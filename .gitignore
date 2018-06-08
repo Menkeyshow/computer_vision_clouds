@@ -58,3 +58,12 @@ docs/_build/
 # PyBuilder
 target/
 
+
+# LaTeX-Zeugs
+
+ausarbeitung/out/
+ausarbeitung/*.aux
+ausarbeitung/*.log
+ausarbeitung/*.out
+ausarbeitung/*.pdf
+ausarbeitung/*.synctex.gz
