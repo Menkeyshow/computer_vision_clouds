@@ -1,0 +1,12 @@
+3706;;altostratus-opacus-and-stratocumulus-stratiformis-undulatus_clouds_m.JPG;;taken_by=Jarmo Koistinen
+3780;;altostratus-opacus-praecipitatio-and-cumulus_clouds_m.JPG;;taken_by=Martin Gudd
+4785;;altostratus-translucidus_clouds_m.JPG;;taken_by=Frank Le Blancq
+5147;;altostratus-opacus-undulatus-mamma_clouds_m.jpg;;taken_by=Martin Gudd
+5443;;altostratus-opacus-radiatus_clouds_m.JPG;;taken_by=Martin Gudd
+5445;;altostratus-opacus-mamma-cumulonimbogenitus_clouds_m.jpg;;taken_by=Mateusz Wojtala
+5446;;altostratus-translucidus-with-virga_clouds_m.JPG;;taken_by=Jarmo Koistinen
+5733;;altostratus-translucidus-undulatus-with-virga_clouds_m.JPG;;taken_by=Art Rangno
+5867;;altostratus-opacus-pannus-nimbostratomutatus_clouds_m.JPG;;taken_by=Michael Bruhn
+5869;;altostratus-translucidus-nimbostratomutatus_clouds_m.JPG;;taken_by=Michael Bruhn
+5871;;altostratus-opacus-undulatus-radiatus-with-virga-and-mamma_clouds_m.jpg;;taken_by=Michael Bruhn
+5981;;altostratus-opacus-praecipitatio_clouds_m.png;;taken_by=Michael Bruhn
