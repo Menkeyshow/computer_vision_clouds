@@ -67,3 +67,5 @@ ausarbeitung/*.log
 ausarbeitung/*.out
 ausarbeitung/*.pdf
 ausarbeitung/*.synctex.gz
+
+temp/

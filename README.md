@@ -14,3 +14,8 @@ Ich denke, wir benutzen Python 3, da es ja jetzt auch auf den Uni-Rechnern läuf
 In `clouds-environment.yaml` findet sich eine Beschreibung einer Umgebung für Anaconda.
 Diese benutzt Python 3.5, da soweit ich weiß diese Version auf den Uni-Rechnern installiert ist.
 In der Umgebung sollten auch alle Bibliotheken enthalten sein, die wir so brauchen...
+
+
+## Temporäre Dateien
+
+Bitte in den Ordner `temp`
