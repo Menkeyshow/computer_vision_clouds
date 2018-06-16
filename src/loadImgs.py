@@ -62,7 +62,7 @@ def resize_pics(array,height, widt, foldername):
     for element in array:
         img =  Image.open(element)    
         resized = img.resize((height, widt), PIL.Image.ANTIALIAS)
-        path = "../temp/%s/photo%s.jpg" % (foldername, counter)
+        path = "../temp/%s/%s%s.jpg" % (foldername,foldername, counter)
         resized.save(path)
         counter += 1
         
