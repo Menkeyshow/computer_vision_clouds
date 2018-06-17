@@ -5,9 +5,8 @@ Created on Sat Jun 16 10:55:11 2018
 
 @author: ali
 """
-
+import os
 import glob
-from skimage.io import imread, imsave, imshow
 import PIL
 from PIL import Image
         
@@ -55,10 +54,21 @@ cumuliform = []
 cumuliform = cumulus_pics + cumulonimbus_pics
 
 
-
+def check_directories():
+    '''Checks, if directories exist, and if not creates them'''    
+    directories = ["../temp/stratiform", "../temp/cirriform",
+                   "../temp/stratocumuliform", "../temp/cumuliform" ]
+    for directory in directories:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    
 def resize_pics(array,height, widt, foldername):
     '''function to resize pics to a size''' 
+    check_directories()
     counter = 0
+    
+    
+    
     for element in array:
         img =  Image.open(element)    
         resized = img.resize((height, widt), PIL.Image.ANTIALIAS)
