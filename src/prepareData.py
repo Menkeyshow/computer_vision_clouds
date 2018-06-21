@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
-
 from scipy import misc
 import glob
+import PIL
+from PIL import Image
 
 import util
 
@@ -9,7 +9,27 @@ import util
 #TODO save only descriptor data (missing metric functions for that)
 #TODO save and load funktions for compressed *.npz instead of prepare_data()
 
-#make sure to have run loadImgs.py atleast once for data!
+
+def save_resized_pictures(height, width):
+    for cloud_kind, subkinds in util.cloud_kinds.items():
+        if util.ensure_directory_exists("../temp/classic/" + cloud_kind):
+            # directory exists already, we assume that the resized pictures
+            # are in there
+            continue
+
+        counter = 0
+
+        for subkind in subkinds:
+            for element in glob.glob("../data/" + subkind + "/*"):
+                img = Image.open(element)
+                resized = img.resize((height, width), PIL.Image.ANTIALIAS)
+                path = "../temp/classic/%s/%s%s.jpg" % (cloud_kind, cloud_kind, counter)
+                resized.save(path)
+                counter += 1
+
+
+save_resized_pictures(500, 500)
+
 
 trainData = [] #das ist gegeben
 valiData = []  #das ist gesucht
