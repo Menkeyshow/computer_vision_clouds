@@ -22,7 +22,7 @@ logger.info("logger says hi!")
 
 
 def move_data_into_categorized_directories():
-    dirname = "../temp/categorized/"
+    dirname = "../temp/deep/categorized/"
     if util.ensure_directory_exists(dirname):
         logger.info("found categorized images in " + dirname + ", proceeding")
         return dirname
@@ -30,15 +30,7 @@ def move_data_into_categorized_directories():
     logger.info("couldn't find categorized images in {}, copying images now"
                 .format(dirname))
 
-    cloud_kinds = {
-        "stratiform":
-            ["cirrostratus", "altostratus", "nimbostratus", "stratus"],
-        "cirriform": ["cirrus"],
-        "stratocumuliform": ["cirrocumulus", "altocumulus", "stratocumulus"],
-        "cumuliform": ["cumulus", "cumulonimbus"]
-    }
-
-    for label, sublabels in cloud_kinds.items():
+    for label, sublabels in util.cloud_kinds.items():
         logger.debug("processing {}".format(label))
         labeldirname = dirname + label + "/"
         os.makedirs(labeldirname)
@@ -85,7 +77,7 @@ def extract_features(datagen, image_dir, mode, num):
 
 
 def load_extracted_features():
-    dirname = "../temp/deep-features/"
+    dirname = "../temp/deep/features/"
     if util.ensure_directory_exists(dirname):
         logger.info("found extracted features in " + dirname + ", proceeding")
         loaded = np.load(dirname + "training.npz")

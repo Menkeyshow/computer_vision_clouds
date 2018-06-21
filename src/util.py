@@ -12,3 +12,12 @@ def ensure_directory_exists(dirname):
     else:
         os.makedirs(dirname)
         return False
+
+
+cloud_kinds = {
+    "stratiform":
+        ["cirrostratus", "altostratus", "nimbostratus", "stratus"],
+    "cirriform": ["cirrus"],
+    "stratocumuliform": ["cirrocumulus", "altocumulus", "stratocumulus"],
+    "cumuliform": ["cumulus", "cumulonimbus"]
+}
