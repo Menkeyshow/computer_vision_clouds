@@ -3,8 +3,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import callbacks, layers, models, optimizers
 import logging
 import numpy as np
+from scipy.misc import imread, imsave
 import os
-import shutil
 
 import util
 
@@ -37,7 +37,11 @@ def move_data_into_categorized_directories():
         for cloud_type in sublabels:
             sublabeldirname = "../data/" + cloud_type + "/"
             for filename in os.listdir(sublabeldirname):
-                shutil.copy(sublabeldirname + filename, labeldirname)
+                img = imread(sublabeldirname + filename)
+                height = img.shape[0]
+                width = img.shape[1]
+                imsave(labeldirname + "l-" + filename, img[:(3 * height // 4), :(width // 2), :])
+                imsave(labeldirname + "r-" + filename, img[:(3 * height // 4), (width // 2):, :])
 
     logger.info("finished copying images")
 
