@@ -6,6 +6,8 @@ import numpy as np
 import os
 import shutil
 
+import util
+
 
 
 logger = logging.getLogger(__name__)
@@ -21,14 +23,12 @@ logger.info("logger says hi!")
 
 def move_data_into_categorized_directories():
     dirname = "../temp/categorized/"
-    if os.path.exists(dirname):
+    if util.ensure_directory_exists(dirname):
         logger.info("found categorized images in " + dirname + ", proceeding")
         return dirname
 
     logger.info("couldn't find categorized images in {}, copying images now"
                 .format(dirname))
-
-    os.makedirs(dirname)
 
     cloud_kinds = {
         "stratiform":
@@ -86,7 +86,7 @@ def extract_features(datagen, image_dir, mode, num):
 
 def load_extracted_features():
     dirname = "../temp/deep-features/"
-    if os.path.exists(dirname):
+    if util.ensure_directory_exists(dirname):
         logger.info("found extracted features in " + dirname + ", proceeding")
         loaded = np.load(dirname + "training.npz")
         tr_features = loaded['tr_features']
@@ -125,7 +125,6 @@ def load_extracted_features():
     val_features, val_labels = extract_features(train_datagen, image_dir,
                                                 "validation", num_val)
 
-    os.makedirs(dirname)
     np.savez_compressed(dirname + "training.npz",
                         tr_features=tr_features,
                         tr_labels=tr_labels,

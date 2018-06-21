@@ -5,12 +5,13 @@ Created on Sat Jun 16 10:55:11 2018
 
 @author: ali
 """
-import os
 import glob
 import PIL
 from PIL import Image
         
-        
+import util
+
+
 altocumulus_path = "../data/altocumulus/*"
 altocumulus_pics = glob.glob(altocumulus_path)
 
@@ -59,15 +60,13 @@ def check_directories():
     directories = ["../temp/stratiform", "../temp/cirriform",
                    "../temp/stratocumuliform", "../temp/cumuliform" ]
     for directory in directories:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    
+        util.ensure_directory_exists(directory)
+
+
 def resize_pics(array,height, widt, foldername):
     '''function to resize pics to a size''' 
     check_directories()
     counter = 0
-    
-    
     
     for element in array:
         img =  Image.open(element)    
@@ -81,6 +80,3 @@ resize_pics(stratiform, 500, 500, "stratiform")
 resize_pics(cirriform, 500, 500, "cirriform")
 resize_pics(stratocumuliform, 500, 500, "stratocumuliform")
 resize_pics(cumuliform, 500, 500, "cumuliform")
-
-
-
