@@ -3,8 +3,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import callbacks, layers, models, optimizers
 import logging
 import numpy as np
+from scipy.misc import imread, imsave
 import os
-import shutil
 
 import util
 
@@ -37,7 +37,11 @@ def move_data_into_categorized_directories():
         for cloud_type in sublabels:
             sublabeldirname = "../data/" + cloud_type + "/"
             for filename in os.listdir(sublabeldirname):
-                shutil.copy(sublabeldirname + filename, labeldirname)
+                img = imread(sublabeldirname + filename)
+                height = img.shape[0]
+                width = img.shape[1]
+                imsave(labeldirname + "l-" + filename, img[:(3 * height // 4), :(width // 2), :])
+                imsave(labeldirname + "r-" + filename, img[:(3 * height // 4), (width // 2):, :])
 
     logger.info("finished copying images")
 
@@ -147,13 +151,46 @@ logger.info("fitting model")
 
 early_stop_callback = callbacks.EarlyStopping(monitor='val_loss', min_delta=0,
                                               patience=30)
+checkpoint_callback = callbacks.ModelCheckpoint('../temp/deep/best_model.h5',
+                                                monitor='val_loss',
+                                                verbose=0,
+                                                save_best_only=True,
+                                                save_weights_only=False,
+                                                mode='auto', period=1)
 history = model.fit(tr_features, tr_labels,
-                    epochs=500, batch_size=32,
+                    epochs=500, batch_size=64,
                     verbose=1,
                     validation_data=(val_features, val_labels),
-                    callbacks=[early_stop_callback])
+                    callbacks=[early_stop_callback, checkpoint_callback])
 
+model.load_weights('../temp/deep/best_model.h5')
+# TODO: true train/validate/test data split
+score = model.evaluate(val_features, val_labels, verbose=1)
+print("test loss: ", score[0], "accuracy: ", score[1])
 
-# TODO: testing performance
+predictions = model.predict_classes(val_features, verbose=1)
 
-# https://www.learnopencv.com/keras-tutorial-transfer-learning-using-pre-trained-models/
+ground_truth = []
+for label in val_labels:
+    for i in range(len(label)):
+        if label[i] > 0.:
+            ground_truth.append(i)
+            break
+
+assert len(ground_truth) == len(predictions)
+
+confusion_matrix = np.zeros(16).reshape((4, 4))
+for true, prediction in zip(ground_truth, predictions):
+    confusion_matrix[true][prediction] += 1
+
+cm = confusion_matrix
+for i in range(4):
+    cm[i] /= np.sum(cm[i])
+
+cm *= 100
+
+print("\t".join(["", "cir", "cum", "str", "s-c"]))
+print("cir\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[0][0], cm[0][1], cm[0][2], cm[0][3]))
+print("cum\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[1][0], cm[1][1], cm[1][2], cm[1][3]))
+print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
+print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
