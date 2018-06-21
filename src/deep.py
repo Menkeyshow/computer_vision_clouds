@@ -168,6 +168,29 @@ model.load_weights('../temp/deep/best_model.h5')
 score = model.evaluate(val_features, val_labels, verbose=1)
 print("test loss: ", score[0], "accuracy: ", score[1])
 
-# TODO: testing performance
+predictions = model.predict_classes(val_features, verbose=1)
 
-# https://www.learnopencv.com/keras-tutorial-transfer-learning-using-pre-trained-models/
+ground_truth = []
+for label in val_labels:
+    for i in range(len(label)):
+        if label[i] > 0.:
+            ground_truth.append(i)
+            break
+
+assert len(ground_truth) == len(predictions)
+
+confusion_matrix = np.zeros(16).reshape((4, 4))
+for true, prediction in zip(ground_truth, predictions):
+    confusion_matrix[true][prediction] += 1
+
+cm = confusion_matrix
+for i in range(4):
+    cm[i] /= np.sum(cm[i])
+
+cm *= 100
+
+print("\t".join(["", "cir", "cum", "str", "s-c"]))
+print("cir\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[0][0], cm[0][1], cm[0][2], cm[0][3]))
+print("cum\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[1][0], cm[1][1], cm[1][2], cm[1][3]))
+print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
+print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
