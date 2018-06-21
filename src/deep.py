@@ -20,7 +20,7 @@ logger.info("logger says hi!")
 
 
 def move_data_into_categorized_directories():
-    dirname = "./temp/categorized/"
+    dirname = "../temp/categorized/"
     if os.path.exists(dirname):
         logger.info("found categorized images in " + dirname + ", proceeding")
         return dirname
@@ -85,7 +85,7 @@ def extract_features(datagen, image_dir, mode, num):
 
 
 def load_extracted_features():
-    dirname = "./temp/deep-features/"
+    dirname = "../temp/deep-features/"
     if os.path.exists(dirname):
         logger.info("found extracted features in " + dirname + ", proceeding")
         loaded = np.load(dirname + "training.npz")
