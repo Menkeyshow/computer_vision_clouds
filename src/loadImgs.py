@@ -14,11 +14,14 @@ import util
 
 
 def save_resized_pictures(height, width):
-    for cloud_kind in util.cloud_kinds:
-        util.ensure_directory_exists("../temp/classic/" + cloud_kind)
-
-    counter = 0
     for cloud_kind, subkinds in util.cloud_kinds.items():
+        if util.ensure_directory_exists("../temp/classic/" + cloud_kind):
+            # directory exists already, we assume that the resized pictures
+            # are in there
+            continue
+
+        counter = 0
+
         for subkind in subkinds:
             for element in glob.glob("../data/" + subkind + "/*"):
                 img = Image.open(element)
