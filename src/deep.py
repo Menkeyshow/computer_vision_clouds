@@ -151,12 +151,22 @@ logger.info("fitting model")
 
 early_stop_callback = callbacks.EarlyStopping(monitor='val_loss', min_delta=0,
                                               patience=30)
+checkpoint_callback = callbacks.ModelCheckpoint('../temp/deep/best_model.h5',
+                                                monitor='val_loss',
+                                                verbose=0,
+                                                save_best_only=True,
+                                                save_weights_only=False,
+                                                mode='auto', period=1)
 history = model.fit(tr_features, tr_labels,
-                    epochs=500, batch_size=32,
+                    epochs=500, batch_size=64,
                     verbose=1,
                     validation_data=(val_features, val_labels),
-                    callbacks=[early_stop_callback])
+                    callbacks=[early_stop_callback, checkpoint_callback])
 
+model.load_weights('../temp/deep/best_model.h5')
+# TODO: true train/validate/test data split
+score = model.evaluate(val_features, val_labels, verbose=1)
+print("test loss: ", score[0], "accuracy: ", score[1])
 
 # TODO: testing performance
 
