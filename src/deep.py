@@ -115,7 +115,7 @@ def load_extracted_features():
             rescale=1./255,
             validation_split=0.2)
 
-    num_train = 512
+    num_train = 4096
     logger.info("extracting {} training features".format(num_train))
     tr_features, tr_labels = extract_features(train_datagen, image_dir,
                                               "training", num_train)
@@ -140,21 +140,24 @@ tr_features, tr_labels, val_features, val_labels = load_extracted_features()
 logger.info("creating model")
 
 model = models.Sequential()
-model.add(layers.Dense(256, activation='relu', input_dim=2048,
+model.add(layers.Dense(128, activation='relu', input_dim=2048,
                        name='class-fc1'))
+model.add(layers.Dropout(0.6))
+model.add(layers.Dense(128, activation='relu', name='class-fc2'))
+model.add(layers.Dropout(0.6))
 model.add(layers.Dense(4, activation='softmax', name='output'))
 
 logger.info("compiling model")
 model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.SGD(lr=0.01, momentum=0.9),
+              optimizer=optimizers.SGD(lr=0.001, momentum=0.9),
               metrics=['acc'])
 
 logger.info("fitting model")
 
 early_stop_callback = callbacks.EarlyStopping(monitor='val_loss', min_delta=0,
-                                              patience=3)
+                                              patience=30)
 history = model.fit(tr_features, tr_labels,
-                    epochs=20, batch_size=32,
+                    epochs=500, batch_size=32,
                     verbose=1,
                     validation_data=(val_features, val_labels),
                     callbacks=[early_stop_callback])
