@@ -7,7 +7,10 @@ import os
 import shutil
 
 
+
 logger = logging.getLogger(__name__)
+if (logger.hasHandlers()):
+    logger.handlers.clear()
 logger.setLevel(logging.DEBUG)
 sh = logging.StreamHandler()
 sh.setLevel(logging.DEBUG)
@@ -40,7 +43,7 @@ def move_data_into_categorized_directories():
         labeldirname = dirname + label + "/"
         os.makedirs(labeldirname)
         for cloud_type in sublabels:
-            sublabeldirname = "./data/" + cloud_type + "/"
+            sublabeldirname = "../data/" + cloud_type + "/"
             for filename in os.listdir(sublabeldirname):
                 shutil.copy(sublabeldirname + filename, labeldirname)
 
