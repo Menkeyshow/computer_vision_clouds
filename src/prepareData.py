@@ -41,8 +41,6 @@ def save_resized_pictures(height, width):
                 counter += 1
 
 
-save_resized_pictures(500, 500)
-
 
 trainData = [] #das ist gegeben
 valiData = []  #das ist gesucht
@@ -66,7 +64,7 @@ def prepare_data():
     
     for cloud_kind in util.cloud_kinds:
         pics = []
-        for imgpath in glob.globg("../temp/classic/" + cloud_kind + "/*"):
+        for imgpath in glob.glob("../temp/classic/" + cloud_kind + "/*"):
             pics.append(misc.imread(imgpath))
 
         numberValiImages = round(len(pics) * 0.8, 0)
@@ -80,3 +78,7 @@ def prepare_data():
         for x in range(int(numberValiImages), int(len(pics))):
             valiData.append(pics[x][:][:][:])
             valiLabels.append(labels[cloud_kind])
+            
+if __name__ == '__main__':
+    save_resized_pictures(500, 500)
+    prepare_data()
