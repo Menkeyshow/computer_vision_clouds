@@ -35,6 +35,7 @@ def move_data_into_categorized_directories():
         labeldirname = dirname + label + "/"
         os.makedirs(labeldirname)
         for cloud_type in sublabels:
+            logger.debug("current cloud type: {}".format(cloud_type))
             sublabeldirname = "../data/" + cloud_type + "/"
             for filename in os.listdir(sublabeldirname):
                 img = imread(sublabeldirname + filename)
