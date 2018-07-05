@@ -22,7 +22,7 @@ import skimage.color
 
 plt.close("all")
 
-img = glob.glob("../temp/cirriform/cirriform21.jpg")
+img = glob.glob("../temp/cirriform/cirriform29.jpg")
 for x in img:
     pic = imread(x)
 
@@ -36,7 +36,9 @@ def binarize(img):
         image_mean = 0.03
     return pic > image_mean
     
-def cut_black_out(img, thresh):
+
+def cut_black_out(img, thresh): #wir nehmen 0.2 als treshold?
+    dont_crop = False
     box_height = np.shape(img)[0] * 0.03
     bool_= True
     y = np.shape(img)[0]
@@ -44,14 +46,17 @@ def cut_black_out(img, thresh):
         image_box = img[int(y) - int(box_height) : int(y),:]
         box_mean = np.mean(image_box)
         y -= box_height/2
-        print ("hello")
+        print (y,box_height)
+        if y < 0:
+            bool_ = False
+            dont_crop = True
         if box_mean > thresh:
             bool_ = False
-            
+    if dont_crop:
+        return img
     return img[0:int(y),:]
         
-def binerized_crop(img,thresh):
+def binarized_crop(img,thresh):
     pic1 = binarize(img).astype(np.float)
-    print(np.max(pic1),pic1.shape)
-    imshow(cut_black_out(pic1, thresh), cmap='Greys_r')
-    
+    pic2 = cut_black_out(pic1, 0.2)
+    return pic2.shape #??
