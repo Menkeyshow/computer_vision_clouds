@@ -61,6 +61,8 @@ def prepare_data():
     '''
 
     logger.info("preparing classic classification data")
+    global trainData
+    global valiData
     
     for cloud_kind in util.cloud_kinds:
         pics = []
