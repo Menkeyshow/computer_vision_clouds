@@ -28,7 +28,7 @@ vaMerkmale3 = []
 trMerkmale4 = []
 vaMerkmale4 = []
 
-nbins=3
+nbins=7
 
     
 def getMerkmal(img, Merkmal, nbins):
@@ -66,6 +66,77 @@ def create_cropped_images():
         #print("resized:",resized.shape)
         bin_valiData.append(resized)
     print("done cropping validata")
+    
+def create_confusion_matrix():
+    #first number = calculated, second number = trueLabel
+    #1 = stratiform
+    #2 = cirriform
+    #3 = stratocumuliform
+    #4 = cumuliform
+    O1_1 = 0
+    O1_2 = 0
+    O1_3 = 0
+    O1_4 = 0
+    
+    O2_1 = 0
+    O2_2 = 0
+    O2_3 = 0
+    O2_4 = 0
+    
+    O3_1 = 0
+    O3_2 = 0
+    O3_3 = 0
+    O3_4 = 0
+    
+    O4_1 = 0
+    O4_2 = 0
+    O4_3 = 0
+    O4_4 = 0
+    
+    for calculatedLabel, trueLabel in zip(result,valiLabels):
+        if calculatedLabel == 1 and trueLabel == 1:
+            O1_1 += 1
+        if calculatedLabel == 1 and trueLabel == 2:
+            O1_2 += 1
+        if calculatedLabel == 1 and trueLabel == 3:
+            O1_3 += 1
+        if calculatedLabel == 1 and trueLabel == 4:
+            O1_4 += 1
+            
+        if calculatedLabel == 2 and trueLabel == 1:
+            O2_1 += 1
+        if calculatedLabel == 2 and trueLabel == 2:
+            O2_2 += 1
+        if calculatedLabel == 2 and trueLabel == 3:
+            O2_3 += 1
+        if calculatedLabel == 2 and trueLabel == 4:
+            O2_4 += 1
+            
+        if calculatedLabel == 3 and trueLabel == 1:
+            O3_1 += 1
+        if calculatedLabel == 3 and trueLabel == 2:
+            O3_2 += 1
+        if calculatedLabel == 3 and trueLabel == 3:
+            O3_3 += 1
+        if calculatedLabel == 3 and trueLabel == 4:
+            O3_4 += 1
+            
+        if calculatedLabel == 4 and trueLabel == 1:
+            O4_1 += 1
+        if calculatedLabel == 4 and trueLabel == 2:
+            O4_2 += 1
+        if calculatedLabel == 4 and trueLabel == 3:
+            O4_3 += 1
+        if calculatedLabel == 4 and trueLabel == 4:
+            O4_4 += 1
+            
+    gesamt = O1_1 + O1_2 + O1_3 + O1_4 + O2_1 + O2_2 + O2_3 + O2_4 + O3_1 + O3_2 + O3_3 + O3_4 + O4_1 + O4_2 + O4_3 + O4_4
+    print ("stratiform: "+ str(O1_1) +"|"+ str(O1_2) +"|"+ str(O1_3) +"|"+ str(O1_4))
+    print ("cirriform: " + str(O2_1) +"|"+ str(O2_2) +"|"+ str(O2_3) +"|"+ str(O2_4))
+    print ("stratocummuliform: " + str(O3_1) +"|"+ str(O3_2) +"|"+ str(O3_3) +"|"+ str(O3_4))
+    print("cummuliform: " +str(O4_1) +"|"+ str(O4_2) +"|"+ str(O4_3) +"|"+ str(O4_4))
+    print (gesamt)
+        
         
 
 #MAIN PROGRAMM
@@ -92,7 +163,7 @@ if __name__ == '__main__':
         vaMerkmale3.append(getMerkmal(img, 'mean', 0))
         
     #Gewichte
-    W0=1
+    W0=1.0
     W1=0.7
     W2=0.7
     result = []
@@ -115,3 +186,5 @@ if __name__ == '__main__':
         
     accuracy = correct/len(valiLabels)
     print (accuracy)
+    
+    create_confusion_matrix()
