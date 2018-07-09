@@ -68,12 +68,13 @@ def move_data_into_categorized_directories():
     return train_dirname, test_dirname
 
 
-def extract_features(datagen, image_dir, mode, num):
-    extractor = Xception(include_top=False,
-                         weights='imagenet',
-                         input_shape=(256, 256, 3),
-                         pooling='max')
+extractor = Xception(include_top=False,
+                     weights='imagenet',
+                     input_shape=(256, 256, 3),
+                     pooling='max')
 
+
+def extract_features(datagen, image_dir, mode, num):
     # TODO: seed...
     generator = datagen.flow_from_directory(
             image_dir,
@@ -198,11 +199,13 @@ def print_confusion_matrix(model, val_features, val_labels):
 
     assert len(ground_truth) == len(predictions)
 
-    confusion_matrix = np.zeros(16).reshape((4, 4))
+    cm = np.zeros(16).reshape((4, 4))
     for true, prediction in zip(ground_truth, predictions):
-        confusion_matrix[true][prediction] += 1
+        cm[true][prediction] += 1
 
-    cm = confusion_matrix
+    correctness = (cm[0][0] + cm[1][1] + cm[2][2] + cm[3][3]) / len(ground_truth)
+    print("correctness: {}".format(correctness))
+
     for i in range(4):
         cm[i] /= np.sum(cm[i])
 
@@ -214,6 +217,72 @@ def print_confusion_matrix(model, val_features, val_labels):
     print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
     print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
 
+
+def classify_image_test(model):
+    # FIXME: check for deduplicatablility w/ extract_features et al.
+    test_datagen = ImageDataGenerator(fill_mode='nearest', rescale=1./255)
+    generator = test_datagen.flow_from_directory(
+            '../temp/deep/categorized/test/',
+            target_size=(340,512),
+            batch_size=32)
+    
+    num = 173
+    features = np.empty(shape=(3, num, 2048))
+    labels = np.empty(shape=(num, 4))
+
+    i = 0
+    for inputs_batch, labels_batch in generator:
+        batch_size = min(num - i, inputs_batch.shape[0])
+
+        left_features_batch = extractor.predict(inputs_batch[:batch_size, :256, :256])
+        features[0, i:(i + batch_size)] = left_features_batch
+
+        middle_features_batch = extractor.predict(inputs_batch[:batch_size, :256, 128:384])
+        features[1, i:(i + batch_size)] = middle_features_batch
+
+        right_features_batch = extractor.predict(inputs_batch[:batch_size, :256, 256:])
+        features[2, i:(i + batch_size)] = right_features_batch
+
+        labels[i:(i + batch_size)] = labels_batch[:batch_size]
+
+        i += batch_size
+        logger.debug("extracting features: {}/{}".format(i, num))
+        if i >= num:
+            break
+
+    left_predictions = model.predict(features[0], verbose=1)
+    middle_predictions = model.predict(features[1], verbose=1)
+    right_predictions = model.predict(features[2], verbose=1)
+    predictions = left_predictions + middle_predictions + right_predictions
+    predictions = np.argmax(predictions, axis=1)
+
+    ground_truth = []
+    for label in labels:
+        for i in range(len(label)):
+            if label[i] > 0.:
+                ground_truth.append(i)
+                break
+
+    assert len(ground_truth) == len(predictions)
+
+    cm = np.zeros(16).reshape((4, 4))
+    for true, prediction in zip(ground_truth, predictions):
+        cm[true][prediction] += 1
+
+    correctness = (cm[0][0] + cm[1][1] + cm[2][2] + cm[3][3]) / len(ground_truth)
+    print("correctness: {}".format(correctness))
+
+    for i in range(4):
+        cm[i] /= np.sum(cm[i])
+
+    cm *= 100
+
+    print("\t".join(["", "cir", "cum", "str", "s-c"]))
+    print("cir\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[0][0], cm[0][1], cm[0][2], cm[0][3]))
+    print("cum\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[1][0], cm[1][1], cm[1][2], cm[1][3]))
+    print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
+    print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
+            
 
 def main():
     set_up_logger(__name__)
@@ -232,6 +301,7 @@ def main():
 
     print_confusion_matrix(model, val_features, val_labels)
 
+    classify_image_test(model)
 
 
 if __name__ == '__main__':
