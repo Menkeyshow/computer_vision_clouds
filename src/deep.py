@@ -3,8 +3,10 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import callbacks, layers, models, optimizers
 import logging
 import numpy as np
-from scipy.misc import imread, imsave
 import os
+from scipy.misc import imread, imsave
+from shutil import copy
+from random import random
 
 import util
 
@@ -32,32 +34,46 @@ def move_data_into_categorized_directories():
     logger.info("couldn't find categorized images in {}, copying images now"
                 .format(dirname))
 
+    train_dirname = dirname + "train/"
+    test_dirname = dirname + "test/"
+
+    util.ensure_directory_exists(train_dirname)
+    util.ensure_directory_exists(test_dirname)
+
     for label, sublabels in util.cloud_kinds.items():
         logger.debug("processing {}".format(label))
-        labeldirname = dirname + label + "/"
-        os.makedirs(labeldirname)
+        train_labeldirname = train_dirname + label + "/"
+        test_labeldirname  = test_dirname  + label + "/"
+
+        os.makedirs(train_labeldirname)
+        os.makedirs(test_labeldirname)
+
         for cloud_type in sublabels:
             logger.debug("current cloud type: {}".format(cloud_type))
             sublabeldirname = "../data/" + cloud_type + "/"
             for filename in os.listdir(sublabeldirname):
-                img = imread(sublabeldirname + filename)
-                height = img.shape[0]
-                width = img.shape[1]
-                imsave(labeldirname + "l-" + filename, img[:(3 * height // 4), :(width // 2), :])
-                imsave(labeldirname + "r-" + filename, img[:(3 * height // 4), (width // 2):, :])
+                if random() > 0.2:
+                    img = imread(sublabeldirname + filename)
+                    height = img.shape[0]
+                    width = img.shape[1]
+                    imsave(train_labeldirname + "l-" + filename,
+                           img[:(3 * height // 4), :(width // 2), :])
+                    imsave(train_labeldirname + "r-" + filename,
+                           img[:(3 * height // 4), (width // 2):, :])
+                else:
+                    copy(sublabeldirname + filename, test_labeldirname)
 
     logger.info("finished copying images")
 
-    return dirname
-
-
-extractor = Xception(include_top=False,
-                     weights='imagenet',
-                     input_shape=(256, 256, 3),
-                     pooling='max')
+    return train_dirname, test_dirname
 
 
 def extract_features(datagen, image_dir, mode, num):
+    extractor = Xception(include_top=False,
+                         weights='imagenet',
+                         input_shape=(256, 256, 3),
+                         pooling='max')
+
     # TODO: seed...
     generator = datagen.flow_from_directory(
             image_dir,
@@ -96,7 +112,7 @@ def load_extracted_features():
 
     logger.info("did not find extracted features in " + dirname)
 
-    image_dir = move_data_into_categorized_directories()
+    train_image_dir, test_image_dir = move_data_into_categorized_directories()
 
     # mehr data augmentation optionen:
     # rotation_range
@@ -116,12 +132,12 @@ def load_extracted_features():
 
     num_train = 4096
     logger.info("extracting {} training features".format(num_train))
-    tr_features, tr_labels = extract_features(train_datagen, image_dir,
+    tr_features, tr_labels = extract_features(train_datagen, train_image_dir,
                                               "training", num_train)
 
     num_val = int(num_train * 0.2)
     logger.info("extracting {} validation features".format(num_val))
-    val_features, val_labels = extract_features(train_datagen, image_dir,
+    val_features, val_labels = extract_features(train_datagen, train_image_dir,
                                                 "validation", num_val)
 
     np.savez_compressed(dirname + "training.npz",
