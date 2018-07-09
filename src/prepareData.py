@@ -81,7 +81,7 @@ def prepare_data():
             valiData.append(pics[x][:][:][:])
             valiLabels.append(labels[cloud_kind])
             
-    print("ANzahl der Bilder: ",len(valiData),len(trainData))
+    print("Anzahl der Bilder: ","vali: " + str(len(valiData)), "training: " + str(len(trainData)))
             
 if __name__ == '__main__':
     save_resized_pictures(500, 500)
