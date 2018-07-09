@@ -28,7 +28,7 @@ vaMerkmale3 = []
 trMerkmale4 = []
 vaMerkmale4 = []
 
-nbins=7
+nbins=3
 
     
 def getMerkmal(img, Merkmal, nbins):
@@ -131,11 +131,11 @@ def create_confusion_matrix():
             O4_4 += 1
             
     gesamt = O1_1 + O1_2 + O1_3 + O1_4 + O2_1 + O2_2 + O2_3 + O2_4 + O3_1 + O3_2 + O3_3 + O3_4 + O4_1 + O4_2 + O4_3 + O4_4
-    print ("stratiform: "+ str(O1_1) +"|"+ str(O1_2) +"|"+ str(O1_3) +"|"+ str(O1_4))
-    print ("cirriform: " + str(O2_1) +"|"+ str(O2_2) +"|"+ str(O2_3) +"|"+ str(O2_4))
-    print ("stratocummuliform: " + str(O3_1) +"|"+ str(O3_2) +"|"+ str(O3_3) +"|"+ str(O3_4))
-    print("cummuliform: " +str(O4_1) +"|"+ str(O4_2) +"|"+ str(O4_3) +"|"+ str(O4_4))
-    print (gesamt)
+    print ("stratiform:        "+ str(O1_1) +"|"+ str(O1_2) +"|"+ str(O1_3) +"|"+ str(O1_4))
+    print ("cirriform:         "+ str(O2_1) +"|"+ str(O2_2) +"|"+ str(O2_3) +"|"+ str(O2_4))
+    print ("stratocummuliform: "+ str(O3_1) +"|"+ str(O3_2) +"|"+ str(O3_3) +"|"+ str(O3_4))
+    print ("cummuliform:       "+ str(O4_1) +"|"+ str(O4_2) +"|"+ str(O4_3) +"|"+ str(O4_4))
+    print ("Anzahl klassifizierter Bilder: ",gesamt)
         
         
 
@@ -163,9 +163,9 @@ if __name__ == '__main__':
         vaMerkmale3.append(getMerkmal(img, 'mean', 0))
         
     #Gewichte
-    W0=1.0
-    W1=0.7
-    W2=0.7
+    W0=0.3
+    W1=0.3
+    W2=0.4
     result = []
     
     #Distanzvergleich
@@ -185,6 +185,6 @@ if __name__ == '__main__':
             correct+=1 
         
     accuracy = correct/len(valiLabels)
-    print (accuracy)
+    print ("Accuracy: ",accuracy)
     
     create_confusion_matrix()
