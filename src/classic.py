@@ -45,6 +45,8 @@ def getMerkmal(img, Merkmal, nbins):
         imgReshaped = img.reshape((img.shape[0]*img.shape[1],3)) #Reshapen, damit jedes Pixek in einer Zeile liegt
         return np.histogramdd(imgReshaped, bins = [nbins,nbins,nbins], range=((0,256),(0,256),(0,256)))[0].flatten()
 
+'''
+--obsolete code--
 def create_cropped_images():
     for img in trainData:
         image_shape = box.binarized_crop(img, 0.2)
@@ -66,8 +68,11 @@ def create_cropped_images():
         #print("resized:",resized.shape)
         bin_valiData.append(resized)
     print("done cropping validata")
-    
+'''
 def create_confusion_matrix():
+    '''
+    Creates a confusion matrix, after caclulating train and vali data
+    '''
     #first number = calculated, second number = trueLabel
     #1 = stratiform
     #2 = cirriform
@@ -143,11 +148,12 @@ def create_confusion_matrix():
 if __name__ == '__main__':
     #speichert Daten in trainData, trainLabels, valiData, valiLabels
     prepareData.prepare_data() 
-    create_cropped_images()
     #the copImageArray doesnt work yet :c
-    #bin_trainData = util.cropImageArray(trainData)
-    #bin_valiData = util.cropImageArray(valiData)
-
+    bin_trainData = util.cropImageArray(trainData)
+    print("done cropping TrainImages")
+    bin_valiData = util.cropImageArray(valiData)
+    print("done cropping ValiImages")
+    
     trainData = bin_trainData
     valiData = bin_valiData
 
@@ -156,11 +162,12 @@ if __name__ == '__main__':
         trMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
         trMerkmale2.append(getMerkmal(img, 'std', 0))
         trMerkmale3.append(getMerkmal(img, 'mean', 0))
-    
+    print("done calculating TrainFeatures")
     for img in valiData:
         vaMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
         vaMerkmale2.append(getMerkmal(img, 'std', 0))
         vaMerkmale3.append(getMerkmal(img, 'mean', 0))
+    print("done calculating ValiFeatures")
         
     #Gewichte
     W0=0.3
