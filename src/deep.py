@@ -10,15 +10,17 @@ import util
 
 
 
-logger = logging.getLogger(__name__)
-if (logger.hasHandlers()):
-    logger.handlers.clear()
-logger.setLevel(logging.DEBUG)
-sh = logging.StreamHandler()
-sh.setLevel(logging.DEBUG)
-logger.addHandler(sh)
+def set_up_logger(name):
+    global logger
+    logger = logging.getLogger(name)
+    if (logger.hasHandlers()):
+        logger.handlers.clear()
+    logger.setLevel(logging.DEBUG)
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.DEBUG)
+    logger.addHandler(sh)
 
-logger.info("logger says hi!")
+    logger.info("logger says hi!")
 
 
 def move_data_into_categorized_directories():
@@ -131,67 +133,90 @@ def load_extracted_features():
     return tr_features, tr_labels, val_features, val_labels
 
 
-tr_features, tr_labels, val_features, val_labels = load_extracted_features()
+def create_compiled_model():
+    logger.info("creating model")
 
-logger.info("creating model")
+    model = models.Sequential()
+    model.add(layers.Dense(128, activation='relu', input_dim=2048,
+                           name='class-fc1'))
+    model.add(layers.Dropout(0.6))
+    model.add(layers.Dense(128, activation='relu', name='class-fc2'))
+    model.add(layers.Dropout(0.6))
+    model.add(layers.Dense(4, activation='softmax', name='output'))
 
-model = models.Sequential()
-model.add(layers.Dense(128, activation='relu', input_dim=2048,
-                       name='class-fc1'))
-model.add(layers.Dropout(0.6))
-model.add(layers.Dense(128, activation='relu', name='class-fc2'))
-model.add(layers.Dropout(0.6))
-model.add(layers.Dense(4, activation='softmax', name='output'))
+    logger.info("compiling model")
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=optimizers.SGD(lr=0.001, momentum=0.9),
+                  metrics=['acc'])
 
-logger.info("compiling model")
-model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.SGD(lr=0.001, momentum=0.9),
-              metrics=['acc'])
+    return model
 
-logger.info("fitting model")
 
-early_stop_callback = callbacks.EarlyStopping(monitor='val_loss', min_delta=0,
-                                              patience=30)
-checkpoint_callback = callbacks.ModelCheckpoint('../temp/deep/best_model.h5',
-                                                monitor='val_loss',
-                                                verbose=0,
-                                                save_best_only=True,
-                                                save_weights_only=False,
-                                                mode='auto', period=1)
-history = model.fit(tr_features, tr_labels,
-                    epochs=500, batch_size=64,
-                    verbose=1,
-                    validation_data=(val_features, val_labels),
-                    callbacks=[early_stop_callback, checkpoint_callback])
+def fit_model(model, filename, tr_features, tr_labels, val_features, val_labels):
+    # TODO: add option to just load already-fitted model
+    logger.info("fitting model")
 
-model.load_weights('../temp/deep/best_model.h5')
-# TODO: true train/validate/test data split
-score = model.evaluate(val_features, val_labels, verbose=1)
-print("test loss: ", score[0], "accuracy: ", score[1])
+    early_stop_callback = callbacks.EarlyStopping(monitor='val_loss', min_delta=0,
+                                                  patience=30)
+    checkpoint_callback = callbacks.ModelCheckpoint(filename,
+                                                    monitor='val_loss',
+                                                    verbose=0,
+                                                    save_best_only=True,
+                                                    save_weights_only=False,
+                                                    mode='auto', period=1)
+    # TODO: visualize training history??
+    model.fit(tr_features, tr_labels, epochs=500, batch_size=64,
+              verbose=1, validation_data=(val_features, val_labels),
+              callbacks=[early_stop_callback, checkpoint_callback])
 
-predictions = model.predict_classes(val_features, verbose=1)
 
-ground_truth = []
-for label in val_labels:
-    for i in range(len(label)):
-        if label[i] > 0.:
-            ground_truth.append(i)
-            break
+def print_confusion_matrix(model, val_features, val_labels):
+    predictions = model.predict_classes(val_features, verbose=1)
 
-assert len(ground_truth) == len(predictions)
+    ground_truth = []
+    for label in val_labels:
+        for i in range(len(label)):
+            if label[i] > 0.:
+                ground_truth.append(i)
+                break
 
-confusion_matrix = np.zeros(16).reshape((4, 4))
-for true, prediction in zip(ground_truth, predictions):
-    confusion_matrix[true][prediction] += 1
+    assert len(ground_truth) == len(predictions)
 
-cm = confusion_matrix
-for i in range(4):
-    cm[i] /= np.sum(cm[i])
+    confusion_matrix = np.zeros(16).reshape((4, 4))
+    for true, prediction in zip(ground_truth, predictions):
+        confusion_matrix[true][prediction] += 1
 
-cm *= 100
+    cm = confusion_matrix
+    for i in range(4):
+        cm[i] /= np.sum(cm[i])
 
-print("\t".join(["", "cir", "cum", "str", "s-c"]))
-print("cir\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[0][0], cm[0][1], cm[0][2], cm[0][3]))
-print("cum\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[1][0], cm[1][1], cm[1][2], cm[1][3]))
-print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
-print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
+    cm *= 100
+
+    print("\t".join(["", "cir", "cum", "str", "s-c"]))
+    print("cir\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[0][0], cm[0][1], cm[0][2], cm[0][3]))
+    print("cum\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[1][0], cm[1][1], cm[1][2], cm[1][3]))
+    print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
+    print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
+
+
+def main():
+    set_up_logger(__name__)
+    tr_features, tr_labels, val_features, val_labels = load_extracted_features()
+
+    model = create_compiled_model()
+
+    fit_model(model, '../temp/deep/best_model.h5',
+              tr_features, tr_labels, val_features, val_labels)
+
+    model.load_weights('../temp/deep/best_model.h5')
+
+    # TODO: true train/validate/test data split
+    score = model.evaluate(val_features, val_labels, verbose=1)
+    print("test loss: ", score[0], "accuracy: ", score[1])
+
+    print_confusion_matrix(model, val_features, val_labels)
+
+
+
+if __name__ == '__main__':
+    main()
