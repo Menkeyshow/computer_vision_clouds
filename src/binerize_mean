@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jul  5 15:52:00 2018
+
+@author: ali
+"""
+
+import numpy as np
+from skimage.io import imread, imsave, imshow, imshow_collection
+from scipy import misc
+from skimage.filters import threshold_otsu
+from skimage.measure import label, regionprops
+from skimage import transform
+import scipy.ndimage.morphology as morph
+import matplotlib.pyplot as plt
+import glob
+import pdb
+import skimage.color
+
+
+
+img = glob.glob("../temp/stratocumuliform/stratocumuliform12.jpg")
+for x in img:
+    pic = imread(x)
+    
+    
+#gray_pic = skimage.color.rgb2grey(pic)    
+plt.close()
+
+
+# neighbours of a pixel (clockwise)
+    
+    
+def get_cc_clouds(img, inner_treshhold, outer_threshhold):
+    plt.close()
+    #img = skimage.color.rgb2grey(img)
+   # visited_Areas = [] 
+    
+def get_white_pixles(img, r_treshhold, g_treshhold, b_treshhold):
+    
+    output = np.ones((img.shape[0], img.shape[1]))
+    
+    for x in range(img.shape[0]):
+        for y in range(img.shape[1]):
+            if img[x,y][0] >= r_treshhold and img[x,y][1] >= g_treshhold and img[x,y][2] >= b_treshhold :
+                output[x,y] = 0
+            
+    return output
+    
+swag = get_white_pixles(pic, pic[2].mean(),pic[2].mean(),pic[2].mean() + 40)
+binned = [pic, swag]
+imshow_collection(binned)
+
+#hist = np.histogram(swag, bins = 20, range = (0,1))
+#plt.hist(swag.flatten(), bins = 20, range = (0,1))
+

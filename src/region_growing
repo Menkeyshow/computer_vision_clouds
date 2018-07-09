@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jul  3 14:42:29 2018
+
+@author: ali
+"""
+
+
+
+import numpy as np
+from skimage.io import imread, imsave, imshow, imshow_collection
+from scipy import misc
+from skimage.filters import threshold_otsu
+from skimage.measure import label, regionprops
+from skimage import transform
+import scipy.ndimage.morphology as morph
+import matplotlib.pyplot as plt
+import glob
+import pdb
+import skimage.color
+
+
+
+img = glob.glob("../temp/classic/cirriform/cirriform23.jpg")
+for x in img:
+    pic = imread(x)
+    
+    
+gray_pic = skimage.color.rgb2grey(pic)    
+plt.close()
+
+
+# neighbours of a pixel (clockwise)
+def get_neighbours(x,y):
+    return [[x-1,y-1],[x-1,y],[x-1,y+1],
+            [x,y+1],[x+1,y+1],
+            [x+1,y],[x+1,y-1],[x,y-1]]
+    
+    
+def get_cc_clouds(img, inner_treshhold, outer_threshhold):
+    plt.close()
+    img = skimage.color.rgb2grey(img)
+   # visited_Areas = [] 
+    
+    
+    imagecollection= []
+    x = [0,0,0]
+    
+    for i in range(1):
+        white_pixle = get_white_pixle(img, outer_threshhold, x[1] + 1)
+        print(white_pixle)
+        x = (region_growing(img, inner_treshhold, white_pixle))
+        imagecollection.append(x[0])
+    
+    imshow(imagecollection[0])
+    
+    
+def get_white_pixle(img, treshhold, visited):
+    for x in range(visited, img.shape[0]):
+        for y in range(img.shape[1]):
+            if img[x,y] >= treshhold :
+                return [x,y]
+            
+    return 'brake'
+    
+
+# region growing
+def region_growing(img, white_tolerance, white_pixle):
+    
+    
+    # dimensions
+    max_x_shape = img.shape[0]
+    max_y_shape = img.shape[1]
+
+    max_x = 0
+    max_y = 0
+    
+    output = np.ones((max_x_shape, max_y_shape))
+    startpixle = white_pixle[0]
+    
+    visited = []
+    to_do = [white_pixle]
+    
+    
+    # process as long as there is something to process
+    while to_do != []:
+        current_i = to_do[0]
+        current_val = img[current_i[0],current_i[1]]
+        visited.append(current_i)
+        
+        for n in get_neighbours(current_i[0], current_i[1]):
+            #neighbour has a valid value
+            if  (n not in visited) and (0 <= n[0] < max_x_shape) and (0 <= n[1] < max_y_shape):
+                    n_val = img[n[0],n[1]] 
+                    if (abs(float(current_val) - float(n_val)) <= white_tolerance):
+                        output[n[0],n[1]] = 0
+                        if n not in to_do:
+                            to_do.append(n)
+                            if n[0] > max_x:
+                                max_x = n[0] 
+                            if n[1] > max_y:
+                                max_y = n[1]   
+        to_do.pop(0)
+    
+    return [output, max_x, max_y]
+
+get_cc_clouds(pic, 0.0364455, 0.70)

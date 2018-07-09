@@ -41,7 +41,7 @@ def save_resized_pictures(height, width):
                 counter += 1
 
 
-save_resized_pictures(500, 500)
+save_resized_pictures(100, 100)
 
 
 trainData = [] #das ist gegeben
