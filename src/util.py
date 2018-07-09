@@ -29,8 +29,8 @@ def cropImageArray(array):
     '''
     Returns a cropped imageArray, cropped with the box_clouds method.
     '''
-    cropped_array = []
     for img in array:
+        cropped_array = []
         image_shape = box.binarized_crop(img, 0.2)
         #print("image_shape:" ,image_shape)
         #print("img_shape:" , img.shape)
