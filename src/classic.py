@@ -11,6 +11,24 @@ from skimage import io
 from skimage.io import imread, imsave, imshow
 import skimage
 
+
+'''      KONFIGURATION      '''
+'''BIITE UNBGEDINGT ANPASSEN'''
+#Use saved data or create new ones
+use_saved_data = False #only works, if you saved data once!
+save_data = True
+#Number of Bins for histograms
+nbins=7
+
+#Weights for the distance calculation
+W0=0.3 #0
+W1=0.4#1000000
+W2=0.4#1000000
+W3=0.5#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
+#So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
+
+
+
 """ 
 trainData = [] #das ist gegeben
 valiData = []  #das ist gesucht
@@ -33,7 +51,6 @@ vaMerkmale3 = []
 trMerkmale4 = []
 vaMerkmale4 = []
 
-nbins=7
 
     
 def getMerkmal(img, Merkmal, nbins): #Gibt das angegebene Merkmal für ein Bild zurück.
@@ -58,31 +75,6 @@ def getMerkmal(img, Merkmal, nbins): #Gibt das angegebene Merkmal für ein Bild 
         return sums 
         
 
-'''
---obsolete code--
-def create_cropped_images():
-    for img in trainData:
-        image_shape = box.binarized_crop(img, 0.2)
-        #print("image_shape:" ,image_shape)
-        #print("img_shape:" , img.shape)
-        image = img[0:image_shape[0],0:image_shape[1],:]
-        #print("image:",image.shape)
-        resized = skimage.transform.resize(image, (500,500))
-        #print("resized:",resized.shape)
-        bin_trainData.append(resized)
-    print("done cropping traindata")
-    for img in valiData:
-        image_shape = box.binarized_crop(img, 0.2)
-        #print("image_shape:" ,image_shape)
-        #print("img_shape:" , img.shape)
-        image = img[0:image_shape[0],0:image_shape[1],:]
-        #print("image:",image.shape)
-        resized = skimage.transform.resize(image, (500,500))
-        #print("resized:",resized.shape)
-        bin_valiData.append(resized)
-    print("done cropping validata")
-'''
-    
 def edges(): #Findet die Kanten
     for img in trainData:
         g_img = color.rgb2gray(img)
@@ -185,41 +177,60 @@ def euclidean_hist_dist(hist1, hist2):
 if __name__ == '__main__':
     #speichert Daten in trainData, trainLabels, valiData, valiLabels
     prepareData.prepare_data() 
-    bin_trainData = util.cropImageArray(trainData)
-    print("done cropping TrainImages")
-    bin_valiData = util.cropImageArray(valiData)
-    print("done cropping ValiImages")
+    if use_saved_data == False:
+        
+        
+        
+        bin_trainData = util.cropImageArray(trainData)
+        print("done cropping TrainImages")
+        bin_valiData = util.cropImageArray(valiData)
+        print("done cropping ValiImages")
+        
+        trainData = bin_trainData
+        valiData = bin_valiData
+        edges()
     
-    trainData = bin_trainData
-    valiData = bin_valiData
-    edges()
+        #berechnet Merkmale in den zugehörigen Arrays
+        for img in trainData: 
+            trMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
+            trMerkmale2.append(getMerkmal(img, 'std', 0))
+            trMerkmale3.append(getMerkmal(img, 'mean', 0))   
+        for img in edgy_trainData:
+            trMerkmale4.append(getMerkmal(img, 'edge_count', 0))
+        print("done calculating TrainFeatures")
+        
+        for img in valiData:
+            vaMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
+            vaMerkmale2.append(getMerkmal(img, 'std', 0))
+            vaMerkmale3.append(getMerkmal(img, 'mean', 0))       
+        for img in edgy_valiData:
+            vaMerkmale4.append(getMerkmal(img, 'edge_count', 0))
+        print("done calculating ValiFeatures")
+    
+    if save_data == True:
+        np.save("../temp/classic/trMerkmale", trMerkmale)
+        np.save("../temp/classic/trMerkmale2", trMerkmale2)
+        np.save("../temp/classic/trMerkmale3", trMerkmale3)
+        np.save("../temp/classic/trMerkmale4", trMerkmale4)
+        
+        np.save("../temp/classic/vaMerkmale", vaMerkmale)
+        np.save("../temp/classic/vaMerkmale2", vaMerkmale2)
+        np.save("../temp/classic/vaMerkmale3", vaMerkmale3)
+        np.save("../temp/classic/vaMerkmale4", vaMerkmale4)
 
-    #berechnet Merkmale in den zugehörigen Arrays
-    for img in trainData: 
-        trMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
-        trMerkmale2.append(getMerkmal(img, 'std', 0))
-        trMerkmale3.append(getMerkmal(img, 'mean', 0))   
-    for img in edgy_trainData:
-        trMerkmale4.append(getMerkmal(img, 'edge_count', 0))
-    print("done calculating TrainFeatures")
-    
-    for img in valiData:
-        vaMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
-        vaMerkmale2.append(getMerkmal(img, 'std', 0))
-        vaMerkmale3.append(getMerkmal(img, 'mean', 0))       
-    for img in edgy_valiData:
-        vaMerkmale4.append(getMerkmal(img, 'edge_count', 0))
-    print("done calculating ValiFeatures")
-    
-    #Gewichte
-    W0=1.0 #0
-    W1=0.5#1000000
-    W2=0.7#1000000
-    W3=0.5#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
-    #So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
-
+    if use_saved_data == True:
+        print("skipping calculating features and instead using saved ones")
+        trMerkmale = np.load("../temp/classic/trMerkmale.npy")
+        trMerkmale2 = np.load("../temp/classic/trMerkmale2.npy")
+        trMerkmale3 = np.load("../temp/classic/trMerkmale3.npy")
+        trMerkmale4 = np.load("../temp/classic/trMerkmale4.npy")
+        
+        vaMerkmale = np.load("../temp/classic/vaMerkmale.npy")
+        vaMerkmale2 = np.load("../temp/classic/vaMerkmale2.npy")
+        vaMerkmale3 = np.load("../temp/classic/vaMerkmale3.npy")
+        vaMerkmale4 = np.load("../temp/classic/vaMerkmale4.npy")
+        
     result = []
-    
     #Distanzvergleich
     for vaM,vaM2,vaM3,vaM4 in zip(vaMerkmale,vaMerkmale2,vaMerkmale3,vaMerkmale4):
         distances = [] 
