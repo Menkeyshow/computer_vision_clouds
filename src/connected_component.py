@@ -22,7 +22,7 @@ import skimage.color
 
 
 
-img = glob.glob("../temp/classic/cirriform/cirriform23.jpg")
+img = glob.glob("../temp/classic/cirriform/cirriform24.jpg")
 for x in img:
     pic = imread(x)
     
