@@ -51,6 +51,11 @@ def getMerkmal(img, Merkmal, nbins): #Gibt das angegebene Merkmal für ein Bild 
         return np.histogramdd(imgReshaped, bins = [nbins,nbins,nbins], range=((0,1),(0,1),(0,1)))[0].flatten()
     if Merkmal == 'histogramG' :
         return np.histogram(img, bins = nbins)[0]
+    if Merkmal == 'edge_count' :
+        sums = np.array([0])
+        for zeile in img:
+            sums = np.append(sums, zeile.sum())
+        return sums 
         
 
 '''
@@ -93,6 +98,7 @@ def edges(): #Findet die Kanten
         sobel_v = filters.sobel_v(f_img)
         intensity = np.linalg.norm(np.stack((sobel_h, sobel_v)), axis=0)
         edgy_valiData.append(intensity)   
+    
 
 def create_confusion_matrix():
     '''
@@ -194,7 +200,7 @@ if __name__ == '__main__':
         trMerkmale2.append(getMerkmal(img, 'std', 0))
         trMerkmale3.append(getMerkmal(img, 'mean', 0))   
     for img in edgy_trainData:
-        trMerkmale4.append(getMerkmal(img, 'histogramG', 16))
+        trMerkmale4.append(getMerkmal(img, 'edge_count', 0))
     print("done calculating TrainFeatures")
     
     for img in valiData:
@@ -202,7 +208,7 @@ if __name__ == '__main__':
         vaMerkmale2.append(getMerkmal(img, 'std', 0))
         vaMerkmale3.append(getMerkmal(img, 'mean', 0))       
     for img in edgy_valiData:
-       vaMerkmale4.append(getMerkmal(img, 'histogramG', 16))
+        vaMerkmale4.append(getMerkmal(img, 'edge_count', 0))
     print("done calculating ValiFeatures")
     
     #Gewichte
