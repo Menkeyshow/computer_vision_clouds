@@ -73,13 +73,15 @@ def prepare_data():
         numberTrainImages = len(pics) - numberValiImages
         print(numberValiImages, numberTrainImages, len(pics))
 
-        for x in range(int(numberValiImages)):
+        for x in range(0, int(numberTrainImages)):
             trainData.append(pics[x][:][:][:])
             trainLabels.append(labels[cloud_kind])
 
-        for x in range(int(numberValiImages), int(len(pics))):
+        for x in range(int(numberTrainImages), int(len(pics))):
             valiData.append(pics[x][:][:][:])
             valiLabels.append(labels[cloud_kind])
+            
+    print("ANzahl der Bilder: ",len(valiData),len(trainData))
             
 if __name__ == '__main__':
     save_resized_pictures(500, 500)

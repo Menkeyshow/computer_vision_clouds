@@ -39,4 +39,4 @@ def cropImageArray(array):
         resized = skimage.transform.resize(image, (500,500))
         #print("resized:",resized.shape)
         cropped_array.append(resized)
-        return cropped_array
+    return cropped_array
