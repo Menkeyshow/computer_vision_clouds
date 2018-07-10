@@ -17,15 +17,15 @@ import skimage
 #Use saved data or create new ones
 use_saved_data = False #only works, if you saved data once!
 save_data = True
+
 #Number of Bins for histograms
 nbins=7
 
 #Weights for the distance calculation
-W0=0.3 #0
-W1=0.4#1000000
-W2=0.4#1000000
-W3=0.5#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
-#So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
+W0=1 #1D-Histogramm
+W1=0 #std
+W2=0 #mean
+W3=500 #edge_count
 
 
 
