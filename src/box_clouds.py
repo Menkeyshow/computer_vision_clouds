@@ -20,7 +20,7 @@ import skimage.color
 from matplotlib.colors import hsv_to_rgb
 
 
-img = glob.glob("../temp/stratocumuliform/stratocumuliform122.jpg")
+img = glob.glob("../temp/classic/stratocumuliform/stratocumuliform122.jpg")
 for x in img:
     pic = imread(x)
 
