@@ -28,7 +28,7 @@ vaMerkmale3 = []
 trMerkmale4 = []
 vaMerkmale4 = []
 
-nbins=3
+nbins=7
 
     
 def getMerkmal(img, Merkmal, nbins):
@@ -37,13 +37,13 @@ def getMerkmal(img, Merkmal, nbins):
     if Merkmal == 'std':
         return np.std(img, axis=(0,1))
     if Merkmal == 'histogram1D':
-        rHist = np.histogram(img[:,:,0], bins = nbins, range=(0,256))[0] 
-        gHist = np.histogram(img[:,:,1], bins = nbins, range=(0,256))[0]
-        bHist = np.histogram(img[:,:,2], bins = nbins, range=(0,256))[0]
+        rHist = np.histogram(img[:,:,0], bins = nbins, range=(0,1))[0] 
+        gHist = np.histogram(img[:,:,1], bins = nbins, range=(0,1))[0]
+        bHist = np.histogram(img[:,:,2], bins = nbins, range=(0,1))[0]
         return np.hstack((rHist, gHist, bHist)) #hstack verbindet die Eingabe (hier die einzelnen Historgamme als Array) zu einem Array, indem es die Elemente horizontal stapelt
     if Merkmal == 'histogram3D':
         imgReshaped = img.reshape((img.shape[0]*img.shape[1],3)) #Reshapen, damit jedes Pixek in einer Zeile liegt
-        return np.histogramdd(imgReshaped, bins = [nbins,nbins,nbins], range=((0,256),(0,256),(0,256)))[0].flatten()
+        return np.histogramdd(imgReshaped, bins = [nbins,nbins,nbins], range=((0,1),(0,1),(0,1)))[0].flatten()
 
 '''
 --obsolete code--
@@ -159,20 +159,20 @@ if __name__ == '__main__':
 
     #berechnet Merkmale in den zugehörigen Arrays
     for img in trainData: 
-        trMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
+        trMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
         trMerkmale2.append(getMerkmal(img, 'std', 0))
         trMerkmale3.append(getMerkmal(img, 'mean', 0))
     print("done calculating TrainFeatures")
     for img in valiData:
-        vaMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
+        vaMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
         vaMerkmale2.append(getMerkmal(img, 'std', 0))
         vaMerkmale3.append(getMerkmal(img, 'mean', 0))
     print("done calculating ValiFeatures")
         
     #Gewichte
-    W0=0.3
-    W1=0.3
-    W2=0.4
+    W0=1.0
+    W1=0.5
+    W2=0.7
     result = []
     
     #Distanzvergleich
