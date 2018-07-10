@@ -48,10 +48,10 @@ def getMerkmal(img, Merkmal, nbins): #Gibt das angegebene Merkmal für ein Bild 
         return np.hstack((rHist, gHist, bHist)) #hstack verbindet die Eingabe (hier die einzelnen Historgamme als Array) zu einem Array, indem es die Elemente horizontal stapelt
     if Merkmal == 'histogram3D':
         imgReshaped = img.reshape((img.shape[0]*img.shape[1],3)) #Reshapen, damit jedes Pixek in einer Zeile liegt
-        return np.histogramdd(imgReshaped, bins = [nbins,nbins,nbins], range=((0,256),(0,256),(0,256)))[0].flatten()
+        return np.histogramdd(imgReshaped, bins = [nbins,nbins,nbins], range=((0,1),(0,1),(0,1)))[0].flatten()
     if Merkmal == 'histogramG' :
         return np.histogram(img, bins = nbins)[0]
-        return np.histogramdd(imgReshaped, bins = [nbins,nbins,nbins], range=((0,1),(0,1),(0,1)))[0].flatten()
+        
 
 '''
 --obsolete code--
@@ -179,7 +179,6 @@ def euclidean_hist_dist(hist1, hist2):
 if __name__ == '__main__':
     #speichert Daten in trainData, trainLabels, valiData, valiLabels
     prepareData.prepare_data() 
-    #the copImageArray doesnt work yet :c
     bin_trainData = util.cropImageArray(trainData)
     print("done cropping TrainImages")
     bin_valiData = util.cropImageArray(valiData)
@@ -207,10 +206,10 @@ if __name__ == '__main__':
     print("done calculating ValiFeatures")
     
     #Gewichte
-    W0=0
-    W1=1000000
-    W2=1000000
-    W3=6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
+    W0=1.0 #0
+    W1=0.5#1000000
+    W2=0.7#1000000
+    W3=0.5#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
     #So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
 
     result = []
