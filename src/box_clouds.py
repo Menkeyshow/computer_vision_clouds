@@ -19,11 +19,11 @@ import pdb
 import skimage.color
 from matplotlib.colors import hsv_to_rgb
 
-
+'''
 img = glob.glob("../temp/classic/stratocumuliform/stratocumuliform122.jpg")
 for x in img:
     pic = imread(x)
-
+'''
 
 def hsv(img):
     for x in range(img.shape[0]):
@@ -82,7 +82,7 @@ def binarized_crop(img, thresh):
     return cropped_img.shape
 
 
-
+'''
 plt.close("all")
 
 x = binarized_crop(pic, 0.35)
@@ -92,3 +92,4 @@ for e in collection:
     print(e.shape)
 plt.close()
 imshow_collection(collection)
+'''
