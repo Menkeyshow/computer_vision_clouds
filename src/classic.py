@@ -206,10 +206,10 @@ if __name__ == '__main__':
     print("done calculating ValiFeatures")
     
     #Gewichte
-    W0=1.0 #0
-    W1=0.5#1000000
-    W2=0.7#1000000
-    W3=0.5#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
+    W0=0.8 #0
+    W1=0.35#1000000
+    W2=0.45#1000000
+    W3=0.8#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
     #So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
 
     result = []

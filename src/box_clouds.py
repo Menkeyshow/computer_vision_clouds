@@ -7,29 +7,13 @@ Created on Thu Jun 21 14:44:21 2018
 """
 
 import numpy as np
-from skimage.io import imread, imsave, imshow, imshow_collection
-from scipy import misc
-from skimage.filters import threshold_otsu
-from skimage.measure import label, regionprops
-from skimage import transform
-import scipy.ndimage.morphology as morph
+from skimage.io import imread, imshow, imshow_collection
 import matplotlib.pyplot as plt
 import glob
-import pdb
 import skimage.color
-from matplotlib.colors import hsv_to_rgb
 
 
-img = glob.glob("../temp/stratocumuliform/stratocumuliform122.jpg")
-for x in img:
-    pic = imread(x)
 
-
-def hsv(img):
-    for x in range(img.shape[0]):
-        for y in range(img.shape[1]):
-            img[x,y,0]+ 20
-        
 def binarize(img):
     '''
     Binarize an image via its greyscaled mean value.
@@ -81,6 +65,11 @@ def binarized_crop(img, thresh):
     cropped_img = cut_black_out(binarized_img, thresh)
     return cropped_img.shape
 
+'''
+debug stuff
+img = glob.glob("../temp/stratocumuliform/stratocumuliform122.jpg")
+for x in img:
+    pic = imread(x)
 
 
 plt.close("all")
@@ -92,3 +81,4 @@ for e in collection:
     print(e.shape)
 plt.close()
 imshow_collection(collection)
+'''
