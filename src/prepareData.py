@@ -69,7 +69,7 @@ def prepare_data():
         for imgpath in glob.glob("../temp/classic/" + cloud_kind + "/*"):
             pics.append(misc.imread(imgpath))
 
-        numberValiImages = round(len(pics) * 0.8, 0)
+        numberValiImages = round(len(pics) * 0.2, 0)
         numberTrainImages = len(pics) - numberValiImages
         print(numberValiImages, numberTrainImages, len(pics))
 
