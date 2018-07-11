@@ -13,7 +13,6 @@ import glob
 import skimage.color
 
 
-
 def binarize(img):
     '''
     Binarize an image via its greyscaled mean value.
