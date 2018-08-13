@@ -192,7 +192,7 @@ if __name__ == '__main__':
     
         #berechnet Merkmale in den zugehörigen Arrays
         for img in trainData: 
-            trMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
+            trMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
             trMerkmale2.append(getMerkmal(img, 'std', 0))
             trMerkmale3.append(getMerkmal(img, 'mean', 0))   
         for img in edgy_trainData:
@@ -200,19 +200,12 @@ if __name__ == '__main__':
         print("done calculating TrainFeatures")
         
         for img in valiData:
-            vaMerkmale.append(getMerkmal(img, 'histogram1D', nbins))
+            vaMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
             vaMerkmale2.append(getMerkmal(img, 'std', 0))
             vaMerkmale3.append(getMerkmal(img, 'mean', 0))       
         for img in edgy_valiData:
             vaMerkmale4.append(getMerkmal(img, 'edge_count', 0))
         print("done calculating ValiFeatures")
-    
-    #Gewichte
-    W0=0.8 #0
-    W1=0.35#1000000
-    W2=0.45#1000000
-    W3=0.8#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
-    #So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
 
     if save_data == True:
         np.save("../temp/classic/trMerkmale", trMerkmale)
@@ -236,6 +229,22 @@ if __name__ == '__main__':
         vaMerkmale2 = np.load("../temp/classic/vaMerkmale2.npy")
         vaMerkmale3 = np.load("../temp/classic/vaMerkmale3.npy")
         vaMerkmale4 = np.load("../temp/classic/vaMerkmale4.npy")
+        
+    """
+    G E W I C H T U N G
+    ACHTUNG: Da die Werte unterschiedlich groß sind, muss man teilweise stark gewichten,
+             damit nicht einfach ein Wert keine Auswirkung hat. z.B. Histogramm vs. mean
+    Nur 3D Histogramme: 0.38323353293413176
+    Nur 1D Histogramme: 0.3532934131736527
+    Nur std und mean(gleich gewichtet): 0.40119760479041916
+    Nur Kantenzählung: 0.41317365269461076
+    """
+    #Gewichte
+    W0=0#0.8
+    W1=0#.35#1000000
+    W2=0#.45#1000000
+    W3=1#0.8#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
+    #So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
         
     result = []
     #Distanzvergleich
