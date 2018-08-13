@@ -9,57 +9,99 @@
 
 \begin{document}
 
-\title{Irgendwas mit Wolken} % TODO
-\author{Thilo Fryen, Lukas Hintze, Ali Pourasad, Maximilian Birkenhagen} % TODO: Alles richtig geschrieben?
-
+\title{Klassifikation von Wolkenarten: Ein Vergleich von verschiedenen Merkmalen zu CNNs} % TODO
+\author{Thilo Fryen, Lukas Hintze, Ali Ebrahimi, Maximilian Birkenhagen} % TODO: Alles richtig geschrieben?
 \maketitle % setzt automatisch den angegebenen Autor und Titel, sowie das heutige Datum als Überschirft (weitere Angaben möglich)
 
 
 \begin{abstract}
     % TODO
-    Wir klassifizieren Wolken.
-    Und so.
+    Wir klassifizieren Wolken...
+    % vll erst schreiben, wenn der Bericht fertig ist
 \end{abstract}
 
+\newpage
 \section{Einleitung}
 
 % TODO: Einleitung
-Hier sollte stehen, was under Thema ist, warum es interessant ist, was andere Leute davor schon gemacht haben,
-was unsere Aufgabe ist, und wie unsere Arbeit aufgebaut ist.
+%Hier sollte stehen, was under Thema ist, warum es interessant ist, was andere Leute davor schon gemacht haben,
+%was unsere Aufgabe ist, und wie unsere Arbeit aufgebaut ist.---
+
+Wir haben uns dafür entschieden Wolken zu klassifizieren, einerseits aus Neugier wie gut dies möglich ist und andererseits einfach aus eigenem Interesse an Wolken.
+
+Unsere Aufgabe war es Wolken durch einen 'klassischen' Ansatz und durch ein Convolutional Neural Network (CNN) zu klassifizieren und die Ergebnisse zu vergleichen. 
+Für die Klassifizierung mit dem 'klassischen' Ansatz haben wir verschiedene Merkmale, wie zum Beispiel: Mittelwert, Standabweichung, Farb-Histogramm und Kantenerkennung verwendet.
+ 
+ Unser Bericht ist so aufgebaut, dass wir erst erklären wo unsere Bilder herkommen, was für Charakteristika sie haben und wie wir diese verarbeitet haben. Danach wird unsere Methodik erläutert, wie wir Probleme gelöst haben und was für Verfahren wir angewendet haben. Sodass zum Schluss ein aussage kräftiges Fazit mit Hinsicht auf unsere Ergebnisse gezogen wurde.
+ 
+Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an der Universität Hamburg im Sommersemster 2018.
+
 
 
 \section{Daten}
 
 % TODO: Daten
-Hier sollte stehen, woher unsere Daten kommen, wie sie aussehen, was für Charakteristika sie haben, und was so klassentypische Einträge sind.
+%Hier sollte stehen, woher unsere Daten kommen, wie sie aussehen, was für Charakteristika sie haben, und was so klassentypische Einträge sind.
 
+Unsere Bilder haben wir von der Website Wolken-online.de und von der World Meteorological Organization (WMO).
+Insgesamt standen uns ca. 800 Bilder zur verfügung.
+Die Bilder waren meist von individuellen Personen geschossene Bilder vom Himmel. 
+Allerdings ist oft auf den Bildern nicht nur der Himmel zu sehen, sondern auch am unteren Rand die Erde.
+
+Da es 10 Wolkengattungen gibt, haben wir uns entschieden bei unserer Klassifizierung 
+die Wolkenarten in vier zu Hauptgruppen unterteilen: 
+\begin{itemize}
+\item Cirriform
+\item Cumuliform
+\item Stratiform
+\item Stratocumuliform
+\end{itemize}
+
+Die Wolkenarten unterscheiden sich im wesentlichen durch...
 
 \section{Methodik}
 
 % TODO: Methodik
-Hier sollte stehen, wie wir unser Problem lösen, sprich, wie unser Endsystem funktioniert.
-Warum machen wir es so und nicht anders?
-Wie funktionieren die Verfahren, die wir nutzen?
-Auch eine Ablaufgrafik wäre nice.
+%Hier sollte stehen, wie wir unser Problem lösen, sprich, wie unser Endsystem funktioniert.
+%Warum machen wir es so und nicht anders?
+%Wie funktionieren die Verfahren, die wir nutzen?
+%Auch eine Ablaufgrafik wäre nice.
+
+\subsection{Beschaffung der Bilder}
+
+\subsection{Verwertung der Bilder}
+Da die Bilder verschieden waren, mussten wir sie an unsere Klassifikation anpassen.
+Zu erst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Bilder, wo die Wolken kaum erkennbar waren manuell aussortiert.
+Wie erwähnt, war oft der untere Rand des Bildes nicht mehr der Himmel, sondern zum Beispiel eine Wiese oder Bäume.
+Durch eine Binarisierung konnten wir relativ akkurat den Himmel ausschneiden.
+Zum Schluss haben wir die Bilder noch auf die Einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten. 
+
+\subsubsection{Biniarisierung}
+Die Biniarisierung haben wir mithilfe des arithmetische Mittel des gesamten Bildes und dem Hue + Value aus dem HSV-Farbraum implementiert.
+...
+Hier Boxalg erklären
+\subsection{Augmentation der Bilder}
+
+
 
 
 \section{Experimente bzw.\ Bewertung}
 
 % TODO: Fazit
-Wie sehen unsere Ergebnisse aus?
-Wie verändern sich die Ergebnisse durch die CNNs?
-Was passiert, wenn man einzelne Teile des Systems austauscht oder Merkmale entfern (dies evtl.\ auch mit Diagrammen zeigen)?
-Wie schneidet das System pro Klasse ab?
-Wie wirken sich Änderungen der Parameter/Hyperpara\-meter auf die Ergebnisse aus?
-Wie schnell sind unsere Verfahren?
+%Wie sehen unsere Ergebnisse aus?
+%Wie verändern sich die Ergebnisse durch die CNNs?
+%Was passiert, wenn man einzelne Teile des Systems austauscht oder Merkmale entfern (dies evtl.\ auch mit Diagrammen zeigen)?
+%Wie schneidet das System pro Klasse ab?
+%Wie wirken sich Änderungen der Parameter/Hyperpara\-meter auf die Ergebnisse aus?
+%Wie schnell sind unsere Verfahren?
 
 
 \section{Fazit}
 
 % TODO: Fazit
-Was ist unser Fazit?
-Zusammenfassung und Einordnung unserer Ergebnisse.
-Ausblick?
+%Was ist unser Fazit?
+%Zusammenfassung und Einordnung unserer Ergebnisse.
+%Ausblick?
 
 
 % Literaturverzeichnis mit Hilfe der "thebibliography" Umgebung:
