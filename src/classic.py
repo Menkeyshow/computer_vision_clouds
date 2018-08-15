@@ -16,8 +16,7 @@ from skimage import color
 #available features: mean, std, histogram1D, histogram3D, histogramG, edge_count
 #shape: [[feature, weight],[feature2, weight2], ...]
 '''edge_count does not work yet'''
-config = [['mean',1],
-          ['std',1]]
+config = [['edge_count',1]]
 
 #following are the arrays needed to save the data
 bin_trainData = []
@@ -66,12 +65,13 @@ def load_data():
         np.save('../temp/classic/valiData', valiData)
         np.save('../temp/classic/trainLabels', trainLabels)
         np.save('../temp/classic/valiLabels', valiLabels)
+        print('done saving Images')
     else:
         trainData = np.load('../temp/classic/trainData.npy')
         valiData = np.load('../temp/classic/valiData.npy')
         trainLabels = np.load('../temp/classic/trainLabels.npy')
         valiLabels = np.load('../temp/classic/valiLabels.npy')
-        
+        print('done loading Images')
         
 #Calculates all features that haven't been saved yet
 #Want something recalculated? Just delete the file
@@ -110,27 +110,15 @@ def getFeature(img, Merkmal, nbins): #returns the given feature for a picture
     if Merkmal == 'histogramG' :
         return np.histogram(img, bins = nbins)[0]
     if Merkmal == 'edge_count' :
-        sums = np.array([0])
-        for zeile in img:
-            sums = np.append(sums, zeile.sum())
-        return sums 
-        
-
-def edges(): #Findet die Kanten
-    for img in trainData:
         g_img = color.rgb2gray(img)
         f_img = gaussian_filter(g_img, 2) #Wendet den gaussschen Weichzeichner auf das Bild an mit Sigma = 2
         sobel_h = filters.sobel_h(f_img) #Findet die horizontalen Kanten
         sobel_v = filters.sobel_v(f_img) #Findet die vertikalen Kanten
         intensity = np.linalg.norm(np.stack((sobel_h, sobel_v)), axis=0) #Kombiniert h & v und zeigt den absoluten Kantenwert
-        edgy_trainData.append(intensity)
-    for img in valiData:
-        g_img = color.rgb2gray(img)
-        f_img = gaussian_filter(g_img, 2)
-        sobel_h = filters.sobel_h(f_img)
-        sobel_v = filters.sobel_v(f_img)
-        intensity = np.linalg.norm(np.stack((sobel_h, sobel_v)), axis=0)
-        edgy_valiData.append(intensity)   
+        sums = np.array([0])
+        for zeile in intensity:
+            sums = np.append(sums, zeile.sum())
+        return sums 
     
 
 def create_confusion_matrix():
