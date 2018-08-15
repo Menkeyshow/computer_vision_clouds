@@ -1,59 +1,100 @@
 import prepareData
 from prepareData import trainData, trainLabels, valiData, valiLabels
+
 import numpy as np
+
 import box_clouds as box
 import util
+import os.path
 from scipy.ndimage.filters import gaussian_filter
 from skimage import filters
 from skimage import color
-from skimage import io
 
-from skimage.io import imread, imsave, imshow
-import skimage
+'''      CONFIGURATION      '''
+'''      PLEASE ADJUST      '''
+#Which features should be used and how should they be weighted?
+#available features: mean, std, histogram1D, histogram3D, histogramG, edge_count
+#shape: [[feature, weight],[feature2, weight2], ...]
+'''edge_count does not work yet'''
+config = [['mean',1],
+          ['std',1]]
 
-
-'''      KONFIGURATION      '''
-'''BIITE UNBGEDINGT ANPASSEN'''
-#Use saved data or create new ones
-use_saved_data = False #only works, if you saved data once!
-save_data = True
-
-#Number of Bins for histograms
-nbins=7
-
-#Weights for the distance calculation
-W0=1 #1D-Histogramm
-W1=0 #std
-W2=0 #mean
-W3=500 #edge_count
-
-
-
-""" 
-trainData = [] #das ist gegeben
-valiData = []  #das ist gesucht
-
-trainLabels = []
-valiLabels = []
-"""
-
+#following are the arrays needed to save the data
 bin_trainData = []
 bin_valiData = []
 edgy_trainData = []
 edgy_valiData = []
 
-trMerkmale = [] 
-vaMerkmale = []
-trMerkmale2 = [] 
-vaMerkmale2 = []
-trMerkmale3 = []
-vaMerkmale3 = []
-trMerkmale4 = []
-vaMerkmale4 = []
+tr_mean = [] 
+va_mean = []
+tr_std = []
+va_std = []
+tr_histogram1D = [] 
+va_histogram1D = []
+tr_histogram3D = []
+va_histogram3D = []
+tr_histogramG = []
+va_histogramG = []
+tr_edge_count = []
+va_edge_count = []
+
+#Number of Bins for histograms
+nbins=7
+
+#Dictionary to convert strings to variable names
+stringconverter = {'tr_mean':tr_mean,'va_mean':va_mean, 
+                   'tr_std':tr_std,'va_std':va_std, 
+                   'tr_histogram1D':tr_histogram1D,'va_histogram1D':va_histogram1D,
+                   'tr_histogram3D':tr_histogram3D,'va_histogram3D':va_histogram3D,
+                   'tr_histogramG':tr_histogramG,'va_histogramG':va_histogramG,
+                   'tr_edge_count':tr_edge_count,'va_edge_count':va_edge_count}
 
 
+def load_data():
+    if not os.path.exists('../temp/classic/trainData.npy'):
+        #ASSUMPTION: trainData exists implicates that valiData, trainLabels and valiLabels exist
+        global trainData, valiData, trainLabels, valiLabels
+        prepareData.prepare_data() 
+        bin_trainData = util.cropImageArray(trainData)
+        print('done cropping TrainImages')
+        bin_valiData = util.cropImageArray(valiData)
+        print('done cropping ValiImages')
+        
+        trainData = bin_trainData
+        valiData = bin_valiData
+        np.save('../temp/classic/trainData', trainData)
+        np.save('../temp/classic/valiData', valiData)
+        np.save('../temp/classic/trainLabels', trainLabels)
+        np.save('../temp/classic/valiLabels', valiLabels)
+    else:
+        trainData = np.load('../temp/classic/trainData.npy')
+        valiData = np.load('../temp/classic/valiData.npy')
+        trainLabels = np.load('../temp/classic/trainLabels.npy')
+        valiLabels = np.load('../temp/classic/valiLabels.npy')
+        
+        
+#Calculates all features that haven't been saved yet
+#Want something recalculated? Just delete the file
+def calculateFeatures():
     
-def getMerkmal(img, Merkmal, nbins): #Gibt das angegebene Merkmal für ein Bild zurück.
+    for feat in config:
+        if os.path.exists('../temp/classic/tr_'+feat[0]+'.npy'):
+            stringconverter['tr_'+feat[0]] = np.load('../temp/classic/tr_'+feat[0]+'.npy')
+        else:    
+            for img in trainData:
+                stringconverter['tr_'+feat[0]].append(getFeature(img, feat[0], nbins))
+            np.save('../temp/classic/tr_'+feat[0]+'.npy',stringconverter['tr_'+feat[0]])
+            print('saved new tr_'+feat[0])
+        if os.path.exists('../temp/classic/va_'+feat[0]+'.npy'):
+            stringconverter['va_'+feat[0]] = np.load('../temp/classic/va_'+feat[0]+'.npy')
+        else:    
+            for img in valiData:
+                stringconverter['va_'+feat[0]].append(getFeature(img, feat[0], nbins))
+            np.save('../temp/classic/va_'+feat[0]+'.npy',stringconverter['va_'+feat[0]])
+            print('saved new va_'+feat[0])
+
+
+def getFeature(img, Merkmal, nbins): #returns the given feature for a picture
     if Merkmal == 'mean':
         return np.mean(img, axis=(0,1))
     if Merkmal == 'std':
@@ -159,104 +200,28 @@ def create_confusion_matrix():
             O4_4 += 1
             
     gesamt = O1_1 + O1_2 + O1_3 + O1_4 + O2_1 + O2_2 + O2_3 + O2_4 + O3_1 + O3_2 + O3_3 + O3_4 + O4_1 + O4_2 + O4_3 + O4_4
-    print ("stratiform:        "+ str(O1_1) +"|"+ str(O1_2) +"|"+ str(O1_3) +"|"+ str(O1_4))
-    print ("cirriform:         "+ str(O2_1) +"|"+ str(O2_2) +"|"+ str(O2_3) +"|"+ str(O2_4))
-    print ("stratocummuliform: "+ str(O3_1) +"|"+ str(O3_2) +"|"+ str(O3_3) +"|"+ str(O3_4))
-    print ("cummuliform:       "+ str(O4_1) +"|"+ str(O4_2) +"|"+ str(O4_3) +"|"+ str(O4_4))
-    print ("Anzahl klassifizierter Bilder: ",gesamt)
-        
+    print ('stratiform:        '+ str(O1_1) +'|'+ str(O1_2) +'|'+ str(O1_3) +'|'+ str(O1_4))
+    print ('cirriform:         '+ str(O2_1) +'|'+ str(O2_2) +'|'+ str(O2_3) +'|'+ str(O2_4))
+    print ('stratocummuliform: '+ str(O3_1) +'|'+ str(O3_2) +'|'+ str(O3_3) +'|'+ str(O3_4))
+    print ('cummuliform:       '+ str(O4_1) +'|'+ str(O4_2) +'|'+ str(O4_3) +'|'+ str(O4_4))
+    print ('Anzahl klassifizierter Bilder: ',gesamt)
 
-        
-def euclidean_hist_dist(hist1, hist2):
-    """Computes the Euclidean distance between two histograms."""
-
-    delta_hist_squared = (hist2 - hist1) ** 2
-    return np.sqrt(delta_hist_squared.sum())
 
 #MAIN PROGRAMM
 if __name__ == '__main__':
-    #speichert Daten in trainData, trainLabels, valiData, valiLabels
-    prepareData.prepare_data() 
-    if use_saved_data == False:
-        
-        
-        
-        bin_trainData = util.cropImageArray(trainData)
-        print("done cropping TrainImages")
-        bin_valiData = util.cropImageArray(valiData)
-        print("done cropping ValiImages")
-        
-        trainData = bin_trainData
-        valiData = bin_valiData
-        edges()
-    
-        #berechnet Merkmale in den zugehörigen Arrays
-        for img in trainData: 
-            trMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
-            trMerkmale2.append(getMerkmal(img, 'std', 0))
-            trMerkmale3.append(getMerkmal(img, 'mean', 0))   
-        for img in edgy_trainData:
-            trMerkmale4.append(getMerkmal(img, 'edge_count', 0))
-        print("done calculating TrainFeatures")
-        
-        for img in valiData:
-            vaMerkmale.append(getMerkmal(img, 'histogram3D', nbins))
-            vaMerkmale2.append(getMerkmal(img, 'std', 0))
-            vaMerkmale3.append(getMerkmal(img, 'mean', 0))       
-        for img in edgy_valiData:
-            vaMerkmale4.append(getMerkmal(img, 'edge_count', 0))
-        print("done calculating ValiFeatures")
-
-    if save_data == True:
-        np.save("../temp/classic/trMerkmale", trMerkmale)
-        np.save("../temp/classic/trMerkmale2", trMerkmale2)
-        np.save("../temp/classic/trMerkmale3", trMerkmale3)
-        np.save("../temp/classic/trMerkmale4", trMerkmale4)
-        
-        np.save("../temp/classic/vaMerkmale", vaMerkmale)
-        np.save("../temp/classic/vaMerkmale2", vaMerkmale2)
-        np.save("../temp/classic/vaMerkmale3", vaMerkmale3)
-        np.save("../temp/classic/vaMerkmale4", vaMerkmale4)
-
-    if use_saved_data == True:
-        print("skipping calculating features and instead using saved ones")
-        trMerkmale = np.load("../temp/classic/trMerkmale.npy")
-        trMerkmale2 = np.load("../temp/classic/trMerkmale2.npy")
-        trMerkmale3 = np.load("../temp/classic/trMerkmale3.npy")
-        trMerkmale4 = np.load("../temp/classic/trMerkmale4.npy")
-        
-        vaMerkmale = np.load("../temp/classic/vaMerkmale.npy")
-        vaMerkmale2 = np.load("../temp/classic/vaMerkmale2.npy")
-        vaMerkmale3 = np.load("../temp/classic/vaMerkmale3.npy")
-        vaMerkmale4 = np.load("../temp/classic/vaMerkmale4.npy")
-        
-    """
-    G E W I C H T U N G
-    ACHTUNG: Da die Werte unterschiedlich groß sind, muss man teilweise stark gewichten,
-             damit nicht einfach ein Wert keine Auswirkung hat. z.B. Histogramm vs. mean
-    Nur 3D Histogramme: 0.38323353293413176
-    Nur 1D Histogramme: 0.3532934131736527
-    Nur std und mean(gleich gewichtet): 0.40119760479041916
-    Nur Kantenzählung: 0.41317365269461076
-    """
-    #Gewichte
-    W0=0#0.8
-    W1=0#.35#1000000
-    W2=0#.45#1000000
-    W3=1#0.8#6 #Erhöht man W3, geht die Genauigkeit gegen 39%, verringert man W3 ist es, als wäre es 0.
-    #So wie es jetzt gerade ist, verschlechtert W3 leicht das Ergebnis
-        
+    load_data()
+    calculateFeatures()
     result = []
     #Distanzvergleich
-    for vaM,vaM2,vaM3,vaM4 in zip(vaMerkmale,vaMerkmale2,vaMerkmale3,vaMerkmale4):
-        distances = [] 
-        for trM,trM2,trM3,trM4 in zip(trMerkmale,trMerkmale2,trMerkmale3,trMerkmale4): 
-            distances.append(W0*np.linalg.norm(vaM-trM)+
-                             W1*np.linalg.norm(vaM2-trM2)+
-                             W2*np.linalg.norm(vaM3-trM3)+
-                             W3*np.linalg.norm(euclidean_hist_dist(vaM4, trM4)))
-        result.append(trainLabels[np.argmin(distances)]) 
-
+    for x in range(len(valiLabels)):
+        distances = []
+        for y in range(len(trainLabels)):
+            dist = 0
+            for feat in config:
+                dist += np.linalg.norm(stringconverter['va_'+feat[0]][x] 
+                        -stringconverter['tr_'+feat[0]][y]) * feat[1]    #(val-train)*weight
+            distances.append(dist) 
+        result.append(trainLabels[np.argmin(distances)])
 
     #Accuracy Berechnung
     correct = 0.0
@@ -265,6 +230,6 @@ if __name__ == '__main__':
             correct+=1 
         
     accuracy = correct/len(valiLabels)
-    print ("Accuracy: ",accuracy)
+    print ('Accuracy: ',accuracy)
     
     create_confusion_matrix()
