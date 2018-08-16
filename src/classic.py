@@ -3,27 +3,22 @@ from prepareData import trainData, trainLabels, valiData, valiLabels
 
 import numpy as np
 
-import box_clouds as box
 import util
 import os.path
 from scipy.ndimage.filters import gaussian_filter
 from skimage import filters
 from skimage import color
+import matplotlib.pyplot as plt
 
 '''      CONFIGURATION      '''
 '''      PLEASE ADJUST      '''
 #Which features should be used and how should they be weighted?
 #available features: mean, std, histogram1D, histogram3D, histogramG, edge_count
 #shape: [[feature, weight],[feature2, weight2], ...]
-'''edge_count does not work yet'''
-config = [['edge_count',1]]
+config = [['edge_count', 1], ['mean', 100], ['std', 100]]
 
-#following are the arrays needed to save the data
-bin_trainData = []
-bin_valiData = []
-edgy_trainData = []
-edgy_valiData = []
-
+#following are the arrays needed to save the features
+#ATTENTION: they are only accessible via the stringconverter dict
 tr_mean = [] 
 va_mean = []
 tr_std = []
@@ -50,9 +45,19 @@ stringconverter = {'tr_mean':tr_mean,'va_mean':va_mean,
 
 
 def load_data():
+    global feats_all_saved, trainData, valiData, trainLabels, valiLabels
+    feats_all_saved = True
+    for feat in config:#Are all features already saved? Then we don't need to load the data, only the labels
+        if not os.path.exists('../temp/classic/tr_'+feat[0]+'.npy'):
+            feats_all_saved = False
+        if not os.path.exists('../temp/classic/va_'+feat[0]+'.npy'):
+            feats_all_saved = False
+    if feats_all_saved:
+        trainLabels = np.load('../temp/classic/trainLabels.npy')
+        valiLabels = np.load('../temp/classic/valiLabels.npy')
+        return
     if not os.path.exists('../temp/classic/trainData.npy'):
         #ASSUMPTION: trainData exists implicates that valiData, trainLabels and valiLabels exist
-        global trainData, valiData, trainLabels, valiLabels
         prepareData.prepare_data() 
         bin_trainData = util.cropImageArray(trainData)
         print('done cropping TrainImages')
@@ -76,7 +81,6 @@ def load_data():
 #Calculates all features that haven't been saved yet
 #Want something recalculated? Just delete the file
 def calculateFeatures():
-    
     for feat in config:
         if os.path.exists('../temp/classic/tr_'+feat[0]+'.npy'):
             stringconverter['tr_'+feat[0]] = np.load('../temp/classic/tr_'+feat[0]+'.npy')
@@ -193,12 +197,24 @@ def create_confusion_matrix():
     print ('stratocummuliform: '+ str(O3_1) +'|'+ str(O3_2) +'|'+ str(O3_3) +'|'+ str(O3_4))
     print ('cummuliform:       '+ str(O4_1) +'|'+ str(O4_2) +'|'+ str(O4_3) +'|'+ str(O4_4))
     print ('Anzahl klassifizierter Bilder: ',gesamt)
-
+    
 
 #MAIN PROGRAMM
 if __name__ == '__main__':
     load_data()
     calculateFeatures()
+    
+    '''following is a scatterplot for mean and std
+    x = stringconverter['tr_mean']
+    y = stringconverter['tr_std']
+    a = np.append(trainLabels,np.append(trainLabels,trainLabels))
+    b = np.sort(a)
+    c = np.reshape(b, (666, 3))
+    plt.scatter(x, y, 5, c)
+    plt.xlabel('Mean')
+    plt.ylabel('Standard Deviation')
+    plt.show
+    '''
     result = []
     #Distanzvergleich
     for x in range(len(valiLabels)):
