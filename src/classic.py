@@ -194,8 +194,8 @@ def create_confusion_matrix():
     gesamt = O1_1 + O1_2 + O1_3 + O1_4 + O2_1 + O2_2 + O2_3 + O2_4 + O3_1 + O3_2 + O3_3 + O3_4 + O4_1 + O4_2 + O4_3 + O4_4
     print ('stratiform:        '+ str(O1_1) +'|'+ str(O1_2) +'|'+ str(O1_3) +'|'+ str(O1_4))
     print ('cirriform:         '+ str(O2_1) +'|'+ str(O2_2) +'|'+ str(O2_3) +'|'+ str(O2_4))
-    print ('stratocummuliform: '+ str(O3_1) +'|'+ str(O3_2) +'|'+ str(O3_3) +'|'+ str(O3_4))
-    print ('cummuliform:       '+ str(O4_1) +'|'+ str(O4_2) +'|'+ str(O4_3) +'|'+ str(O4_4))
+    print ('stratocumuliform: '+ str(O3_1) +'|'+ str(O3_2) +'|'+ str(O3_3) +'|'+ str(O3_4))
+    print ('cumuliform:       '+ str(O4_1) +'|'+ str(O4_2) +'|'+ str(O4_3) +'|'+ str(O4_4))
     print ('Anzahl klassifizierter Bilder: ',gesamt)
     
 
@@ -204,17 +204,17 @@ if __name__ == '__main__':
     load_data()
     calculateFeatures()
     
-    '''following is a scatterplot for mean and std
+    '''#following is a scatterplot for mean and std
     x = stringconverter['tr_mean']
     y = stringconverter['tr_std']
     a = np.append(trainLabels,np.append(trainLabels,trainLabels))
     b = np.sort(a)
     c = np.reshape(b, (666, 3))
     plt.scatter(x, y, 5, c)
-    plt.xlabel('Mean')
+    plt.xlabel('Mean \n lila:stratiform    blau:cirriform    grün:stratocumuliform    gelb:cumuliform')
     plt.ylabel('Standard Deviation')
-    plt.show
-    '''
+    plt.show'''
+    
     result = []
     #Distanzvergleich
     for x in range(len(valiLabels)):
