@@ -9,6 +9,7 @@ from scipy.ndimage.filters import gaussian_filter
 from skimage import filters
 from skimage import color
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 '''      CONFIGURATION      '''
 '''      PLEASE ADJUST      '''
@@ -239,15 +240,10 @@ if __name__ == '__main__':
     plt.xlabel('Mean \n lila:stratiform    blau:cirriform    grün:stratocumuliform    gelb:cumuliform')
     plt.ylabel('Standard Deviation')
     plt.show
-    #following is a scatterplot for edge_count
+    #following is a box/swarmplot for edge_count
     x = [] 
     for arr in stringconverter['tr_edge_count']:
         x.append(sum(arr))
     y = trainLabels
-    plt.scatter(x, y, 5)
-    plt.xlabel('Summe der Zeilensummen')
-    plt.ylabel('stratiform                  cirriform          stratocumuliform          cumuliform')
-    cur_axes = plt.gca()
-    cur_axes.axes.get_yaxis().set_ticklabels([])
-    plt.show'''
-    
+    sns.swarmplot(y,x)#In dieser und der nächsten Zeile sind boxplot/violinplot/swarmplot austauschbar
+    sns.swarmplot(y,x,order=['stratiform','cirriform','stratocumuliform','cumuliform'])'''
