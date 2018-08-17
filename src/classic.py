@@ -204,17 +204,6 @@ if __name__ == '__main__':
     load_data()
     calculateFeatures()
     
-    '''#following is a scatterplot for mean and std
-    x = stringconverter['tr_mean']
-    y = stringconverter['tr_std']
-    a = np.append(trainLabels,np.append(trainLabels,trainLabels))
-    b = np.sort(a)
-    c = np.reshape(b, (666, 3))
-    plt.scatter(x, y, 5, c)
-    plt.xlabel('Mean \n lila:stratiform    blau:cirriform    grün:stratocumuliform    gelb:cumuliform')
-    plt.ylabel('Standard Deviation')
-    plt.show'''
-    
     result = []
     #Distanzvergleich
     for x in range(len(valiLabels)):
@@ -237,3 +226,28 @@ if __name__ == '__main__':
     print ('Accuracy: ',accuracy)
     
     create_confusion_matrix()
+    
+    #SCATTERPLOTS! eventuell auskommentieren
+    
+    '''#following is a scatterplot for mean and std
+    x = stringconverter['tr_mean']
+    y = stringconverter['tr_std']
+    a = np.append(trainLabels,np.append(trainLabels,trainLabels))
+    b = np.sort(a)
+    c = np.reshape(b, (666, 3))
+    plt.scatter(x, y, 5, c)
+    plt.xlabel('Mean \n lila:stratiform    blau:cirriform    grün:stratocumuliform    gelb:cumuliform')
+    plt.ylabel('Standard Deviation')
+    plt.show
+    #following is a scatterplot for edge_count
+    x = [] 
+    for arr in stringconverter['tr_edge_count']:
+        x.append(sum(arr))
+    y = trainLabels
+    plt.scatter(x, y, 5)
+    plt.xlabel('Summe der Zeilensummen')
+    plt.ylabel('stratiform                  cirriform          stratocumuliform          cumuliform')
+    cur_axes = plt.gca()
+    cur_axes.axes.get_yaxis().set_ticklabels([])
+    plt.show'''
+    
