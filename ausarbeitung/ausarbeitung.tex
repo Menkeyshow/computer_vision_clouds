@@ -10,7 +10,7 @@
 \begin{document}
 
 \title{Klassifikation von Wolkenarten: Ein Vergleich von verschiedenen Merkmalen zu CNNs} % TODO
-\author{Thilo Fryen, Lukas Hintze, Ali Ebrahimi, Maximilian Birkenhagen} % TODO: Alles richtig geschrieben?
+\author{Maximilian Birkenhagen, Ali Ebrahimi, Thilo Fryen, Lukas Hintze} % TODO: Alles richtig geschrieben?
 \maketitle % setzt automatisch den angegebenen Autor und Titel, sowie das heutige Datum als Überschirft (weitere Angaben möglich)
 
 
@@ -27,12 +27,14 @@
 %Hier sollte stehen, was under Thema ist, warum es interessant ist, was andere Leute davor schon gemacht haben,
 %was unsere Aufgabe ist, und wie unsere Arbeit aufgebaut ist.---
 
-Wir haben uns dafür entschieden Wolken zu klassifizieren, einerseits aus Neugier wie gut dies möglich ist und andererseits einfach aus eigenem Interesse an Wolken.
+Wir haben uns dafür entschieden, Wolken zu klassifizieren; einerseits aus Neugier, wie gut dies möglich ist, und andererseits einfach aus eigenem Interesse an Wolken.
 
-Unsere Aufgabe war es Wolken durch einen 'klassischen' Ansatz und durch ein Convolutional Neural Network (CNN) zu klassifizieren und die Ergebnisse zu vergleichen. 
+ Die Klassifikation von Wolken ist aber nicht nur für Wolken-Enthusiasten interessant, sondern spielt auch eine große Rolle bei der Klimaforschung, Wettervorhersagen und Unwetterwarnungen. Allerdings werden dabei eher andere Messmethoden wie Radar, Laser (z.B. LiDAR) oder Radiometer verwendet, bei denen Messungen von Sensoren an verschiedenen Orten (Satellit, Bodenstationen) kombiniert werden \footnote{Whang, Zhien; Sassen, Kenneth: Cloud Type and Macrophysical Property Retrieval Using Multiple Remote Sensors, University of Utah, 2001 - DOI:https://doi.org/10.1175/1520-0450(2001)040<1665:CTAMPR>2.0.CO;2}. Es gab aber auch schon versuche, nur mit Hilfe von Bildern Wolken zu klassifizieren: Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von einer Position aus und unterschieden sieben verschiedene Wolkenarten(kombinationen), darunter auch "leerer Himmel". Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-One-Out Cross-Validation eine Genauigkeit von 97\% \footnote{Heinle, A.; Macke, A.; Srivastav, A.: Automatic cloud classification of whole sky images, Universität Kiel, 2010 - DOI: 10.5194/amt-3-557-2010}.
+
+Unsere Aufgabe war es, Wolken einerseits mit dem 'klassischen' Ansatz und andererseits mittels Convolutional Neural Networks (CNN) zu klassifizieren und die Ergebnisse zu vergleichen. 
 Für die Klassifizierung mit dem 'klassischen' Ansatz haben wir verschiedene Merkmale, wie zum Beispiel: Mittelwert, Standabweichung, Farb-Histogramm und Kantenerkennung verwendet.
  
- Unser Bericht ist so aufgebaut, dass wir erst erklären wo unsere Bilder herkommen, was für Charakteristika sie haben und wie wir diese verarbeitet haben. Danach wird unsere Methodik erläutert, wie wir Probleme gelöst haben und was für Verfahren wir angewendet haben. Sodass zum Schluss ein aussage kräftiges Fazit mit Hinsicht auf unsere Ergebnisse gezogen wurde.
+ Dieser Bericht ist so aufgebaut, dass wir erst erklären wo unsere Bilder herkommen, was für Charakteristika sie haben und wie wir diese verarbeitet haben. Danach wird unsere Methodik erläutert, wie wir Probleme gelöst haben und was für Verfahren wir angewendet haben. Sodass zum Schluss ein aussagekräftiges Fazit mit Hinsicht auf unsere Ergebnisse gezogen wurde.
  
 Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an der Universität Hamburg im Sommersemster 2018.
 
@@ -44,20 +46,26 @@ Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an d
 %Hier sollte stehen, woher unsere Daten kommen, wie sie aussehen, was für Charakteristika sie haben, und was so klassentypische Einträge sind.
 
 Unsere Bilder haben wir von der Website Wolken-online.de und von der World Meteorological Organization (WMO).
-Insgesamt standen uns ca. 800 Bilder zur verfügung.
+Insgesamt standen uns ca. 800 Bilder zur Verfügung.
 Die Bilder waren meist von individuellen Personen geschossene Bilder vom Himmel. 
-Allerdings ist oft auf den Bildern nicht nur der Himmel zu sehen, sondern auch am unteren Rand die Erde.
+Allerdings ist auf den Bildern oft nicht nur der Himmel zu sehen, sondern auch am unteren Rand die Erde, zum Beispiel Häuser oder Bäume. Außerdem sind gelegentlich mehrere Wolkenarten auf dem selben Bild vertreten.
 
-Da es 10 Wolkengattungen gibt, haben wir uns entschieden bei unserer Klassifizierung 
-die Wolkenarten in vier zu Hauptgruppen unterteilen: 
+Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welche in Abbildung 1 schematisch dargestellt sind. Da diese sich untereinander teilweise sehr ähneln und wir lieber weniger Klassen unterscheiden wollen, haben wir diese in vier Hauptgruppen unterteilt.
 \begin{itemize}
-\item Cirriform
-\item Cumuliform
-\item Stratiform
-\item Stratocumuliform
+\item Cirriform: Cirrus
+\item Cumuliform: Cumulus, Cumulonimbus
+\item Stratiform: Cirrostratus, Altostratus, Numbostratus, Stratus
+\item Stratocumuliform: Cirrocumulus, Altocumulus, Stratocumulus
 \end{itemize}
 
-Die Wolkenarten unterscheiden sich im wesentlichen durch...
+\begin{figure}[h]
+\centering
+\includegraphics[width=10cm,height=14cm,keepaspectratio]{Cloud_infographic-01.png}
+\caption{Schematische Darstellung der zehn Wolkengattungen}
+    \label{fig:cloudtypes}
+\end{figure}
+
+Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden auf Bildern nur schwer bis nicht erkennbar sind. Die stratiformen Wolken zeichnen sich dadurch aus, dass sie sehr flächig und zusammenhängend sind und meinst durchgängig den ganzen Himmel bedecken. Die cirriformen Wolken sind gefedert und oft durchsichtig, da sie sehr dünn und gefächert sind. Die cumuliformen Wolken haben die Form von großen Haufen, während die Stratocumuliformen Wolken die Form von vielen kleinen Haufen haben. Leider, wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen sie ineinander über, was die Unterscheidung deutlich erschwert. Außerdem gibt es noch sehr viele, Arten, Unterarten und Begleitwolken, die sich teilweise auch überschneiden \footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man unter\\ https://de.wikipedia.org/wiki/Wolke\#Übersicht, zuletzt aufgerufen im August 2018} . 
 
 \section{Methodik}
 
@@ -70,14 +78,14 @@ Die Wolkenarten unterscheiden sich im wesentlichen durch...
 \subsection{Beschaffung der Bilder}
 
 \subsection{Verwertung der Bilder}
-Da die Bilder verschieden waren, mussten wir sie an unsere Klassifikation anpassen.
-Zu erst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Bilder, wo die Wolken kaum erkennbar waren manuell aussortiert.
-Wie erwähnt, war oft der untere Rand des Bildes nicht mehr der Himmel, sondern zum Beispiel eine Wiese oder Bäume.
+Da die Bilder verschieden waren, mussten wir sie vor der Klassifikation anpassen.
+Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Bilder, auf denen die Wolken kaum erkennbar waren, manuell aussortiert.
+Wie erwähnt war oft der untere Rand des Bildes nicht mehr der Himmel, sondern zum Beispiel eine Wiese oder Bäume.
 Durch eine Binarisierung konnten wir relativ akkurat den Himmel ausschneiden.
 Zum Schluss haben wir die Bilder noch auf die Einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten. 
 
-\subsubsection{Biniarisierung}
-Die Biniarisierung haben wir mithilfe des arithmetische Mittel des gesamten Bildes und dem Hue + Value aus dem HSV-Farbraum implementiert.
+\subsubsection{Binarisierung}
+Die Binarisierung haben wir mithilfe des arithmetischen Mittels des gesamten Bildes und dem Hue + Value aus dem HSV-Farbraum implementiert.
 ...
 Hier Boxalg erklären
 \subsection{Augmentation der Bilder}
@@ -85,12 +93,12 @@ Hier Boxalg erklären
 
 
 
-\section{Experimente bzw.\ Bewertung}
+\section{Experimente und Ergebnisse}
 
 % TODO: Fazit
 %Wie sehen unsere Ergebnisse aus?
 %Wie verändern sich die Ergebnisse durch die CNNs?
-%Was passiert, wenn man einzelne Teile des Systems austauscht oder Merkmale entfern (dies evtl.\ auch mit Diagrammen zeigen)?
+%Was passiert, wenn man einzelne Teile des Systems austauscht oder Merkmale entfernt (dies evtl.\ auch mit Diagrammen zeigen)?
 %Wie schneidet das System pro Klasse ab?
 %Wie wirken sich Änderungen der Parameter/Hyperpara\-meter auf die Ergebnisse aus?
 %Wie schnell sind unsere Verfahren?
