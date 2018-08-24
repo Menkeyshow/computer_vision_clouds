@@ -16,7 +16,7 @@ import seaborn as sns
 #Which features should be used and how should they be weighted?
 #available features: mean, std, histogram1D, histogram3D, histogramG, edge_count
 #shape: [[feature, weight],[feature2, weight2], ...]
-config = [['edge_count', 1], ['mean', 100], ['std', 100]]
+config = [['edge_count', 1500],['histogram3D', 1]]
 
 #following are the arrays needed to save the features
 #ATTENTION: they are only accessible via the stringconverter dict

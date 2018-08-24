@@ -50,20 +50,21 @@ Insgesamt standen uns ca. 800 Bilder zur Verfügung.
 Die Bilder waren meist von individuellen Personen geschossene Bilder vom Himmel. 
 Allerdings ist auf den Bildern oft nicht nur der Himmel zu sehen, sondern auch am unteren Rand die Erde, zum Beispiel Häuser oder Bäume. Außerdem sind gelegentlich mehrere Wolkenarten auf dem selben Bild vertreten.
 
-Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welche in Abbildung 1 schematisch dargestellt sind. Da diese sich untereinander teilweise sehr ähneln und wir lieber weniger Klassen unterscheiden wollen, haben wir diese in vier Hauptgruppen unterteilt.
-\begin{itemize}
-\item Cirriform: Cirrus
-\item Cumuliform: Cumulus, Cumulonimbus
-\item Stratiform: Cirrostratus, Altostratus, Numbostratus, Stratus
-\item Stratocumuliform: Cirrocumulus, Altocumulus, Stratocumulus
-\end{itemize}
+Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welche in Abbildung~\ref{fig:cloudtypes} schematisch dargestellt sind. Da diese sich untereinander teilweise sehr ähneln und wir lieber weniger Klassen unterscheiden wollen, haben wir diese in vier Hauptgruppen unterteilt.
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \centering
-\includegraphics[width=10cm,height=14cm,keepaspectratio]{Cloud_infographic-01.png}
+\includegraphics[width=10cm,height=13cm,keepaspectratio]{Cloud_infographic-01.png}
 \caption{Schematische Darstellung der zehn Wolkengattungen}
     \label{fig:cloudtypes}
 \end{figure}
+
+\begin{itemize}
+\item Cirriform: Cirrus\\123 Bilder
+\item Cumuliform: Cumulus, Cumulonimbus\\294 Bilder
+\item Stratiform: Cirrostratus, Altostratus, Numbostratus, Stratus\\129 Bilder
+\item Stratocumuliform: Cirrocumulus, Altocumulus, Stratocumulus\\287 Bilder
+\end{itemize}
 
 Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden auf Bildern nur schwer bis nicht erkennbar sind. Die stratiformen Wolken zeichnen sich dadurch aus, dass sie sehr flächig und zusammenhängend sind und meinst durchgängig den ganzen Himmel bedecken. Die cirriformen Wolken sind gefedert und oft durchsichtig, da sie sehr dünn und gefächert sind. Die cumuliformen Wolken haben die Form von großen Haufen, während die Stratocumuliformen Wolken die Form von vielen kleinen Haufen haben. Leider, wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen sie ineinander über, was die Unterscheidung deutlich erschwert. Außerdem gibt es noch sehr viele, Arten, Unterarten und Begleitwolken, die sich teilweise auch überschneiden \footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man unter\\ https://de.wikipedia.org/wiki/Wolke\#Übersicht, zuletzt aufgerufen im August 2018} . 
 
@@ -82,12 +83,23 @@ Da die Bilder verschieden waren, mussten wir sie vor der Klassifikation anpassen
 Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Bilder, auf denen die Wolken kaum erkennbar waren, manuell aussortiert.
 Wie erwähnt war oft der untere Rand des Bildes nicht mehr der Himmel, sondern zum Beispiel eine Wiese oder Bäume.
 Durch eine Binarisierung konnten wir relativ akkurat den Himmel ausschneiden.
-Zum Schluss haben wir die Bilder noch auf die Einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten. 
+Zum Schluss haben wir die Bilder noch auf die Einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten. Der Train/Validation-Split beim klassischen Ansatz war 8:2 bzw. 666:167.
 
 \subsubsection{Binarisierung}
 Die Binarisierung haben wir mithilfe des arithmetischen Mittels des gesamten Bildes und dem Hue + Value aus dem HSV-Farbraum implementiert.
 ...
 Hier Boxalg erklären
+
+\subsubsection{Kantenzählung}
+Ein Merkmal, das wir verwenden, misst die Kanten auf den Bildern. Dazu wird zuerst das Bild in ein Graubild umgewandelt, da dann nicht die Kanten für jeden Farbwert (RGB) einzeln berechnet werden müssen. Als nächstes wirdt ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Sobel ein Kantenbild erzeugt. Dort, wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher. Diese Werte werden dann Zeilenweise summiert, sodass ein Histogramm wie auf dem rechten Bild in Abbildung~\ref{fig:kaz} entsteht. So können die Kanten pro Zeile von zwei Bildern verglichen werden.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{Kantenzählung.png}
+\caption{Kantenzählung: Visualisierung der Funktion}
+    \label{fig:kaz}
+\end{figure}
+
 \subsection{Augmentation der Bilder}
 
 
@@ -95,6 +107,46 @@ Hier Boxalg erklären
 
 \section{Experimente und Ergebnisse}
 
+\subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
+Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 48\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung
+\begin{table}[h]
+\begin{tabular}{|l|l|l|l|l|l|l|}
+ \hline
+ \textbf{Merkmale:}&mean&std&1D-Hist.&3D-Hist.&Grau-Hist.&Kantenz.\\
+ \hline
+ \textbf{Erfolg:} & 28\% & 32\% & 35\% & 38\% & grau & 41\% \\
+ \hline
+\end{tabular}
+\caption{Genauigkeit der einzelnen Merkmale, gerundet}
+\label{tab:gen}
+\end{table}
+
+\begin{table}[h]
+\begin{tabular}{|l|l|l|l|}
+ \hline
+ \textbf{Kombi.:}&mean+std&mean+std+Kantenz.&Kantenz.+3D-Hist.\\
+ \hline
+ \textbf{Erfolg:} & 40\% & 48\% & 49\% \\
+ \hline
+\end{tabular}
+\caption{Genauigkeit von Merkmalskombinationen, gerundet}
+\label{tab:gen2}
+\end{table}
+
+Bei der Kantenzählung wurden beim Gaussschen Weichzeichner Sigma ausprobiert, wobei sich Sigma = 2 als am besten herausstellte (siehe Tabelle~\ref{tab:sigma}).
+\begin{table}[h]
+\begin{tabular}{|l|l|l|l|l|l|}
+ \hline
+ \textbf{Sigma:} & 0 & 1 & 2 & 3 & 4\\
+ \hline
+ \textbf{Erfolg:} & 40\% & 41\% & 41\% & 36\% & 35\% \\
+ \hline
+\end{tabular}
+\caption{Genauigkeit der Kantenzählung bei verschiedenen Sigmas für den Weichzeichner}
+\label{tab:sigma}
+\end{table}
+
+\subsection{Neuronale Netze}
 % TODO: Fazit
 %Wie sehen unsere Ergebnisse aus?
 %Wie verändern sich die Ergebnisse durch die CNNs?
