@@ -11,12 +11,17 @@ from skimage import color
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-'''      CONFIGURATION      '''
-'''      PLEASE ADJUST      '''
+'''      CONFIGURATION      
+         PLEASE ADJUST      
+Erfolgreiche Gewichtungen:
+mean,1 std,1 --> 40%
+mean,100 std,100 edge_count,1 -->48%
+edge_count,1500 histogram3D, 1 -->49%
+'''
 #Which features should be used and how should they be weighted?
 #available features: mean, std, histogram1D, histogram3D, histogramG, edge_count
 #shape: [[feature, weight],[feature2, weight2], ...]
-config = [['edge_count', 1500],['histogram3D', 1]]
+config = [['histogram3D', 1],['edge_count', 1500]]
 
 #following are the arrays needed to save the features
 #ATTENTION: they are only accessible via the stringconverter dict

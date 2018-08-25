@@ -4,6 +4,7 @@
 \usepackage[T1]{fontenc}    % für deutsche Umlaute etc. in der Ausgabe
 \usepackage[utf8]{inputenc} % für deutsche Umlaute.
 \usepackage{graphicx}       % um Bilder einzubinden
+\usepackage{subfigure} 	  % um 2 Bilder nebeneinander haben zu können
 \usepackage{hyperref}       % um URLs korrekt einzubinden und Hyperlinks im Dokument zu ermöglichen
 
 
@@ -62,7 +63,7 @@ Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welch
 \begin{itemize}
 \item Cirriform: Cirrus\\123 Bilder
 \item Cumuliform: Cumulus, Cumulonimbus\\294 Bilder
-\item Stratiform: Cirrostratus, Altostratus, Numbostratus, Stratus\\129 Bilder
+\item Stratiform: Cirrostratus, Altostratus, Nimbostratus, Stratus\\129 Bilder
 \item Stratocumuliform: Cirrocumulus, Altocumulus, Stratocumulus\\287 Bilder
 \end{itemize}
 
@@ -108,7 +109,7 @@ Ein Merkmal, das wir verwenden, misst die Kanten auf den Bildern. Dazu wird zuer
 \section{Experimente und Ergebnisse}
 
 \subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
-Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 48\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung
+Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 48\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|l|}
  \hline
@@ -133,7 +134,15 @@ Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, b
 \label{tab:gen2}
 \end{table}
 
-Bei der Kantenzählung wurden beim Gaussschen Weichzeichner Sigma ausprobiert, wobei sich Sigma = 2 als am besten herausstellte (siehe Tabelle~\ref{tab:sigma}).
+Abbildung~\ref{fig:meanstd} zeigt, dass die verschiedenen Klassen mithilfe von Mittelwert und Standardabweichung nur schwer auseinanderzuhalten sind. Trotzdem erreichen wir hier eine Genauigkeit von 40\%.
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1.1\textwidth]{Scatterplot_mean_std.png}
+\caption{Scatterplot für Mittelwert und Standardabweichung}
+\label{fig:meanstd}
+\end{figure}
+
+Bei der Kantenzählung wurden beim Gaussschen Weichzeichner Sigma ausprobiert, wobei sich Sigma = 2 als am besten herausstellte (siehe Tabelle~\ref{tab:sigma}). Dies ist so, da bei größeren Sigmas die Kanten zu sehr verschwimmen %<-- Bin mir da nicht 100% sicher, ob das stimmt, weil ich nicht weiß, ob ich Sigma richtig verstanden habe...
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|}
  \hline
@@ -145,6 +154,17 @@ Bei der Kantenzählung wurden beim Gaussschen Weichzeichner Sigma ausprobiert, w
 \caption{Genauigkeit der Kantenzählung bei verschiedenen Sigmas für den Weichzeichner}
 \label{tab:sigma}
 \end{table}
+Die Kantenzählung war besonders darauf ausgelegt, stratiforme Wolken (flächige Wolken) zu identifizieren, da diese meist durchgängige Flächen sind und daher wenig Kanten haben. Abbildung~\ref{fig:kbs} zeigt einen Boxplot und einen Swarmplot für die Kantenzählung. Dabei ist wichtig zu berücksichtigen, dass für die Plots die Histogramme auf einen Wert reduziert wurden, das heißt der Plot spiegelt das Merkmal nur näherungsweise wider. Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithilfe des Merkmals klar von den anderen trennen, zeigt der Swarmplot, dass dies nur für etwa die Hälfte der Bilder mit stratiformen Wolken gilt. %Also haben wir das Merkmal so für unseren Entscheidungsbaum verwendet, dass wir alle Wolken die einen Gesamtkantenwert von unter 1000 haben als stratiform klassifizieren, dabei aber nicht ausschließen, dass unter den Verbliebenen noch stratiforme Wolken sind...könnte man hier schreiben wenn wir es machen.
+
+
+\begin{figure}[h!]%Die Bilder sind eventuell zu klein, dann bitte einfach untereinander statt nebeneinander.
+\subfigure[Boxplot Kantenzählung]
+{\includegraphics[width=0.53\textwidth]{edge_count_boxplot.png}}
+\subfigure[Swarmplot Kantenzählung]
+{\includegraphics[width=0.53\textwidth]{edge_count_swarmplot.png}}
+\caption{Kantenzählung: Unterschiede der Klassen}
+    \label{fig:kbs}
+\end{figure}
 
 \subsection{Neuronale Netze}
 % TODO: Fazit
