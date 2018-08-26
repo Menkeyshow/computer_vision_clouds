@@ -10,18 +10,44 @@
 
 \begin{document}
 
-\title{Klassifikation von Wolkenarten: Ein Vergleich von verschiedenen Merkmalen zu CNNs} % TODO
-\author{Maximilian Birkenhagen, Ali Ebrahimi, Thilo Fryen, Lukas Hintze} % TODO: Alles richtig geschrieben?
-\maketitle % setzt automatisch den angegebenen Autor und Titel, sowie das heutige Datum als Überschirft (weitere Angaben möglich)
+% Titelseite
+\begin{titlepage}
+\begin{figure}[h]
+	\begin{minipage}[b]{62mm}
+		\includegraphics[width=59mm]{unilogo.png}
+	\end{minipage}
+	\hspace{4cm}
+	\begin{minipage}[b]{59mm}
+           	%\begin{flushright}
+            	\includegraphics[width=28mm]{unihh.png}
+	\end{minipage}
+\end{figure}
 
+\vfill
+	
+\begin{center}
+\noindent { \huge Praktikum Computer Vision\\}
+\vspace{14mm}
+% Titel
+\noindent \textbf{\huge Cloud Computing mal anders: Klassifikation von Wolkenbildern mit kNN und CNNs\\ %oder: Klassifikation von Wolkenarten: Ein Vergleich von verschiedenen Merkmalen zu CNNs
+}
+\vspace{4mm}
+\vfill
 
-\begin{abstract}
-    % TODO
-    Wir klassifizieren Wolken...
-    % vll erst schreiben, wenn der Bericht fertig ist
-\end{abstract}
+ Maximilian Birkenhagen, Ali Ebrahimi, Thilo Fryen, Lukas Hintze \\
+~ \\
+\today
 
-\newpage
+\vspace{15mm}
+\textbf{ \Large{DEPARTMENT} \\ \small{mathematics, informatics \\ and natural science} \\ }	
+\vspace{5mm}
+\noindent \rule{\textwidth}{0.4mm} %Die Linie
+
+\Large{ZUSAMMENFASSUNG}
+\end{center}
+\noindent Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\\
+\end{titlepage}
+
 \section{Einleitung}
 
 % TODO: Einleitung
@@ -201,6 +227,9 @@ Die Kantenzählung war besonders darauf ausgelegt, stratiforme Wolken (flächige
 %Wie wirken sich Änderungen der Parameter/Hyperpara\-meter auf die Ergebnisse aus?
 %Wie schnell sind unsere Verfahren?
 
+\subsection{Menschen klassifizieren Wolken}
+Da uns aufgefallen ist, dass es nicht nur für den Computer sondern auch für uns schwierig ist, die Wolken zu klassifizieren, haben wir uns dazu entschieden, eine Studie durchzuführen. Bei dieser Studie sollten die sechs Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen. Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Klasse sechs Trainingsbilder als Referenz. Dabei wurde eine Durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer in Anhang 1%oder der wievielte Anhang auch immer.. bitte aktualisieren/korrigieren
+geschildert.
 
 \section{Fazit}
 
