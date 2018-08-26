@@ -92,8 +92,8 @@ Die Binarisierung haben wir mithilfe des arithmetischen Mittels des gesamten Bil
 Ein Pixel gehört somit zum Bild, falls er heller ist als der Durchschnitt des gesamten Bildes, und falls er weder grün noch sehr sehr dunkel ist. Dies hat nach vielem rumexperimentieren für ein gutes Ergebnis gesorgt \ref{fig:boxAlg}. 
 \subsubsection{BoxCut Algrotithmus}
 Nach dem Binarisieren wird von unten eine rechteckige Fläche des Bildes ausgewählt. Die Höhe beträgt dabei ca. 0.1 des Bildes und die gesamte Breite (dargestellt durch das rote Rechteck im mittleren Bild in \ref{fig:boxAlg}). In dem markierten Rechteck wird dann der durchschnittliche Farbwert berechnet, und falls dieser über unserem Treshhold von 0.35 liegt, gehört ein Teil der Box wahrscheinlich zum Himmel, sodass das Bild bis zum unteren Teil der Box geschnitten wird.
-Falls aber der durchschnittliche Farbwert unter dem Treshhold liegt, wird die Box um die hälfte seiner Höhe nach oben verschoben, bis dann der Treshhold irgendwann überschritten wird.
-Wir haben mit vielen Bilder rum experimentiert, sodass wir unsere Werte angepasst haben, um beim Großteil auf ein gutes Ergebnis zu kommen.
+Falls aber der durchschnittliche Farbwert unter dem Treshhold liegt, wird die Box um die Hälfte ihrer Höhe nach oben verschoben, bis dann der Treshhold irgendwann überschritten wird.
+Wir haben mit vielen Bilder herumexperimentiert, sodass wir unsere Werte angepasst haben, um beim Großteil auf ein gutes Ergebnis zu kommen.
 
 
 \begin{figure}[h!]
@@ -114,9 +114,9 @@ Ein Merkmal, das wir verwenden, misst die Kanten auf den Bildern. Dazu wird zuer
 \end{figure}
 
 \subsection{Augmentation der Bilder}
-Da wir nur 800 Bilder zur verfügung hatten, war es besonders für unser Convolutional Neural Network wichtig mehr Bilder durch augmentation zu erzeugen.
-Hier haben wir uns dafür entschieden, dass nach dem Ausschneiden des Himmels, ein Bild jeweils in drei Teile geteilt wird. \ref{fig:augmentation}
-Wobei, dann keine zwei Randteile in den selben Split kommen dürfen % war das so?
+Da wir nur 800 Bilder zur Verfügung hatten, war es besonders für unser Convolutional Neural Network wichtig, mehr Bilder durch Augmentation zu erzeugen.
+Hier haben wir uns dafür entschieden, dass nach dem Ausschneiden des Himmels ein Bild jeweils in drei Teile geteilt wird. \ref{fig:augmentation}
+Wobei dann die drei Bilder, die aus einem Bild entstanden sind, entweder alle in den Test- oder den Validation-Split kommen mussten.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{Augmentation}
@@ -126,16 +126,16 @@ Wobei, dann keine zwei Randteile in den selben Split kommen dürfen % war das so
 
 \subsection{Gescheiterte Ansätze}
 Wir hatten noch zusätzliche Merkmale implementiert, die nicht gut genug funktioniert haben, um sie zu verwenden.
-Ein Ansatz war Region Growing bei Wolken, um dann daraus die Zusammenhangskomponenten oder die Frequenzen der Regionen abzuleiten.
-Besonders bei der Klassifizierung von  "Schäfchen Wolken", wäre es die Anzahl der Zusammenhangskomponenten aussagekräftig gewesen.
-Wir konnten Region Growing, leider nicht benutzen, da auf vielen Bildern die Wolken ineinander übergehen und trotz runter skalierung auf 50p x 50p, hat die Berechnung noch bis zu 30 Sekunden gedauert.
+Ein Ansatz war das Region Growing bei Wolken, um dann daraus die Zusammenhangskomponenten oder die Frequenzen der Regionen abzuleiten.
+Besonders bei der Klassifizierung von  "Schäfchenwolken", wäre die Anzahl der Zusammenhangskomponenten aussagekräftig gewesen.
+Wir konnten Region Growing leider nicht benutzen, da auf vielen Bildern die Wolken ineinander übergehen und trotz Runterskalierung auf 50p x 50p, hat die Berechnung noch bis zu 30 Sekunden gedauert.
 
 
 
 \section{Experimente und Ergebnisse}
 
 \subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
-Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 48\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
+Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 49\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|l|}
  \hline
@@ -209,11 +209,11 @@ Die Kantenzählung war besonders darauf ausgelegt, stratiforme Wolken (flächige
 %Zusammenfassung und Einordnung unserer Ergebnisse.
 %Ausblick?
 
-Insgesamt können wir sagen, dass es eine Herausforderung war die verschiedenen Bilder zu klassifizieren. Vor allem weil Artenexternen Bilder sich teilweise so ähnlich, aber auch die Arteninternen Bilder so unterschiedlich aussahen. Und da es sogar für Menschen schwer ist, viele Bilder zu unterscheiden, hatten wir uns besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erdacht.
-Allerdings sind wir mit 48\% sind wir schon sehr zufrieden, da das noch weit besser als zufälliges zu ordnen der Klassen ist.
+Insgesamt können wir sagen, dass es eine Herausforderung war, die verschiedenen Bilder zu klassifizieren. Vor allem weil artenexterne Bilder sich teilweise so ähnlich, aber auch die arteninternen Bilder so unterschiedlich aussahen. Und da es sogar für Menschen schwer ist, viele Bilder zu unterscheiden, hatten wir besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erwartet.
+Allerdings sind wir mit 49\% sind wir schon sehr zufrieden, da das noch weit besser als zufälliges Zuordnen der Klassen ist.
 Beim Neuronale Netze ....
 
-Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei Gleicher Helligkeit, vom selben Standpunkt aus, etc. Allerdings müsste man dann vorsichtig seien, wie im Falle von der Kieler Universität, das die Bilder nicht overfitten. 
+Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei Gleicher Helligkeit, vom selben Standpunkt aus, etc. Allerdings müsste man dann vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder nicht overfitten. 
 
 % Literaturverzeichnis mit Hilfe der "thebibliography" Umgebung:
 
