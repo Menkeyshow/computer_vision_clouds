@@ -67,7 +67,7 @@ Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welch
 \item Stratocumuliform: Cirrocumulus, Altocumulus, Stratocumulus\\287 Bilder
 \end{itemize}
 
-Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden auf Bildern nur schwer bis nicht erkennbar sind. Die stratiformen Wolken zeichnen sich dadurch aus, dass sie sehr flächig und zusammenhängend sind und meinst durchgängig den ganzen Himmel bedecken. Die cirriformen Wolken sind gefedert und oft durchsichtig, da sie sehr dünn und gefächert sind. Die cumuliformen Wolken haben die Form von großen Haufen, während die Stratocumuliformen Wolken die Form von vielen kleinen Haufen haben. Leider, wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen sie ineinander über, was die Unterscheidung deutlich erschwert. Außerdem gibt es noch sehr viele, Arten, Unterarten und Begleitwolken, die sich teilweise auch überschneiden \footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man unter\\ https://de.wikipedia.org/wiki/Wolke\#Übersicht, zuletzt aufgerufen im August 2018} . 
+Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden auf Bildern nur schwer bis nicht erkennbar sind. Die stratiformen Wolken zeichnen sich dadurch aus, dass sie sehr flächig und zusammenhängend sind und meinst durchgängig den ganzen Himmel bedecken. Die Cirriformen Wolken sind gefedert und oft durchsichtig, da sie sehr dünn und gefächert sind. Die cumuliformen Wolken haben die Form von großen Haufen, während die Stratocumuliformen Wolken die Form von vielen kleinen Haufen haben. Leider, wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen sie ineinander über, was die Unterscheidung deutlich erschwert. Außerdem gibt es noch sehr viele, Arten, Unterarten und Begleitwolken, die sich teilweise auch überschneiden \footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man unter\\ https://de.wikipedia.org/wiki/Wolke\#Übersicht, zuletzt aufgerufen im August 2018} . 
 
 \section{Methodik}
 
@@ -78,6 +78,7 @@ Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte u
 %Auch eine Ablaufgrafik wäre nice.
 
 \subsection{Beschaffung der Bilder}
+@Lukas , vll  kurz erläutern wie du sie aus deren Website gezogen hast
 
 \subsection{Verwertung der Bilder}
 Da die Bilder verschieden waren, mussten wir sie vor der Klassifikation anpassen.
@@ -88,11 +89,22 @@ Zum Schluss haben wir die Bilder noch auf die Einheitliche Größe von 500x500 P
 
 \subsubsection{Binarisierung}
 Die Binarisierung haben wir mithilfe des arithmetischen Mittels des gesamten Bildes und dem Hue + Value aus dem HSV-Farbraum implementiert.
-...
-Hier Boxalg erklären
+Ein Pixel gehört somit zum Bild, falls er heller ist als der Durchschnitt des gesamten Bildes, und falls er weder grün noch sehr sehr dunkel ist. Dies hat nach vielem rumexperimentieren für ein gutes Ergebnis gesorgt \ref{fig:boxAlg}. 
+\subsubsection{BoxCut Algrotithmus}
+Nach dem Binarisieren wird von unten eine rechteckige Fläche des Bildes ausgewählt. Die Höhe beträgt dabei ca. 0.1 des Bildes und die gesamte Breite (dargestellt durch das rote Rechteck im mittleren Bild in \ref{fig:boxAlg}). In dem markierten Rechteck wird dann der durchschnittliche Farbwert berechnet, und falls dieser über unserem Treshhold von 0.35 liegt, gehört ein Teil der Box wahrscheinlich zum Himmel, sodass das Bild bis zum unteren Teil der Box geschnitten wird.
+Falls aber der durchschnittliche Farbwert unter dem Treshhold liegt, wird die Box um die hälfte seiner Höhe nach oben verschoben, bis dann der Treshhold irgendwann überschritten wird.
+Wir haben mit vielen Bilder rum experimentiert, sodass wir unsere Werte angepasst haben, um beim Großteil auf ein gutes Ergebnis zu kommen.
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1.1\textwidth]{boxAlg} %wäre schön das größer zu bekommen, ohne dass es sich verschiebt 
+\caption{BoxCut-Alogorithmus hat den Himmel erfolgreich von der Erde getrennt}
+\label{fig:boxAlg}
+\end{figure}
 
 \subsubsection{Kantenzählung}
-Ein Merkmal, das wir verwenden, misst die Kanten auf den Bildern. Dazu wird zuerst das Bild in ein Graubild umgewandelt, da dann nicht die Kanten für jeden Farbwert (RGB) einzeln berechnet werden müssen. Als nächstes wirdt ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Sobel ein Kantenbild erzeugt. Dort, wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher. Diese Werte werden dann Zeilenweise summiert, sodass ein Histogramm wie auf dem rechten Bild in Abbildung~\ref{fig:kaz} entsteht. So können die Kanten pro Zeile von zwei Bildern verglichen werden.
+Ein Merkmal, das wir verwenden, misst die Kanten auf den Bildern. Dazu wird zuerst das Bild in ein Graubild umgewandelt, da dann nicht die Kanten für jeden Farbwert (RGB) einzeln berechnet werden müssen. Als nächstes wird ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Sobel ein Kantenbild erzeugt. Dort, wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher. Diese Werte werden dann Zeilenweise summiert, sodass ein Histogramm wie auf dem rechten Bild in Abbildung~\ref{fig:kaz} entsteht. So können die Kanten pro Zeile von zwei Bildern verglichen werden.
 
 \begin{figure}[h!]
 \centering
@@ -102,7 +114,21 @@ Ein Merkmal, das wir verwenden, misst die Kanten auf den Bildern. Dazu wird zuer
 \end{figure}
 
 \subsection{Augmentation der Bilder}
+Da wir nur 800 Bilder zur verfügung hatten, war es besonders für unser Convolutional Neural Network wichtig mehr Bilder durch augmentation zu erzeugen.
+Hier haben wir uns dafür entschieden, dass nach dem Ausschneiden des Himmels, ein Bild jeweils in drei Teile geteilt wird. \ref{fig:augmentation}
+Wobei, dann keine zwei Randteile in den selben Split kommen dürfen % war das so?
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{Augmentation}
+\caption{Ein Bild wurde zu drei verschiedenen augmentiert}
+    \label{fig:augmentation}
+\end{figure}
 
+\subsection{Gescheiterte Ansätze}
+Wir hatten noch zusätzliche Merkmale implementiert, die nicht gut genug funktioniert haben, um sie zu verwenden.
+Ein Ansatz war Region Growing bei Wolken, um dann daraus die Zusammenhangskomponenten oder die Frequenzen der Regionen abzuleiten.
+Besonders bei der Klassifizierung von  "Schäfchen Wolken", wäre es die Anzahl der Zusammenhangskomponenten aussagekräftig gewesen.
+Wir konnten Region Growing, leider nicht benutzen, da auf vielen Bildern die Wolken ineinander übergehen und trotz runter skalierung auf 50p x 50p, hat die Berechnung noch bis zu 30 Sekunden gedauert.
 
 
 
@@ -137,7 +163,7 @@ Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, b
 Abbildung~\ref{fig:meanstd} zeigt, dass die verschiedenen Klassen mithilfe von Mittelwert und Standardabweichung nur schwer auseinanderzuhalten sind. Trotzdem erreichen wir hier eine Genauigkeit von 40\%.
 \begin{figure}[h!]
 \centering
-\includegraphics[width=1.1\textwidth]{Scatterplot_mean_std.png}
+\includegraphics[width=1.1\textwidth]{Scatterplot_mean_std.png} %wäre schön das größer zu bekommen, ohne dass es sich verschiebt 
 \caption{Scatterplot für Mittelwert und Standardabweichung}
 \label{fig:meanstd}
 \end{figure}
@@ -154,7 +180,7 @@ Bei der Kantenzählung wurden beim Gaussschen Weichzeichner Sigma ausprobiert, w
 \caption{Genauigkeit der Kantenzählung bei verschiedenen Sigmas für den Weichzeichner}
 \label{tab:sigma}
 \end{table}
-Die Kantenzählung war besonders darauf ausgelegt, stratiforme Wolken (flächige Wolken) zu identifizieren, da diese meist durchgängige Flächen sind und daher wenig Kanten haben. Abbildung~\ref{fig:kbs} zeigt einen Boxplot und einen Swarmplot für die Kantenzählung. Dabei ist wichtig zu berücksichtigen, dass für die Plots die Histogramme auf einen Wert reduziert wurden, das heißt der Plot spiegelt das Merkmal nur näherungsweise wider. Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithilfe des Merkmals klar von den anderen trennen, zeigt der Swarmplot, dass dies nur für etwa die Hälfte der Bilder mit stratiformen Wolken gilt. %Also haben wir das Merkmal so für unseren Entscheidungsbaum verwendet, dass wir alle Wolken die einen Gesamtkantenwert von unter 1000 haben als stratiform klassifizieren, dabei aber nicht ausschließen, dass unter den Verbliebenen noch stratiforme Wolken sind...könnte man hier schreiben wenn wir es machen.
+Die Kantenzählung war besonders darauf ausgelegt, stratiforme Wolken (flächige Wolken) zu identifizieren, da diese meist durchgängige Flächen sind und daher wenig Kanten haben. Abbildung~\ref{fig:kbs} zeigt einen Boxplot und einen Swarmplot für die Kantenzählung. Dabei ist wichtig zu berücksichtigen, dass für die Plots die Histogramme auf einen Wert reduziert wurden, das heißt der Plot spiegelt das Merkmal nur näherungsweise wieder. Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithilfe des Merkmals klar von den anderen trennen, zeigt der Swarmplot, dass dies nur für etwa die Hälfte der Bilder mit stratiformen Wolken gilt. %Also haben wir das Merkmal so für unseren Entscheidungsbaum verwendet, dass wir alle Wolken die einen Gesamtkantenwert von unter 1000 haben als stratiform klassifizieren, dabei aber nicht ausschließen, dass unter den Verbliebenen noch stratiforme Wolken sind...könnte man hier schreiben wenn wir es machen.
 
 
 \begin{figure}[h!]%Die Bilder sind eventuell zu klein, dann bitte einfach untereinander statt nebeneinander.
@@ -183,6 +209,11 @@ Die Kantenzählung war besonders darauf ausgelegt, stratiforme Wolken (flächige
 %Zusammenfassung und Einordnung unserer Ergebnisse.
 %Ausblick?
 
+Insgesamt können wir sagen, dass es eine Herausforderung war die verschiedenen Bilder zu klassifizieren. Vor allem weil Artenexternen Bilder sich teilweise so ähnlich, aber auch die Arteninternen Bilder so unterschiedlich aussahen. Und da es sogar für Menschen schwer ist, viele Bilder zu unterscheiden, hatten wir uns besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erdacht.
+Allerdings sind wir mit 48\% sind wir schon sehr zufrieden, da das noch weit besser als zufälliges zu ordnen der Klassen ist.
+Beim Neuronale Netze ....
+
+Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei Gleicher Helligkeit, vom selben Standpunkt aus, etc. Allerdings müsste man dann vorsichtig seien, wie im Falle von der Kieler Universität, das die Bilder nicht overfitten. 
 
 % Literaturverzeichnis mit Hilfe der "thebibliography" Umgebung:
 

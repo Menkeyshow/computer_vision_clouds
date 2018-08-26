@@ -18,15 +18,10 @@ def binarize(img):
     Binarize an image via its greyscaled mean value.
     '''
     pic = skimage.color.rgb2grey(img)
-    image_mean = np.mean(pic)     
-    #print(image_mean)
-    img_hsv = skimage.color.rgb2hsv(img) 
-  #  img_hsv.astype(np.uint8)
+    image_mean = np.mean(pic)
+    img_hsv = skimage.color.rgb2hsv(img)
     bin_pic = np.zeros_like(pic)
-    #wozu hatten wir das?
-   # if (image_mean > .4):
-    #image_mean = 0.03
-    #gehen jetzt über alle farbkanäle und schauen uns im hsv den Hue an
+    #gehen über alle farbkanäle und schauen uns im hsv den Hue an
     for x in range(img.shape[0]):
         for y in range(img.shape[1]):
             if (pic[x,y] > image_mean ) \
@@ -34,13 +29,13 @@ def binarize(img):
                 bin_pic[x][y] = 1
     return bin_pic
 
-def cut_black_out(img, thresh): #wir nehmen 0.2 als treshold?
+def cut_black_out(img, thresh):
     '''
     Cut out the bottom of the image which is presumably blacker than the top.
     '''
     box_not_cloud= True
     dont_crop = False
-    box_height = np.shape(img)[0] * 0.1 #3% des Bildes werden als Box getestet
+    box_height = np.shape(img)[0] * 0.1 #1% des Bildes werden als Box getestet
     y = np.shape(img)[0]
     while(box_not_cloud):
         image_box = img[int(y) - int(box_height) : int(y),:]
@@ -58,7 +53,7 @@ def cut_black_out(img, thresh): #wir nehmen 0.2 als treshold?
 def binarized_crop(img, thresh):
     '''
     Returns the shape an image has to be cropped to cut out non-sky objects.
-    Use 0.2 as a treshold.
+    Use 0.2 - 0.35 as a treshold.
     '''
     binarized_img = binarize(img).astype(np.float)
     cropped_img = cut_black_out(binarized_img, thresh)
