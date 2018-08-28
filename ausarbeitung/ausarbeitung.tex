@@ -41,14 +41,20 @@ Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-O
 
 Unsere Aufgabe war es, Wolken einerseits mit dem 'klassischen' Ansatz und andererseits mittels Convolutional Neural Networks (CNN) zu klassifizieren und die Ergebnisse zu vergleichen. 
 Für die Klassifizierung mit dem 'klassischen' Ansatz haben wir verschiedene Merkmale, wie zum Beispiel: Mittelwert, Standardabweichung, Farb-Histogramm und Kantenerkennung verwendet.
- 
-Dieser Bericht ist so aufgebaut, dass wir zunächst erklären, woher unsere Bilder kommen, was für Charakteristika sie haben und wie wir diese verarbeitet haben.
-Danach wird unsere Methodik erläutert, wie wir auftretende Probleme gelöst haben und was für Verfahren wir angewendet haben, sodass zum Schluss ein aussagekräftiges Fazit mit Hinsicht auf unsere Ergebnisse gezogen wurde.
+
+
+\subsection{Aufbau der Arbeit}
+
+In Abschnitt \ref{sec:daten} erläutern wir die Daten, die unserer Arbeit zugrunde liegen, also deren Herkunft, deren Charakteristika, etc.
+In Abschnitt \ref{sec:methodik} folgt die Darlegung unserer Klassifizierungsmethodik, in der auf die Details sowohl des klassischen als auch des auf Maschine Learning basierenden Ansatzes eingegangen wird.
+Abschließend werden beide Ansätze in Abschnitt \ref{sec:experimente} evaluiert und auf quantitativer Ebene verglichen, dabei erfolgt auch ein Vergleich mit der Leistung einer (kleinen) Gruppe von (nicht fachkundigen) Menschen.
+Unser Fazit ist in Abschnitt \ref{sec:fazit} dargestellt.
  
 % TODO: soll dieser Satz vvvvv wirklich rein? Ich finde den eher unpassend... -- Lukas.
 % Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an der Universität Hamburg im Sommersemester 2018.
 
 \section{Daten}
+\label{sec:daten}
 
 % TODO: Daten
 %Hier sollte stehen, woher unsere Daten kommen, wie sie aussehen, was für Charakteristika sie haben, und was so klassentypische Einträge sind.
@@ -84,6 +90,7 @@ Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich 
 \footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in \cite{wiki:wolkenarten}.}
 
 \section{Methodik}
+\label{sec:methodik}
 
 % TODO: Methodik
 %Hier sollte stehen, wie wir unser Problem lösen, sprich, wie unser Endsystem funktioniert.
@@ -162,7 +169,8 @@ Wir konnten das Region Growing leider nicht mit unseren Daten verwenden, da auf 
 
 
 \section{Experimente und Ergebnisse}
-In diesem Abschnitt werden die erzielten Ergebnisse unter verschiedenen Parametern vorgestellt.4
+\label{sec:experimente}
+In diesem Abschnitt werden die erzielten Ergebnisse unter verschiedenen Parametern vorgestellt.
 
 \subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
 Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 49\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
@@ -245,7 +253,10 @@ Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Kla
 Dabei wurde eine Durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer in Anhang 1 %oder der wievielte Anhang auch immer.. bitte aktualisieren/korrigieren
 geschildert.
 
+% TODO: Zumindest oberflächlicher Vergleich der verschiedenen Ansätze und der Menschen.
+
 \section{Fazit}
+\label{sec:fazit}
 
 % TODO: Fazit
 %Was ist unser Fazit?
