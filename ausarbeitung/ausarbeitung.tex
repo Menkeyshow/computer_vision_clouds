@@ -39,8 +39,12 @@ Es gab aber auch schon zuvor Versuche, nur mit Hilfe von Bildern Wolken zu klass
 Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von derselben Position aus und unterschieden dabei sieben verschiedene Wolkenarten(kombinationen), darunter auch den "leeren Himmel".
 Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-One-Out Cross-Validation eine Genauigkeit von 97\% \cite{heinle}.
 
-Unsere Aufgabe war es, Wolken einerseits mit dem 'klassischen' Ansatz und andererseits mittels Convolutional Neural Networks (CNN) zu klassifizieren und die Ergebnisse zu vergleichen. 
-Für die Klassifizierung mit dem 'klassischen' Ansatz haben wir verschiedene Merkmale, wie zum Beispiel: Mittelwert, Standardabweichung, Farb-Histogramm und Kantenerkennung verwendet.
+
+\subsection{Unsere Arbeit}
+
+In dieser Arbeit versuchen wir, Wolken automatisiert zu klassifizieren, und vergleichen dabei zwei unterschiedliche Ansätze:
+der eine Ansatz basiert auf \glqq klassischen\grqq\ Methoden der Computer Vision, das heißt auf händisch ausgewählten Merkmalen wie Mittelwert, Standardabweichung, Farb-Histogrammen und Kantenerkennung, auf deren Grundlage dann ein k-nearest-neighbor-Klassifikator angewendet wird;
+der andere auf den \glqq moderneren\grqq Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
 
 
 \subsection{Aufbau der Arbeit}
