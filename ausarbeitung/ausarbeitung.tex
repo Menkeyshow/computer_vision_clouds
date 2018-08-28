@@ -33,16 +33,20 @@
 
 Wir haben uns dafür entschieden, Wolken zu klassifizieren; einerseits aus reiner Neugier, wie gut dies überhaupt möglich ist und andererseits einfach aus eigenem Interesse an Wolken und ihren Formen.
 
- Die Klassifikation von Wolken ist aber nicht nur für Wolken-Enthusiasten interessant, sondern spielt auch eine große Rolle bei der Klimaforschung, Wettervorhersagen und Unwetterwarnungen. Allerdings werden dabei eher andere Messmethoden wie Radar, Laser (z.B. LiDAR) oder Radiometer präferiert, bei denen Messungen von Sensoren an verschiedenen Orten (Satellit, Bodenstationen) miteinander kombiniert werden \cite{wang}. Es gab aber auch schon zuvor Versuche, nur mit Hilfe von Bildern Wolken zu klassifizieren: Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von derselben Position aus und unterschieden dabei sieben verschiedene Wolkenarten(kombinationen), darunter auch den "leeren Himmel". Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-One-Out Cross-Validation eine Genauigkeit von 97\% \cite{heinle}.
+Die Klassifikation von Wolken ist aber nicht nur für Wolken-Enthusiasten interessant, sondern spielt auch eine große Rolle bei der Klimaforschung, Wettervorhersagen und Unwetterwarnungen.
+Allerdings werden dabei eher andere Messmethoden wie Radar, Laser (z.B. LiDAR) oder Radiometer präferiert, bei denen Messungen von Sensoren an verschiedenen Orten (Satellit, Bodenstationen) miteinander kombiniert werden \cite{wang}.
+Es gab aber auch schon zuvor Versuche, nur mit Hilfe von Bildern Wolken zu klassifizieren:
+Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von derselben Position aus und unterschieden dabei sieben verschiedene Wolkenarten(kombinationen), darunter auch den "leeren Himmel".
+Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-One-Out Cross-Validation eine Genauigkeit von 97\% \cite{heinle}.
 
 Unsere Aufgabe war es, Wolken einerseits mit dem 'klassischen' Ansatz und andererseits mittels Convolutional Neural Networks (CNN) zu klassifizieren und die Ergebnisse zu vergleichen. 
 Für die Klassifizierung mit dem 'klassischen' Ansatz haben wir verschiedene Merkmale, wie zum Beispiel: Mittelwert, Standardabweichung, Farb-Histogramm und Kantenerkennung verwendet.
  
-%Ich bin mir nicht sicher, ob wir das generell so "legere" halten können, oder ob wir generell vllt eher unpersönlicher schreiben sollten. Bin das persönlich auch nicht so gewohnt - Max
- Dieser Bericht ist so aufgebaut, dass wir zunächst erklären, woher unsere Bilder kommen, was für Charakteristika sie haben und wie wir diese verarbeitet haben. Danach wird unsere Methodik erläutert, wie wir auftretende Probleme gelöst haben und was für Verfahren wir angewendet haben, sodass zum Schluss ein aussagekräftiges Fazit mit Hinsicht auf unsere Ergebnisse gezogen wurde.
+Dieser Bericht ist so aufgebaut, dass wir zunächst erklären, woher unsere Bilder kommen, was für Charakteristika sie haben und wie wir diese verarbeitet haben.
+Danach wird unsere Methodik erläutert, wie wir auftretende Probleme gelöst haben und was für Verfahren wir angewendet haben, sodass zum Schluss ein aussagekräftiges Fazit mit Hinsicht auf unsere Ergebnisse gezogen wurde.
  
-Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an der Universität Hamburg im Sommersemster 2018.
-%Sollten die Fußnoten evtl generell eher als Bibliografie Einträge reingepackt werden?
+% TODO: soll dieser Satz vvvvv wirklich rein? Ich finde den eher unpassend... -- Lukas.
+% Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an der Universität Hamburg im Sommersemester 2018.
 
 \section{Daten}
 
@@ -52,9 +56,11 @@ Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an d
 Unsere Bilder haben wir von der Website Wolken-online.de und von der World Meteorological Organization (WMO).
 Insgesamt standen uns so ca. 800 Bilder zur Verfügung.
 Die Bilder waren meist von individuellen Personen geschossene Fotos vom Himmel. 
-Allerdings ist auf den Bildern oft nicht nur der Himmel zu sehen, sondern auch vor allem am unteren Rand die Erdoberfläche mitsamt Objekten wie Häusern oder Bäumen. Außerdem sind gelegentlich mehrere Wolkenarten auf demselben Bild vertreten.
+Allerdings ist auf den Bildern oft nicht nur der Himmel zu sehen, sondern auch vor allem am unteren Rand die Erdoberfläche mitsamt Objekten wie Häusern oder Bäumen.
+Außerdem sind gelegentlich mehrere Wolkenarten auf demselben Bild vertreten.
 
-Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welche in Abbildung~\ref{fig:cloudtypes} schematisch dargestellt sind. Da diese sich untereinander teilweise sehr ähneln und wir lieber weniger Klassen unterscheiden wollen, da wir nur 800 Bilder zur Verfügung haben, haben wir diese in die folgenden vier Hauptgruppen unterteilt:
+Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welche in Abbildung~\ref{fig:cloudtypes} schematisch dargestellt sind.
+Da diese sich untereinander teilweise sehr ähneln und wir lieber weniger Klassen unterscheiden wollen, da wir nur 800 Bilder zur Verfügung haben, haben wir diese in die folgenden vier Hauptgruppen unterteilt:
 
 \begin{figure}[h!]
 \centering
@@ -70,7 +76,12 @@ Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welch
 \item Stratocumuliform: Cirrocumulus, Altocumulus, Stratocumulus\\287 Bilder
 \end{itemize}
 
-Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden Eigenschaften auf Bildern nur schwer bis gar nicht erkennbar sind. Die stratiformen Wolken zeichnen sich dadurch aus, dass sie sehr flächig und zusammenhängend sind und meist durchgängig den ganzen Himmel bedecken. Die cirriformen Wolken sind gefedert und oft durchsichtig, da sie sehr dünn und gefächert sind. Die cumuliformen Wolken haben die Form von großen Haufen, während die stratocumuliformen Wolken die Form von vielen kleinen Haufen haben. Leider, wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen sie teils ineinander über, was die Unterscheidung deutlich erschwert. Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich teilweise ebenso in ihren Eigenschaften überschneiden \footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in \cite{wiki:wolkenarten}.}
+Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden Eigenschaften auf Bildern nur schwer bis gar nicht erkennbar sind. Die stratiformen Wolken zeichnen sich dadurch aus, dass sie sehr flächig und zusammenhängend sind und meist durchgängig den ganzen Himmel bedecken.
+Die cirriformen Wolken sind gefedert und oft durchsichtig, da sie sehr dünn und gefächert sind.
+Die cumuliformen Wolken haben die Form von großen Haufen, während die stratocumuliformen Wolken die Form von vielen kleinen Haufen haben.
+Leider, wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen sie teils ineinander über, was die Unterscheidung deutlich erschwert.
+Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich teilweise ebenso in ihren Eigenschaften überschneiden.
+\footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in \cite{wiki:wolkenarten}.}
 
 \section{Methodik}
 
@@ -79,21 +90,26 @@ Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte u
 %Warum machen wir es so und nicht anders?
 %Wie funktionieren die Verfahren, die wir nutzen?
 %Auch eine Ablaufgrafik wäre nice.
-Im Folgenden Abschnitt werden wir unseren Ablauf der klassischen Klassifikation als auch die durch das neuronale Netz erläutern. Der grobe Ablauf kann dabei anhand von Abbildung \ref{fig:ablauf} verfolgt werden. %Grafik baue ich noch ein, wobei ich nicht weiß, inwiefern ich da genau auf das neuronale Netz eingehen werde, die einzelnen Schichten zu zeigen wäre glaube ich leicht overkill.. - Max
+Im Folgenden Abschnitt werden wir unseren Ablauf der klassischen Klassifikation als auch die durch das neuronale Netz erläutern.
+Der grobe Ablauf kann dabei anhand von Abbildung \ref{fig:ablauf} verfolgt werden. %Grafik baue ich noch ein, wobei ich nicht weiß, inwiefern ich da genau auf das neuronale Netz eingehen werde, die einzelnen Schichten zu zeigen wäre glaube ich leicht overkill.. - Max
+
 \subsection{Beschaffung der Bilder}
-@Lukas , vll  kurz erläutern wie du sie aus deren Website gezogen hast
+% TODO: Lukas , vll  kurz erläutern wie du sie aus deren Website gezogen hast
 
 \subsection{Verwertung der Bilder}
 Da die Bilder verschieden waren, mussten wir sie vor der Klassifikation anpassen.
 Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Fotos, auf denen die Wolken kaum erkennbar waren, manuell aussortiert.
 Wie erwähnt war oft der untere Rand des Bildes nicht mehr nur reiner Himmel. Oft waren auch Wiesen oder Bäume zu sehen, die der Klassifizierung Probleme bereiteten.
 Durch eine Binarisierung, die im Kapitel \ref{sec:binary} näher erläutert wird, konnten wir relativ akkurat den Himmel ausschneiden.
-Zum Schluss haben wir die Bilder noch auf die einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten. Der Train/Validation-Split beim klassischen Ansatz war 8:2 bzw. 666:167.
+Zum Schluss haben wir die Bilder noch auf die einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten.
+Der Train/Validation-Split beim klassischen Ansatz war 8:2 bzw. 666:167.
 
 \subsubsection{Binarisierung} 
 \label{sec:binary}
-Die Binarisierung haben wir mithilfe des arithmetischen Mittels über das gesamte Bild und dem Hue + Value aus dem HSV-Farbraum implementiert.%Wollen wir hier nicht eher die deutschen Begriffe verwenden? Hellwert, Farbwert, Sättigung und co?
-Ein Pixel gehört dann zum Vordergrund, falls er heller ist als der Durchschnitt des gesamten Bildes, und falls er weder grün noch sehr sehr dunkel ist. Dies hat nach vielem herum experimentieren für ein gutes Ergebnis gesorgt \ref{fig:boxAlg}.
+Die Binarisierung haben wir mithilfe des arithmetischen Mittels über das gesamte Bild und dem Hue + Value aus dem HSV-Farbraum implementiert. % TODO: Wollen wir hier nicht eher die deutschen Begriffe verwenden? Hellwert, Farbwert, Sättigung und co?
+Ein Pixel gehört dann zum Vordergrund, falls er heller ist als der Durchschnitt des gesamten Bildes, und falls er weder grün noch sehr sehr dunkel ist.
+Dies hat nach vielem herum experimentieren für ein gutes Ergebnis gesorgt \ref{fig:boxAlg}.
+
 \subsubsection{BoxCut Algrotithmus}
 Nach dem Binarisieren wird von unten eine rechteckige Fläche des Bildes ausgewählt. Die Höhe beträgt dabei ca. 0.1 %oder lieber 10%?
 des Bildes und die gesamte Breite (dargestellt durch das rote Rechteck im mittleren binarisierten Bild in \ref{fig:boxAlg}). In dem markierten Rechteck wird dann der durchschnittliche Farbwert berechnet, und falls dieser über unserem Treshhold%auch hier: lieber deutsch?
@@ -111,7 +127,10 @@ Wir haben mit vielen Bildern experimentiert, sodass wir unsere Werte angepasst h
 \end{figure}
 
 \subsubsection{Kantenzählung}
-Ein Merkmal, welches wir neben dem Mittelwert, der Standardabweichung und den Farb-Histogrammen verwenden, misst die Anzahl der Kanten auf den Bildern. Dazu wird zuerst das Bild in ein Graustufenbild umgewandelt, da man somit nicht die Kanten für jeden Farbwert im RGB-Farbraum einzeln berechnet werden müssen. Als nächstes wird ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Hilfe des Sobel-Filters ein Kantenbild erzeugt. Dort, wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher. Diese Werte werden dann zeilenweise aufsummiert, sodass ein Histogramm wie auf dem rechten Bild in Abbildung~\ref{fig:kaz} entsteht. So können die Kanten pro Zeile von zwei Bildern verglichen werden.
+Ein Merkmal, welches wir neben dem Mittelwert, der Standardabweichung und den Farb-Histogrammen verwenden, misst die Anzahl der Kanten auf den Bildern.
+Dazu wird zuerst das Bild in ein Graustufenbild umgewandelt, da man somit nicht die Kanten für jeden Farbwert im RGB-Farbraum einzeln berechnet werden müssen. Als nächstes wird ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Hilfe des Sobel-Filters ein Kantenbild erzeugt.
+Dort, wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher.
+Diese Werte werden dann zeilenweise aufsummiert, sodass ein Histogramm wie auf dem rechten Bild in Abbildung~\ref{fig:kaz} entsteht. So können die Kanten pro Zeile von zwei Bildern verglichen werden.
 
 \begin{figure}[h!]
 \centering
@@ -123,7 +142,8 @@ Ein Merkmal, welches wir neben dem Mittelwert, der Standardabweichung und den Fa
 \subsection{Augmentation der Bilder}
 Da wir nur 800 Bilder zur Verfügung hatten, war es besonders für unser Convolutional Neural Network wichtig, mehr Bilder durch Augmentation zu erzeugen.
 Hier haben wir uns dafür entschieden, dass nach dem Ausschneiden des Himmels%referenz auf die zugehörige Sektion ja/nein?
-ein Bild jeweils in drei Teile geteilt wird wie in Abbildung \ref{fig:augmentation} zu erkennen. Wichtig ist hierbei, dass dann die drei Bilder, die aus einem Bild entstanden sind, entweder alle in den Test- oder in den Validation-Split aufgenommen werden.
+ein Bild jeweils in drei Teile geteilt wird wie in Abbildung \ref{fig:augmentation} zu erkennen.
+Wichtig ist hierbei, dass dann die drei Bilder, die aus einem Bild entstanden sind, entweder alle in den Test- oder in den Validation-Split aufgenommen werden.
 
 \begin{figure}[h!]
 \centering
@@ -140,8 +160,10 @@ Besonders bei der Klassifizierung von Cumuluswolken %"Schäfchenwolken"
 wäre die Anzahl der Zusammenhangskomponenten sehr aussagekräftig gewesen.
 Wir konnten das Region Growing leider nicht mit unseren Daten verwenden, da auf vielen Bildern die Wolken ineinander übergehen und trotz Runterskalierung auf 50p x 50p, die Berechnung pro Bild noch bis zu 30 Sekunden gedauert hat.
 
+
 \section{Experimente und Ergebnisse}
-In diesem Abschnitt werden die erzielten Ergebnisse unter verschiedenen Parametern vorgestellt.
+In diesem Abschnitt werden die erzielten Ergebnisse unter verschiedenen Parametern vorgestellt.4
+
 \subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
 Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 49\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
 %Was bedeutet der "grau" Eintrag in der ersten Tabelle?
@@ -177,7 +199,8 @@ Abbildung~\ref{fig:meanstd} zeigt, dass die verschiedenen Klassen mithilfe von M
 \label{fig:meanstd}
 \end{figure}
 
-Bei der Kantenzählung wurden beim Gaussschen Weichzeichner verschiedene Sigma Werte ausprobiert, wobei sich Sigma = 2 als am besten herausstellte (siehe Tabelle~\ref{tab:sigma}). Dies ist so, da bei größeren Sigmas die Kanten zu sehr verschwimmen %<-- Bin mir da nicht 100% sicher, ob das stimmt, weil ich nicht weiß, ob ich Sigma richtig verstanden habe... || so hätte ich das auch verstanden - Max
+Bei der Kantenzählung wurden beim Gaussschen Weichzeichner verschiedene Sigma Werte ausprobiert, wobei sich Sigma = 2 als am besten herausstellte (siehe Tabelle~\ref{tab:sigma}).
+Dies ist so, da bei größeren Sigmas die Kanten zu sehr verschwimmen %<-- Bin mir da nicht 100% sicher, ob das stimmt, weil ich nicht weiß, ob ich Sigma richtig verstanden habe... || so hätte ich das auch verstanden - Max
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|}
  \hline
@@ -189,8 +212,12 @@ Bei der Kantenzählung wurden beim Gaussschen Weichzeichner verschiedene Sigma W
 \caption{Genauigkeit der Kantenzählung bei verschiedenen Sigmas für den Weichzeichner}
 \label{tab:sigma}
 \end{table}
+
 Die Kantenzählung war besonders darauf ausgelegt, stratiforme Wolken %(flächige Wolken)
-zu identifizieren, da diese meist durchgängige Flächen sind und daher wenig Kanten haben. Abbildung~\ref{fig:kbs} zeigt einen Boxplot und einen Swarmplot für die Kantenzählung. Dabei ist wichtig zu berücksichtigen, dass für die Plots die Histogramme auf einen Wert reduziert wurden, das heißt der Plot spiegelt das Merkmal nur annäherungsweise wieder. Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithilfe des Merkmals alleine klar von den anderen trennen, zeigt der Swarmplot, dass dies nur für etwa die Hälfte der Bilder mit stratiformen Wolken gilt. %Also haben wir das Merkmal so für unseren Entscheidungsbaum verwendet, dass wir alle Wolken die einen Gesamtkantenwert von unter 1000 haben als stratiform klassifizieren, dabei aber nicht ausschließen, dass unter den Verbliebenen noch stratiforme Wolken sind...könnte man hier schreiben wenn wir es machen.
+zu identifizieren, da diese meist durchgängige Flächen sind und daher wenig Kanten haben.
+Abbildung~\ref{fig:kbs} zeigt einen Boxplot und einen Swarmplot für die Kantenzählung.
+Dabei ist wichtig zu berücksichtigen, dass für die Plots die Histogramme auf einen Wert reduziert wurden, das heißt der Plot spiegelt das Merkmal nur annäherungsweise wieder.
+Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithilfe des Merkmals alleine klar von den anderen trennen, zeigt der Swarmplot, dass dies nur für etwa die Hälfte der Bilder mit stratiformen Wolken gilt. %Also haben wir das Merkmal so für unseren Entscheidungsbaum verwendet, dass wir alle Wolken die einen Gesamtkantenwert von unter 1000 haben als stratiform klassifizieren, dabei aber nicht ausschließen, dass unter den Verbliebenen noch stratiforme Wolken sind...könnte man hier schreiben wenn wir es machen.
 
 \begin{figure}[h!]%Die Bilder sind eventuell zu klein, dann bitte einfach untereinander statt nebeneinander.
 \subfigure[Boxplot Kantenzählung]
@@ -211,7 +238,11 @@ zu identifizieren, da diese meist durchgängige Flächen sind und daher wenig Ka
 %Wie schnell sind unsere Verfahren?
 
 \subsection{Menschen klassifizieren Wolken}
-Da uns aufgefallen ist, dass es nicht nur für den Computer sondern auch für uns schwierig ist, die Wolken zu klassifizieren, haben wir uns dazu entschieden, eine kleine Studie durchzuführen. Bei dieser Studie sollten die sechs getesteten Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen. Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Klasse sechs Trainingsbilder als Referenz. Dabei wurde eine Durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer in Anhang 1 %oder der wievielte Anhang auch immer.. bitte aktualisieren/korrigieren
+
+Da uns aufgefallen ist, dass es nicht nur für den Computer sondern auch für uns schwierig ist, die Wolken zu klassifizieren, haben wir uns dazu entschieden, eine kleine Studie durchzuführen.
+Bei dieser Studie sollten die sechs getesteten Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen.
+Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Klasse sechs Trainingsbilder als Referenz.
+Dabei wurde eine Durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer in Anhang 1 %oder der wievielte Anhang auch immer.. bitte aktualisieren/korrigieren
 geschildert.
 
 \section{Fazit}
@@ -221,12 +252,15 @@ geschildert.
 %Zusammenfassung und Einordnung unserer Ergebnisse.
 %Ausblick?
 
-Insgesamt können wir sagen, dass es eine Herausforderung war, die verschiedenen Bilder zu klassifizieren. Nicht nur innerhalb einer Wolkenart unterscheiden sich die Bilder teils sehr stark voneinander, auch ist es vor allem die Ähnlichkeit vieler Bilder in jeweils verschiedenen Wolkenklassen, die die korrekte Klassifizierung der Wolken erschwert. Und da es sogar für Menschen schwer ist, viele Bilder ihrer richtigen Kategorie zuzuordnen, hatten wir besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erwartet.
+Insgesamt können wir sagen, dass es eine Herausforderung war, die verschiedenen Bilder zu klassifizieren.
+Nicht nur innerhalb einer Wolkenart unterscheiden sich die Bilder teils sehr stark voneinander, auch ist es vor allem die Ähnlichkeit vieler Bilder in jeweils verschiedenen Wolkenklassen, die die korrekte Klassifizierung der Wolken erschwert.
+Und da es sogar für Menschen schwer ist, viele Bilder ihrer richtigen Kategorie zuzuordnen, hatten wir besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erwartet.
 Allerdings sind wir mit 49\% für die klassische Methodik schon sehr zufrieden, da dies noch weit besser ist, als ein zufälliges Zuordnen der Klassen.
 
-Beim Neuronale Netze ....
+Beim Neuronale Netze .... % TODO
 
-Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei gleicher Helligkeit oder aber vom selben Standpunkt aus. Allerdings müsste man dann äußerst vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder so nicht zum overfitten der Ergebnisse führen.%Sollte das evtl in die Bibliografie hinein?
+Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei gleicher Helligkeit oder aber vom selben Standpunkt aus.
+Allerdings müsste man dann äußerst vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder so nicht zum overfitten der Ergebnisse führen.%Sollte das evtl in die Bibliografie hinein?
 
 \bibliographystyle{babplain}
 \bibliography{bibliography}
