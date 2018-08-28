@@ -10,43 +10,18 @@
 
 \begin{document}
 
-% Titelseite
-\begin{titlepage}
-\begin{figure}[h]
-	\begin{minipage}[b]{62mm}
-		\includegraphics[width=59mm]{unilogo.png}
-	\end{minipage}
-	\hspace{4cm}
-	\begin{minipage}[b]{59mm}
-           	%\begin{flushright}
-            	\includegraphics[width=28mm]{unihh.png}
-	\end{minipage}
-\end{figure}
+\title{Cloud Computing mal anders: Klassifikation von Wolkenbildern mit kNN und CNNs}
+\author{Maximilian Birkenhagen, Ali Ebrahimi, Thilo Fryen, Lukas Hintze}
+\maketitle
 
-\vfill
-	
-\begin{center}
-\noindent { \huge Praktikum Computer Vision\\}
-\vspace{14mm}
-% Titel
-\noindent \textbf{\huge Cloud Computing mal anders: Klassifikation von Wolkenbildern mit kNN und CNNs\\ %oder: Klassifikation von Wolkenarten: Ein Vergleich von verschiedenen Merkmalen zu CNNs
-}
-\vspace{4mm}
-\vfill
-
- Maximilian Birkenhagen, Ali Ebrahimi, Thilo Fryen, Lukas Hintze \\
-~ \\
-\today
-
-\vspace{15mm}
-\textbf{ \Large{DEPARTMENT} \\ \small{mathematics, informatics \\ and natural science} \\ }	
-\vspace{5mm}
-\noindent \rule{\textwidth}{0.4mm} %Die Linie
-
-\Large{ZUSAMMENFASSUNG}
-\end{center}
-\noindent Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\\
-\end{titlepage}
+\begin{abstract}
+    % TODO: Nochmal überprüfen!
+    Wir vergleichen zwei Ansätze zur Klassifizierung von Wolken anhand von Bildern:
+        einerseits einen \glqq klassischen\grqq\ Ansatz, in dem auf Grundlage von manuell ausgewählten Merkmalen eine \emph{$k$-nearest-neighbor}-Klassifikation durchgeführt wird;
+        andererseits einen auf \emph{Machine Learning} basierendem Ansatz, in dem die Klassifizierung durch ein neuronales Netz auf Grundlage von von einem \emph{Convolutional Neural Network} extrahierten Merkmalen klassifiziert werden.
+        % TODO: Vortrainierung erwähnen?
+    Wir kommen zum Schluss, dass letzterer Ansatz deutlich besser geeignet ist, aber in beiden Varianten noch Luft für weitere Verbesserungen vorhanden ist.
+\end{abstract}
 
 \section{Einleitung}
 
