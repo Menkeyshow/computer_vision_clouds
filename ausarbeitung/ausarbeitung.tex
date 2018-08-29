@@ -10,6 +10,9 @@
 \usepackage{babelbib}
 
 
+% TODO: Bildunterschriften überarbeiten
+
+
 \begin{document}
 
 \title{Cloud Computing mal anders: Klassifikation von Wolkenbildern mit kNN und CNNs}
@@ -19,7 +22,7 @@
 \begin{abstract}
     % TODO: Nochmal überprüfen!
     Wir vergleichen zwei Ansätze zur Klassifizierung von Wolken anhand von Bildern:
-        einerseits einen \glqq klassischen\grqq\ Ansatz, in dem auf Grundlage von manuell ausgewählten Merkmalen eine \emph{$k$-nearest-neighbor}-Klassifikation durchgeführt wird;
+        einerseits einen \glqq klassischen\grqq\ Ansatz, in dem auf Grundlage von manuell ausgewählten Merkmalen eine \emph{$k$-nearest-neighbor}-Klassifika\-tion durchgeführt wird;
         andererseits einen auf \emph{Machine Learning} basierendem Ansatz, in dem die Klassifizierung durch ein neuronales Netz auf Grundlage von von einem \emph{Convolutional Neural Network} extrahierten Merkmalen klassifiziert werden.
         % TODO: Vortrainierung erwähnen?
     Wir kommen zum Schluss, dass letzterer Ansatz deutlich besser geeignet ist, aber in beiden Varianten noch Luft für weitere Verbesserungen vorhanden ist.
@@ -27,16 +30,13 @@
 
 \section{Einleitung}
 
-% TODO: Einleitung
-%Hier sollte stehen, was under Thema ist, warum es interessant ist, was andere Leute davor schon gemacht haben,
-%was unsere Aufgabe ist, und wie unsere Arbeit aufgebaut ist.---
-
+% TODO: Ich glaube, "wir haben uns dafür entschieden" ist hier etwas unpassend... vielleicht eher einfach darstellen, dass Wolkenklassifizieren ein interessantes und relevantes Problem ist, d.h. etwas historischen Hintergrund, aber auch vielleicht, dass es selbst für Menschen keine triviale Aufgabe ist (z.B. die Klassifizierung erfolgte erst ab dem 19. Jahrhundert!)
 Wir haben uns dafür entschieden, Wolken zu klassifizieren; einerseits aus reiner Neugier, wie gut dies überhaupt möglich ist und andererseits einfach aus eigenem Interesse an Wolken und ihren Formen.
 
 Die Klassifikation von Wolken ist aber nicht nur für Wolken-Enthusiasten interessant, sondern spielt auch eine große Rolle bei der Klimaforschung, Wettervorhersagen und Unwetterwarnungen.
 Allerdings werden dabei eher andere Messmethoden wie Radar, Laser (z.B. LiDAR) oder Radiometer präferiert, bei denen Messungen von Sensoren an verschiedenen Orten (Satellit, Bodenstationen) miteinander kombiniert werden \cite{wang}.
 Es gab aber auch schon zuvor Versuche, nur mit Hilfe von Bildern Wolken zu klassifizieren:
-Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von derselben Position aus und unterschieden dabei sieben verschiedene Wolkenarten(kombinationen), darunter auch den "leeren Himmel".
+Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von derselben Position aus und unterschieden dabei sieben verschiedene Wolkenarten(kombinationen), darunter auch den \glqq leeren Himmel\grqq.
 Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-One-Out Cross-Validation eine Genauigkeit von 97\% \cite{heinle}.
 
 
@@ -44,12 +44,12 @@ Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-O
 
 In dieser Arbeit versuchen wir, Wolken automatisiert zu klassifizieren, und vergleichen dabei zwei unterschiedliche Ansätze:
 der eine Ansatz basiert auf \glqq klassischen\grqq\ Methoden der Computer Vision, das heißt auf händisch ausgewählten Merkmalen wie Mittelwert, Standardabweichung, Farb-Histogrammen und Kantenerkennung, auf deren Grundlage dann ein k-nearest-neighbor-Klassifikator angewendet wird;
-der andere auf den \glqq moderneren\grqq Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
+der andere auf den \glqq moderneren\grqq\ Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
 
 
 \subsection{Aufbau der Arbeit}
 
-In Abschnitt \ref{sec:daten} erläutern wir die Daten, die unserer Arbeit zugrunde liegen, also deren Herkunft, deren Charakteristika, etc.
+In Abschnitt \ref{sec:daten} erläutern wir die Daten, die unserer Arbeit zugrunde liegen, also deren Herkunft, deren Charakteristika, und so weiter.
 In Abschnitt \ref{sec:methodik} folgt die Darlegung unserer Klassifizierungsmethodik, in der auf die Details sowohl des klassischen als auch des auf Maschine Learning basierenden Ansatzes eingegangen wird.
 Abschließend werden beide Ansätze in Abschnitt \ref{sec:experimente} evaluiert und auf quantitativer Ebene verglichen, dabei erfolgt auch ein Vergleich mit der Leistung einer (kleinen) Gruppe von (nicht fachkundigen) Menschen.
 Unser Fazit ist in Abschnitt \ref{sec:fazit} dargestellt.
@@ -60,38 +60,43 @@ Unser Fazit ist in Abschnitt \ref{sec:fazit} dargestellt.
 \section{Daten}
 \label{sec:daten}
 
-% TODO: Daten
-%Hier sollte stehen, woher unsere Daten kommen, wie sie aussehen, was für Charakteristika sie haben, und was so klassentypische Einträge sind.
-
-Unsere Bilder haben wir von der Website Wolken-online.de und von der World Meteorological Organization (WMO).
-Insgesamt standen uns so ca. 800 Bilder zur Verfügung.
-Die Bilder waren meist von individuellen Personen geschossene Fotos vom Himmel. 
+Unser Datensatz besteht aus 833 Farbbildern, die zu ungefähr gleichen Teilen vom Wolkenatlas der Webseite wolken-online.de \cite{wolkenonline} und der Bildergalerie des \emph{International Cloud Atlas} der \emph{World Meteorological Organization} \cite{wmo:images} stammen.
+Die Bilder sind meist von individuellen Personen geschossene Fotos vom Himmel.
 Allerdings ist auf den Bildern oft nicht nur der Himmel zu sehen, sondern auch vor allem am unteren Rand die Erdoberfläche mitsamt Objekten wie Häusern oder Bäumen.
 Außerdem sind gelegentlich mehrere Wolkenarten auf demselben Bild vertreten.
 
+% TODO: Referenz zum International Cloud Atlas? (Zum allgemeinen Teil, nicht speziell zur Bildergalerie)
 Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welche in Abbildung~\ref{fig:cloudtypes} schematisch dargestellt sind.
-Da diese sich untereinander teilweise sehr ähneln und wir lieber weniger Klassen unterscheiden wollen, da wir nur 800 Bilder zur Verfügung haben, haben wir diese in die folgenden vier Hauptgruppen unterteilt:
+Die Wolkenarten unterscheiden sich im Wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden Eigenschaften auf Bildern nur schwer bis gar nicht erkennbar sind.
 
+% TODO: Bildquelle!
 \begin{figure}[h!]
 \centering
-\includegraphics[width=10cm,height=13cm,keepaspectratio]{Cloud_infographic-01.png}
+\includegraphics[height=10cm,keepaspectratio]{Cloud_infographic-01.png}
 \caption{Schematische Darstellung der zehn Wolkengattungen}
     \label{fig:cloudtypes}
 \end{figure}
 
-\begin{itemize}
-\item Cirriform: Cirrus\\123 Bilder
-\item Cumuliform: Cumulus, Cumulonimbus\\294 Bilder
-\item Stratiform: Cirrostratus, Altostratus, Nimbostratus, Stratus\\129 Bilder
-\item Stratocumuliform: Cirrocumulus, Altocumulus, Stratocumulus\\287 Bilder
-\end{itemize}
+Aufgrund der Ähnlichkeit einiger Klassen und der doch recht geringen Anzahl an Bildern im Vergleich zu der Anzahl an Klassen entschieden wir uns für eine Gruppierung in die vier Oberklassen \glqq Cirriform\grqq, \glqq Stratiform\grqq, \glqq Cumuliform\grqq, sowie \glqq Stratocumuliform\grqq, die in Tabelle \ref{table:oberklassen} beschrieben sind.
 
-Die Wolkenarten unterscheiden sich im wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden Eigenschaften auf Bildern nur schwer bis gar nicht erkennbar sind. Die stratiformen Wolken zeichnen sich dadurch aus, dass sie sehr flächig und zusammenhängend sind und meist durchgängig den ganzen Himmel bedecken.
-Die cirriformen Wolken sind gefedert und oft durchsichtig, da sie sehr dünn und gefächert sind.
-Die cumuliformen Wolken haben die Form von großen Haufen, während die stratocumuliformen Wolken die Form von vielen kleinen Haufen haben.
-Leider, wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen sie teils ineinander über, was die Unterscheidung deutlich erschwert.
+% TODO: Nochmal je ein typisches Bild pro Klasse aus unserem "echten" Datensatz????
+
+\begin{table}[h!]
+\begin{tabular}{l | p{3.5cm} | p{3.5cm} | l}
+    Hauptklasse & Unterklassen & Beschreibung & \# Bilder \\ \hline
+    Cirriform & Cirrus & gefedert, oft durchsichtig; sehr dünn und gefächert & 123 \\ \hline
+    Stratiform & Cirrostratus, Altostratus, Nimbostratus, Stratus & sehr flächig, zusammenhängend; meist durchgängige Bedeckung & 129 \\ \hline
+    Cumuliform & Cumulus, Cumulonimbus & große Haufen, \glqq Schäfchenwolken\grqq & 294 \\ \hline
+    Stratocumuliform & Cirrocumulus, Altocumulus, Stratocumulus & viele kleine Haufen über eine große Fläche & 287 \\
+\end{tabular}
+    \caption{Zusammensetzung und Beschreibung unseres Klassifizierungsschemas}
+    \label{table:oberklassen}
+\end{table}
+% TODO: evtl. Umwandlung der Tabelle in eigenständige "Abbildung"
+
+Wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen die Klassen leider teils ineinander über, was die Unterscheidung deutlich erschwert.
 Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich teilweise ebenso in ihren Eigenschaften überschneiden.
-\footnote{Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in \cite{wiki:wolkenarten}.}
+Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in \cite{wiki:wolkenarten}.
 
 \section{Methodik}
 \label{sec:methodik}
@@ -101,19 +106,20 @@ Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich 
 %Warum machen wir es so und nicht anders?
 %Wie funktionieren die Verfahren, die wir nutzen?
 %Auch eine Ablaufgrafik wäre nice.
-Im Folgenden Abschnitt werden wir unseren Ablauf der klassischen Klassifikation als auch die durch das neuronale Netz erläutern.
-Der grobe Ablauf kann dabei anhand von Abbildung \ref{fig:ablauf} verfolgt werden. %Grafik baue ich noch ein, wobei ich nicht weiß, inwiefern ich da genau auf das neuronale Netz eingehen werde, die einzelnen Schichten zu zeigen wäre glaube ich leicht overkill.. - Max
 
-\subsection{Beschaffung der Bilder}
-% TODO: Lukas , vll  kurz erläutern wie du sie aus deren Website gezogen hast
+Im diesem Abschnitt erläutern wir die Methodik der beiden Klassifikationsansätze.
+Eine Übersicht über den groben Ablauf kann in Abbildung \ref{fig:ablauf} gewonnen werden.
+% TODO: Grafik baue ich noch ein, wobei ich nicht weiß, inwiefern ich da genau auf das neuronale Netz eingehen werde, die einzelnen Schichten zu zeigen wäre glaube ich leicht overkill.. --Max
 
-\subsection{Verwertung der Bilder}
+\subsection{Vorverarbeitung der Bilder}
+
 Da die Bilder verschieden waren, mussten wir sie vor der Klassifikation anpassen.
 Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Fotos, auf denen die Wolken kaum erkennbar waren, manuell aussortiert.
 Wie erwähnt war oft der untere Rand des Bildes nicht mehr nur reiner Himmel. Oft waren auch Wiesen oder Bäume zu sehen, die der Klassifizierung Probleme bereiteten.
 Durch eine Binarisierung, die im Kapitel \ref{sec:binary} näher erläutert wird, konnten wir relativ akkurat den Himmel ausschneiden.
 Zum Schluss haben wir die Bilder noch auf die einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten.
 Der Train/Validation-Split beim klassischen Ansatz war 8:2 bzw. 666:167.
+
 
 \subsubsection{Binarisierung} 
 \label{sec:binary}
