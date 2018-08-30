@@ -121,16 +121,7 @@ Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in der \emph{W
 
 Im diesem Abschnitt erläutern wir die Methodik der beiden Klassifikationsansätze.
 Eine Übersicht über den groben Ablauf kann in Abbildung \ref{fig:ablauf} gewonnen werden. 
-Bevor mit der eigentlichen Klassifikation begonnen wird, bereiten wir die Ursprungsbilder zunächst wie in Kapitel \ref{sec:vorverarbeitung} beschrieben vor. 
-Anschließend werden die wenigen Originale nach Kapitel \ref{sec:augmentation} augmentiert.
-
-Im "klassischen"\ Ansatz erfolgt hier nun die Merkmal Extraktion.
-Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und dem Farb-Histogramm haben wir auch eine Kantenerkennung durchgeführt, welche in Kapitel \ref{sec:kanten} erklärt wird.
-Zum Schluss dieses Ansatzes nutzen wir nun einen nearest-neighbor-Klassifikator, der unser Bild durch seine Merkmale mit anderen vergleicht.
-Der zugehörige Train/Validation-Split beim diesem Ansatz war 8:2 bzw. 666:167.
-
-Im neuronalen Ansatz ...
-%TODO: Kurze Beschreibung des CNNs
+Bevor mit der eigentlichen Klassifikation begonnen wird, werden die Ursprungsbilder zunächst möglichst so zugeschnitten, dass nur noch Himmel im Bild vorhanden ist (Abschnitt \ref{sec:vorverarbeitung}).
 
 %TODO: In dieser Grafik ist noch nicht drin, wie das CNN funktioniert! -- Max
 \begin{figure}
@@ -140,6 +131,16 @@ Im neuronalen Ansatz ...
 	\label{fig:ablauf}
 \end{figure}
 
+Im \glqq klassischen\grqq\ Ansatz erfolgt hier nun die Bestimmung der Merkmale.
+Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenerkennung durchgeführt (Abschnitt \ref{sec:kanten}).
+Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierende Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
+Der zugehörige Train/Validation-Split beim diesem Ansatz war 8:2. % TODO: Dieses Detail vielleicht woanders hin?
+
+Beim auf Machine Learning basierten Ansatz wird im Training der doch recht kleine Datensatz durch Data Augmentation kompensiert (Abschnitt \ref{sec:augmentation}).
+Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutional Neural Network (CNN); die extrahierten Merkmale werden dann durch ein Klassifikationsnetz klassifiziert (Abschnitt \ref{sec:neural}).
+% TODO: Training/Validation/Testing split?
+
+
 \subsection{Vorverarbeitung der Bilder}
 \label{sec:vorverarbeitung}
 Da unsere ursprünglichen Bilder in ihren Dimensionen und in ihrer Art und Weise, wie sie entstanden sind sich stark unterscheiden, mussten wir sie vor der eigentlichen Klassifikation anpassen.
@@ -147,7 +148,6 @@ Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Fotos,
 Wie erwähnt war oft der untere Rand des Bildes nicht mehr nur reiner Himmel. Oft waren auch Wiesen oder Bäume zu erkennen, die der Klassifizierung Probleme bereiteten.
 Durch eine Binarisierung und unter Anwendung unseres BoxCut Algorithmus, die in Kapitel \ref{sec:binary} und Kapitel \ref{sec:boxcut} näher erläutert werden, konnten wir relativ akkurat den Himmel vom restlichen Bild trennen.
 Zum Schluss haben wir die Bilder noch auf die einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten.
-
 
 \subsubsection{Binarisierung} 
 \label{sec:binary}
@@ -200,6 +200,13 @@ Wichtig ist hierbei, dass dann die drei Bilder, die aus einem Bild entstanden si
 \caption{Ein Bild wurde zu drei verschiedenen augmentiert}
     \label{fig:augmentation}
 \end{figure}
+
+
+\subsection{Merkmalsextraktion und Klassifizierung}
+\label{sec:neural}
+
+% TODO !!
+
 
 \subsection{Gescheiterte Ansätze}
 %Wollen wir diese section evtl under Experimente reinpacken? Hat ja schließlich nach experimentieren nicht ganz so gut funktioniert :P
