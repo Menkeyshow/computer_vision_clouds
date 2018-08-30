@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}    % für deutsche Umlaute etc. in der Ausgabe
 \usepackage[utf8]{inputenc} % für deutsche Umlaute.
 \usepackage{graphicx}       % um Bilder einzubinden
-\usepackage{subfigure} 	  % um 2 Bilder nebeneinander haben zu können
+\usepackage{subfigure} 	    % um 2 Bilder nebeneinander haben zu können
 \usepackage{hyperref}       % um URLs korrekt einzubinden und Hyperlinks im Dokument zu ermöglichen
 \usepackage{cite}
 \usepackage{babelbib}
@@ -49,12 +49,13 @@ der andere auf den \glqq moderneren\grqq\ Convolutional Neural Networks (CNN), d
 
 \subsection{Aufbau der Arbeit}
 
-In Abschnitt \ref{sec:daten} erläutern wir die Daten, die unserer Arbeit zugrunde liegen, also deren Herkunft, deren Charakteristika, und so weiter.
-In Abschnitt \ref{sec:methodik} folgt die Darlegung unserer Klassifizierungsmethodik, in der auf die Details sowohl des klassischen als auch des auf Maschine Learning basierenden Ansatzes eingegangen wird.
+In Abschnitt \ref{sec:daten} erläutern wir die Daten, die unserer Arbeit zugrunde liegen, also deren Herkunft, deren Charakteristika und unsere Klasseneinteilung.
+In Abschnitt \ref{sec:methodik} folgt die Darlegung unserer Klassifizierungsmethodik, in der auf die Details sowohl des klassischen als auch des auf Machine Learning basierenden Ansatzes eingegangen wird.
 Abschließend werden beide Ansätze in Abschnitt \ref{sec:experimente} evaluiert und auf quantitativer Ebene verglichen, dabei erfolgt auch ein Vergleich mit der Leistung einer (kleinen) Gruppe von (nicht fachkundigen) Menschen.
 Unser Fazit ist in Abschnitt \ref{sec:fazit} dargestellt.
  
 % TODO: soll dieser Satz vvvvv wirklich rein? Ich finde den eher unpassend... -- Lukas.
+% Ich finde den jetzt nicht fürchterlich, aber mir ists eigentlich wurscht, ob der drin ist oder nicht. - -Max
 % Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an der Universität Hamburg im Sommersemester 2018.
 
 \section{Daten}
@@ -69,17 +70,28 @@ Außerdem sind gelegentlich mehrere Wolkenarten auf demselben Bild vertreten.
 Der \textit{International Cloud Atlas} unterscheidet zehn Wolkengattungen, welche in Abbildung~\ref{fig:cloudtypes} schematisch dargestellt sind.
 Die Wolkenarten unterscheiden sich im Wesentlichen durch ihre Struktur, Dichte und Höhe, wobei die letzten beiden Eigenschaften auf Bildern nur schwer bis gar nicht erkennbar sind.
 
-% TODO: Bildquelle!
 \begin{figure}[h!]
 \centering
 \includegraphics[height=10cm,keepaspectratio]{Cloud_infographic-01.png}
-\caption{Schematische Darstellung der zehn Wolkengattungen}
+\caption{Schematische Darstellung der zehn Wolkengattungen von \mbox{Met Office}\cite{metoffice}}
     \label{fig:cloudtypes}
 \end{figure}
 
-Aufgrund der Ähnlichkeit einiger Klassen und der doch recht geringen Anzahl an Bildern im Vergleich zu der Anzahl an Klassen entschieden wir uns für eine Gruppierung in die vier Oberklassen \glqq Cirriform\grqq, \glqq Stratiform\grqq, \glqq Cumuliform\grqq, sowie \glqq Stratocumuliform\grqq, die in Tabelle \ref{table:oberklassen} beschrieben sind.
+Aufgrund der Ähnlichkeit einiger Klassen und der doch recht geringen Anzahl an Bildern im Vergleich zu der Anzahl an Klassen entschieden wir uns für eine Gruppierung in die vier Oberklassen \glqq Cirriform\grqq, \glqq Stratiform\grqq, \glqq Cumuliform\grqq, sowie \glqq Stratocumuliform\grqq, die in Tabelle \ref{table:oberklassen} beschrieben und in Abbildung \ref{fig:klassen} zu sehen sind.
 
-% TODO: Nochmal je ein typisches Bild pro Klasse aus unserem "echten" Datensatz????
+\begin{figure}[h!]
+	\subfigure[Cirriform]
+	{\includegraphics[width=0.53\textwidth]{cirriform7}}
+	\subfigure[Stratiform]
+	{\includegraphics[width=0.53\textwidth]{stratiform30}}
+	\\
+	\subfigure[Cumuliform]
+	{\includegraphics[width=0.53\textwidth]{cumuliform0}}
+	\subfigure[Stratocumuliform]
+	{\includegraphics[width=0.53\textwidth]{stratocumuliform171}}
+	\caption{Übersicht der vier Oberklassen}
+	\label{fig:klassen}
+\end{figure}
 
 \begin{table}[h!]
 \begin{tabular}{l | p{3.5cm} | p{3.5cm} | l}
@@ -96,7 +108,7 @@ Aufgrund der Ähnlichkeit einiger Klassen und der doch recht geringen Anzahl an 
 
 Wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen die Klassen leider teils ineinander über, was die Unterscheidung deutlich erschwert.
 Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich teilweise ebenso in ihren Eigenschaften überschneiden.
-Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in \cite{wiki:wolkenarten}.
+Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man auf \emph{\mbox{Wikipedia}} \cite{wiki:wolkenarten}.
 
 \section{Methodik}
 \label{sec:methodik}
@@ -108,31 +120,49 @@ Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in \cite{wiki:
 %Auch eine Ablaufgrafik wäre nice.
 
 Im diesem Abschnitt erläutern wir die Methodik der beiden Klassifikationsansätze.
-Eine Übersicht über den groben Ablauf kann in Abbildung \ref{fig:ablauf} gewonnen werden.
-% TODO: Grafik baue ich noch ein, wobei ich nicht weiß, inwiefern ich da genau auf das neuronale Netz eingehen werde, die einzelnen Schichten zu zeigen wäre glaube ich leicht overkill.. --Max
+Eine Übersicht über den groben Ablauf kann in Abbildung \ref{fig:ablauf} gewonnen werden. 
+Bevor mit der eigentlichen Klassifikation begonnen wird, bereiten wir die Ursprungsbilder zunächst wie in Kapitel \ref{sec:vorverarbeitung} beschrieben vor. 
+Anschließend werden die wenigen Originale nach Kapitel \ref{sec:augmentation} augmentiert.
+
+Im "klassischen"\ Ansatz erfolgt hier nun die Merkmal Extraktion.
+Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und dem Farb-Histogramm haben wir auch eine Kantenerkennung durchgeführt, welche in Kapitel \ref{sec:kanten} erklärt wird.
+Zum Schluss dieses Ansatzes nutzen wir nun einen nearest-neighbor-Klassifikator, der unser Bild durch seine Merkmale mit anderen vergleicht.
+Der zugehörige Train/Validation-Split beim diesem Ansatz war 8:2 bzw. 666:167.
+
+Im neuronalen Ansatz ...
+%TODO: Kurze Beschreibung des CNNs
+
+%TODO: In dieser Grafik ist noch nicht drin, wie das CNN funktioniert! -- Max
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\linewidth,height=0.68\paperheight]{Ablauf}
+	\caption{Ablauf der Klassifikation}
+	\label{fig:ablauf}
+\end{figure}
 
 \subsection{Vorverarbeitung der Bilder}
-
-Da die Bilder verschieden waren, mussten wir sie vor der Klassifikation anpassen.
+\label{sec:vorverarbeitung}
+Da unsere ursprünglichen Bilder in ihren Dimensionen und in ihrer Art und Weise, wie sie entstanden sind sich stark unterscheiden, mussten wir sie vor der eigentlichen Klassifikation anpassen.
 Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Fotos, auf denen die Wolken kaum erkennbar waren, manuell aussortiert.
-Wie erwähnt war oft der untere Rand des Bildes nicht mehr nur reiner Himmel. Oft waren auch Wiesen oder Bäume zu sehen, die der Klassifizierung Probleme bereiteten.
-Durch eine Binarisierung, die im Kapitel \ref{sec:binary} näher erläutert wird, konnten wir relativ akkurat den Himmel ausschneiden.
+Wie erwähnt war oft der untere Rand des Bildes nicht mehr nur reiner Himmel. Oft waren auch Wiesen oder Bäume zu erkennen, die der Klassifizierung Probleme bereiteten.
+Durch eine Binarisierung und unter Anwendung unseres BoxCut Algorithmus, die in Kapitel \ref{sec:binary} und Kapitel \ref{sec:boxcut} näher erläutert werden, konnten wir relativ akkurat den Himmel vom restlichen Bild trennen.
 Zum Schluss haben wir die Bilder noch auf die einheitliche Größe von 500x500 Pixel gebracht, bei welcher die Algorithmen noch schnell ein genaues Ergebnis berechnen konnten.
-Der Train/Validation-Split beim klassischen Ansatz war 8:2 bzw. 666:167.
 
 
 \subsubsection{Binarisierung} 
 \label{sec:binary}
-Die Binarisierung haben wir mithilfe des arithmetischen Mittels über das gesamte Bild und dem Hue + Value aus dem HSV-Farbraum implementiert. % TODO: Wollen wir hier nicht eher die deutschen Begriffe verwenden? Hellwert, Farbwert, Sättigung und co?
-Ein Pixel gehört dann zum Vordergrund, falls er heller ist als der Durchschnitt des gesamten Bildes, und falls er weder grün noch sehr sehr dunkel ist.
-Dies hat nach vielem herum experimentieren für ein gutes Ergebnis gesorgt \ref{fig:boxAlg}.
+Die Binarisierung haben wir mithilfe des arithmetischen Mittels über das gesamte Bild sowie dem Farbwert und der Helligkeit aus dem HSV-Farbraum implementiert.
+So gehört  ein Pixel dann zum Vordergrund, falls er heller ist als der Durchschnitt der Helligkeit des gesamten Bildes und falls er weder grün noch sehr stark dunkel ist.
+Dies hat nach vielem herum experimentieren für ein gutes Ergebnis gesorgt. \ref{fig:boxAlg}.
 
-\subsubsection{BoxCut Algrotithmus}
-Nach dem Binarisieren wird von unten eine rechteckige Fläche des Bildes ausgewählt. Die Höhe beträgt dabei ca. 0.1 %oder lieber 10%?
-des Bildes und die gesamte Breite (dargestellt durch das rote Rechteck im mittleren binarisierten Bild in \ref{fig:boxAlg}). In dem markierten Rechteck wird dann der durchschnittliche Farbwert berechnet, und falls dieser über unserem Treshhold%auch hier: lieber deutsch?
-von 0.35 liegt, gehört ein Teil der Box wahrscheinlich zum Himmel, sodass das Bild bis zum unteren Teil der Box geschnitten wird.
-Falls aber der durchschnittliche Farbwert unter dem Treshhold liegt, wird die Box um die Hälfte ihrer Höhe nach oben verschoben, bis letztlich der Treshhold überschritten wird.
-%Hat der nächste Satz eigentlich eine Aussage :P? 
+\subsubsection{BoxCut Algorithmus}
+\label{sec:boxcut}
+Nach dem Binarisieren versucht der BoxCut Algorithmus den eigentlichen Himmel vom Rest des Bildes auszuscheiden. Dazu wird von unten eine rechteckige Fläche des Bildes ausgewählt. Die Höhe beträgt dabei ca. 0.1 %oder lieber 10%?
+des Bildes und die seine gesamte Breite (dargestellt durch das rote Rechteck im mittleren binarisierten Bild in \ref{fig:boxAlg}). In dem markierten Rechteck wird dann der durchschnittliche Farbwert berechnet.
+Liegt dieser über unserem Treshhold %auch hier: lieber deutsch?
+von 0.35 liegt, so gehört ein Teil der Box wahrscheinlich zum Himmel, sodass das Bild bis zum unteren Teil der Box geschnitten wird.
+Falls aber der durchschnittliche Farbwert unter dem Treshhold liegen sollte, so wird die Box um die Hälfte ihrer Höhe nach oben verschoben. Dies wird solange fortgeführt, bis letztlich der Treshhold überschritten wird und das Bild zugeschnitten wird.
+%TODO: Hat der nächste Satz eigentlich eine Aussage :P? -- Max 
 Wir haben mit vielen Bildern experimentiert, sodass wir unsere Werte angepasst haben, um beim Großteil auf ein gutes Ergebnis zu kommen.
 
 
@@ -142,8 +172,9 @@ Wir haben mit vielen Bildern experimentiert, sodass wir unsere Werte angepasst h
 \caption{BoxCut-Algorithmus hat den Himmel erfolgreich von der Erde getrennt}
 \label{fig:boxAlg}
 \end{figure}
-
+%TODO: Falsches Kapitel für Kantenzählung? -- Max
 \subsubsection{Kantenzählung}
+\label{sec:kanten}
 Ein Merkmal, welches wir neben dem Mittelwert, der Standardabweichung und den Farb-Histogrammen verwenden, misst die Anzahl der Kanten auf den Bildern.
 Dazu wird zuerst das Bild in ein Graustufenbild umgewandelt, da man somit nicht die Kanten für jeden Farbwert im RGB-Farbraum einzeln berechnet werden müssen. Als nächstes wird ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Hilfe des Sobel-Filters ein Kantenbild erzeugt.
 Dort, wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher.
@@ -157,6 +188,7 @@ Diese Werte werden dann zeilenweise aufsummiert, sodass ein Histogramm wie auf d
 \end{figure}
 
 \subsection{Augmentation der Bilder}
+\label{sec:augmentation}
 Da wir nur 800 Bilder zur Verfügung hatten, war es besonders für unser Convolutional Neural Network wichtig, mehr Bilder durch Augmentation zu erzeugen.
 Hier haben wir uns dafür entschieden, dass nach dem Ausschneiden des Himmels%referenz auf die zugehörige Sektion ja/nein?
 ein Bild jeweils in drei Teile geteilt wird wie in Abbildung \ref{fig:augmentation} zu erkennen.
@@ -175,7 +207,7 @@ Wir hatten noch zusätzliche Merkmale implementiert, die nicht gut genug funktio
 Ein Ansatz war es das Region Growing anzuwenden, um so aus den Bildern die Zusammenhangskomponenten der Wolken auszuscheiden oder auch um die Frequenzen der Regionen aus diesen abzuleiten.
 Besonders bei der Klassifizierung von Cumuluswolken %"Schäfchenwolken"
 wäre die Anzahl der Zusammenhangskomponenten sehr aussagekräftig gewesen.
-Wir konnten das Region Growing leider nicht mit unseren Daten verwenden, da auf vielen Bildern die Wolken ineinander übergehen und trotz Runterskalierung auf 50p x 50p, die Berechnung pro Bild noch bis zu 30 Sekunden gedauert hat.
+Wir konnten das Region Growing leider nicht mit unseren Daten verwenden, da auf vielen Bildern die Wolken ineinander übergehen und trotz Runterskalierung auf 50p x 50p, die Berechnung pro Bild noch immer bis zu 30 Sekunden gedauert hat.
 
 
 \section{Experimente und Ergebnisse}
@@ -184,7 +216,7 @@ In diesem Abschnitt werden die erzielten Ergebnisse unter verschiedenen Paramete
 
 \subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
 Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 49\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
-%Was bedeutet der "grau" Eintrag in der ersten Tabelle?
+%TODO: Was bedeutet der "grau" Eintrag in der ersten Tabelle? -- Max
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|l|}
  \hline
@@ -260,7 +292,7 @@ Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithi
 Da uns aufgefallen ist, dass es nicht nur für den Computer sondern auch für uns schwierig ist, die Wolken zu klassifizieren, haben wir uns dazu entschieden, eine kleine Studie durchzuführen.
 Bei dieser Studie sollten die sechs getesteten Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen.
 Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Klasse sechs Trainingsbilder als Referenz.
-Dabei wurde eine Durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer in Anhang 1 %oder der wievielte Anhang auch immer.. bitte aktualisieren/korrigieren
+Dabei wurde eine durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer in Anhang 1 %oder der wievielte Anhang auch immer.. bitte aktualisieren/korrigieren
 geschildert.
 
 % TODO: Zumindest oberflächlicher Vergleich der verschiedenen Ansätze und der Menschen.
@@ -278,11 +310,12 @@ Nicht nur innerhalb einer Wolkenart unterscheiden sich die Bilder teils sehr sta
 Und da es sogar für Menschen schwer ist, viele Bilder ihrer richtigen Kategorie zuzuordnen, hatten wir besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erwartet.
 Allerdings sind wir mit 49\% für die klassische Methodik schon sehr zufrieden, da dies noch weit besser ist, als ein zufälliges Zuordnen der Klassen.
 
-Beim Neuronale Netze .... % TODO
+Bei Neuronale Netzen .... % TODO
 
 Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei gleicher Helligkeit oder aber vom selben Standpunkt aus.
 Allerdings müsste man dann äußerst vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder so nicht zum overfitten der Ergebnisse führen.%Sollte das evtl in die Bibliografie hinein?
 
+% TODO: In der Bilbiografie selbst spielt die Formatierung der Autoren noch verrückt.
 \bibliographystyle{babplain}
 \bibliography{bibliography}
 
