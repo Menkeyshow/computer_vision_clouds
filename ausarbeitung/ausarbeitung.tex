@@ -194,6 +194,8 @@ Hier haben wir uns dafür entschieden, dass nach dem Ausschneiden des Himmels%re
 ein Bild jeweils in drei Teile geteilt wird wie in Abbildung \ref{fig:augmentation} zu erkennen.
 Wichtig ist hierbei, dass dann die drei Bilder, die aus einem Bild entstanden sind, entweder alle in den Test- oder in den Validation-Split aufgenommen werden.
 
+% TODO: Keras: weitere Data augmentation. Auswirkung auf Leistung?
+
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{Augmentation}
@@ -205,7 +207,15 @@ Wichtig ist hierbei, dass dann die drei Bilder, die aus einem Bild entstanden si
 \subsection{Merkmalsextraktion und Klassifizierung}
 \label{sec:neural}
 
-% TODO !!
+% TODO Ausarbeiten!!
+Merkmalsextraktion durch das bei Keras mitgelieferte Xception-Netz.
+Grobe Funktionsweise des Xception-Netzes.
+Warum vortrainiertes Netz?
+Warum keine weitere Anpassung des Netzes (oder: weitere Arbeit?).
+
+Architektur des Klassifikationsnetzes (Dropout, sonst Fully-Connected).
+Warum Dropout?
+Warum diese Architektur?
 
 
 \subsection{Gescheiterte Ansätze}
@@ -286,6 +296,8 @@ Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithi
 \end{figure}
 
 \subsection{Neuronale Netze}
+% TODO: Leistung der Neuronalen netze
+
 % TODO: Fazit
 %Wie sehen unsere Ergebnisse aus?
 %Wie verändern sich die Ergebnisse durch die CNNs?
@@ -323,6 +335,7 @@ Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, w
 Allerdings müsste man dann äußerst vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder so nicht zum overfitten der Ergebnisse führen.%Sollte das evtl in die Bibliografie hinein?
 
 % TODO: In der Bilbiografie selbst spielt die Formatierung der Autoren noch verrückt.
+% ^ Sehe ich jetzt nicht, was denn genau? -- Lukas
 \bibliographystyle{babplain}
 \bibliography{bibliography}
 
