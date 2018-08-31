@@ -10,9 +10,6 @@
 \usepackage{babelbib}
 
 
-% TODO: Bildunterschriften überarbeiten
-
-
 \begin{document}
 
 \title{Cloud Computing mal anders: Klassifikation von Wolkenbildern mit kNN und CNNs}
@@ -183,7 +180,7 @@ Diese Werte werden dann zeilenweise aufsummiert, sodass ein Histogramm wie auf d
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{Kantenzaehlung.png}
-\caption{Kantenzählung: Visualisierung der Funktion}
+\caption{Visualisierung der Kantenzählungs-Funktion}
     \label{fig:kaz}
 \end{figure}
 
@@ -199,7 +196,7 @@ Wichtig ist hierbei, dass dann die drei Bilder, die aus einem Bild entstanden si
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{Augmentation}
-\caption{Ein Bild wurde zu drei verschiedenen augmentiert}
+\caption{Aus einem Originalbild werden drei verschiedene, aber sich überlappende Trainingsbilder}
     \label{fig:augmentation}
 \end{figure}
 
@@ -291,7 +288,7 @@ Während der Boxplot vermuten lässt, die stratiformen Wolken ließen sich mithi
 {\includegraphics[width=0.53\textwidth]{edge_count_boxplot.png}}
 \subfigure[Swarmplot Kantenzählung]
 {\includegraphics[width=0.53\textwidth]{edge_count_swarmplot.png}}
-\caption{Kantenzählung: Unterschiede der Klassen}
+\caption{Unterschiede in den Kantenzählungswerten pro Klasse}
     \label{fig:kbs}
 \end{figure}
 
