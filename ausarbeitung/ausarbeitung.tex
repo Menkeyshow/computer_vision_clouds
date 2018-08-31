@@ -216,6 +216,9 @@ Die von \emph{Xception} errechneten 2048 Merkmale wurden nun durch ein weiteres,
 Hier folgen auf zwei Fully-connected Layer mit 128 Neuronen und ReLU-Aktivierung ein letzter Fully-connected Layer mit 4 Neuronen und Softmax-Aktivierung, die als Ausgabe dient.
 Zwischen den Schichten wurden je 60\% der Verbindungen gekappt, um Overfitting vorzubeugen.
 
+% TODO: Loss-Funktion (Categorical Crossentropy), Optimierer (SGD, Learning Rate 0.001, Momentum 0.9)
+% TODO: Train/Validatoin/Test split (0.64/0.16/0.2)
+
 In der Anwendung des Netzes auf Testfälle wurde nun der Input in drei verschiedene, sich teils überlappende, Segmente aufgeteilt (s. Abbildung \ref{fig:augmentation}), und die Klassifizierungspipeline dann auf jedes Segment angewendet, die dabei resultierenden Gewichte der Outputschicht summiert, und die Kategorie mit dem höchsten Gewicht als Klassifizierung gewählt.
 
 \begin{figure}[h!]
