@@ -131,8 +131,8 @@ Bevor mit der eigentlichen Klassifikation begonnen wird, werden die Ursprungsbil
 
 Im \glqq klassischen\grqq\ Ansatz erfolgt hier nun die Bestimmung der Merkmale.
 Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenerkennung durchgeführt (Abschnitt \ref{sec:kanten}).
-Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierende Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
-Der zugehörige Train/Validation-Split beim diesem Ansatz war 8:2. % TODO: Dieses Detail vielleicht woanders hin?
+Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierenden Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
+Der zugehörige Train/Validation-Split bei diesem Ansatz war 8:2. % TODO: Dieses Detail vielleicht woanders hin?
 
 Beim auf Machine Learning basierten Ansatz wird im Training der doch recht kleine Datensatz durch Data Augmentation kompensiert (Abschnitt \ref{sec:augmentation}).
 Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutional Neural Network (CNN); die extrahierten Merkmale werden dann durch ein Klassifikationsnetz klassifiziert (Abschnitt \ref{sec:neural}).
