@@ -170,7 +170,12 @@ Wir haben mit vielen Bildern experimentiert, sodass wir unsere Werte angepasst h
 \caption{BoxCut-Algorithmus hat den Himmel erfolgreich von der Erde getrennt}
 \label{fig:boxAlg}
 \end{figure}
-%TODO: Falsches Kapitel für Kantenzählung? -- Max
+
+
+\subsection{Klassischer Ansatz}
+
+% TODO: Es fehlt noch eine genauere Beschreibung des klassischen Ansatzes..., sprich, die finalen Ergebnisse, die im "Experimente"-Abschnitt beschrieben werden, sollten hier zusammengefasst stehen... oder zumindest so grob...
+
 \subsubsection{Kantenzählung}
 \label{sec:kanten}
 Ein Merkmal, welches wir neben dem Mittelwert, der Standardabweichung und den Farb-Histogrammen verwenden, misst die Anzahl der Kanten auf den Bildern.
@@ -185,39 +190,44 @@ Diese Werte werden dann zeilenweise aufsummiert, sodass ein Histogramm wie auf d
     \label{fig:kaz}
 \end{figure}
 
-\subsection{Augmentation der Bilder}
-\label{sec:augmentation}
-Da wir nur 800 Bilder zur Verfügung hatten, war es besonders für unser Convolutional Neural Network wichtig, mehr Bilder durch Augmentation zu erzeugen.
-Hier haben wir uns dafür entschieden, dass nach dem Ausschneiden des Himmels%referenz auf die zugehörige Sektion ja/nein?
-ein Bild jeweils in drei Teile geteilt wird wie in Abbildung \ref{fig:augmentation} zu erkennen.
-Wichtig ist hierbei, dass dann die drei Bilder, die aus einem Bild entstanden sind, entweder alle in den Test- oder in den Validation-Split aufgenommen werden.
 
-% TODO: Keras: weitere Data augmentation. Auswirkung auf Leistung?
+\subsection{Machine-Learning-Ansatz}
+
+\subsubsection{Augmentation der Bilder}
+\label{sec:augmentation}
+
+Um trotz des recht kleinen Datensatzes akzeptable Ergebnisse zu erzielen, haben wir Data Augmentation eingesetzt.
+Zuerst wurde jedes Original-Trainingsbild halbiert, sodass sich effektiv die Anzahl der Trainingsbilder verdoppelt.
+Weiterhin wurde die in Keras verfügbare Data-Augmentation-Funktionalität genutzt, woduch im Training bilder zufällig gespiegelt, rotiert, geschert, sowie gezoomt wurden.
+Beide Maßnahmen erhöhten die Genauigkeit des Endsystems deutlich.
+
+Trainiert wurde auf 4096 Bildern---eine höhere Anzahl an Bildern brachte keine signifikante Genauigkeitsverbesserung.
+
+
+\subsubsection{Merkmalsextraktion und Klassifizierung}
+\label{sec:neural}
+
+Bei der Merkmalsextraktion wurde darauf verzichtet, ein eigenes CNN zu konstruieren und zu trainieren.
+Stattdessen verwenden wir, wieder aufgrund der geringen Datensatzgröße, ein in Keras vorhandenes, auf ImageNet vortrainiertes Netz.
+Die Wahl fiel dabei auf \emph{Xception}. % TODO: Referenz?
+Wir wählten es aufgrund der (verglichen mit den anderen in Keras vorhanden Netzen) hohen Genauigkeit bzgl.\ ImageNet.\footnote{Zwar hat \emph{Xception} zum aktuellen Zeitpunkt nicht die höchste Genauigkeit---dieses Netz wäre \emph{InceptionResNetV2}, wobei dieses nur ca. einen Prozentpunkt besser abschneidet---ist aber 60\% kleiner als \emph{InceptionResNetV2} und auch deutlich performanter.}
+
+Die von \emph{Xception} errechneten 2048 Merkmale wurden nun durch ein weiteres, von uns konstruiertes neuronales Netz konstruiert.
+Hier folgen auf zwei Fully-connected Layer mit 128 Neuronen und ReLU-Aktivierung ein letzter Fully-connected Layer mit 4 Neuronen und Softmax-Aktivierung, die als Ausgabe dient.
+Zwischen den Schichten wurden je 60\% der Verbindungen gekappt, um Overfitting vorzubeugen.
+
+In der Anwendung des Netzes auf Testfälle wurde nun der Input in drei verschiedene, sich teils überlappende, Segmente aufgeteilt (s. Abbildung \ref{fig:augmentation}), und die Klassifizierungspipeline dann auf jedes Segment angewendet, die dabei resultierenden Gewichte der Outputschicht summiert, und die Kategorie mit dem höchsten Gewicht als Klassifizierung gewählt.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{Augmentation}
-\caption{Aus einem Originalbild werden drei verschiedene, aber sich überlappende Trainingsbilder}
+\caption{Aus einem Originalbild werden drei verschiedene, aber sich überlappende Bilder}
     \label{fig:augmentation}
 \end{figure}
 
 
-\subsection{Merkmalsextraktion und Klassifizierung}
-\label{sec:neural}
-
-% TODO Ausarbeiten!!
-Merkmalsextraktion durch das bei Keras mitgelieferte Xception-Netz.
-Grobe Funktionsweise des Xception-Netzes.
-Warum vortrainiertes Netz?
-Warum keine weitere Anpassung des Netzes (oder: weitere Arbeit?).
-
-Architektur des Klassifikationsnetzes (Dropout, sonst Fully-Connected).
-Warum Dropout?
-Warum diese Architektur?
-
-
 \subsection{Gescheiterte Ansätze}
-%Wollen wir diese section evtl under Experimente reinpacken? Hat ja schließlich nach experimentieren nicht ganz so gut funktioniert :P
+% TODO: Diese section sollte bei den Experimenten stehen!? Hat ja schließlich nach Experimentieren nicht ganz so gut funktioniert :P
 Wir hatten noch zusätzliche Merkmale implementiert, die nicht gut genug funktioniert haben, um sie zu verwenden.
 Ein Ansatz war es das Region Growing anzuwenden, um so aus den Bildern die Zusammenhangskomponenten der Wolken auszuscheiden oder auch um die Frequenzen der Regionen aus diesen abzuleiten.
 Besonders bei der Klassifizierung von Cumuluswolken %"Schäfchenwolken"
