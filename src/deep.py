@@ -27,15 +27,16 @@ def set_up_logger(name):
 
 def move_data_into_categorized_directories():
     dirname = "../temp/deep/categorized/"
-    if util.ensure_directory_exists(dirname):
-        logger.info("found categorized images in " + dirname + ", proceeding")
-        return dirname
-
-    logger.info("couldn't find categorized images in {}, copying images now"
-                .format(dirname))
 
     train_dirname = dirname + "train/"
     test_dirname = dirname + "test/"
+
+    if util.ensure_directory_exists(dirname):
+        logger.info("found categorized images in " + dirname + ", proceeding")
+        return train_dirname, test_dirname
+
+    logger.info("couldn't find categorized images in {}, copying images now"
+                .format(dirname))
 
     util.ensure_directory_exists(train_dirname)
     util.ensure_directory_exists(test_dirname)
@@ -53,15 +54,15 @@ def move_data_into_categorized_directories():
             sublabeldirname = "../data/" + cloud_type + "/"
             for filename in os.listdir(sublabeldirname):
                 if random() > 0.2:
-                    img = imread(sublabeldirname + filename)
-                    height = img.shape[0]
+                    img = util.cropImage(imread(sublabeldirname + filename))
                     width = img.shape[1]
                     imsave(train_labeldirname + "l-" + filename,
-                           img[:(3 * height // 4), :(width // 2), :])
+                           img[:, :(width // 2), :])
                     imsave(train_labeldirname + "r-" + filename,
-                           img[:(3 * height // 4), (width // 2):, :])
+                           img[:, (width // 2):, :])
                 else:
-                    copy(sublabeldirname + filename, test_labeldirname)
+                    imsave(test_labeldirname + filename,
+                           util.cropImage(imread(sublabeldirname + filename)))
 
     logger.info("finished copying images")
 
@@ -223,10 +224,10 @@ def classify_image_test(model):
     test_datagen = ImageDataGenerator(fill_mode='nearest', rescale=1./255)
     generator = test_datagen.flow_from_directory(
             '../temp/deep/categorized/test/',
-            target_size=(340,512),
+            target_size=(256,512),
             batch_size=32)
     
-    num = 173
+    num = 180
     features = np.empty(shape=(3, num, 2048))
     labels = np.empty(shape=(num, 4))
 
@@ -234,13 +235,13 @@ def classify_image_test(model):
     for inputs_batch, labels_batch in generator:
         batch_size = min(num - i, inputs_batch.shape[0])
 
-        left_features_batch = extractor.predict(inputs_batch[:batch_size, :256, :256])
+        left_features_batch = extractor.predict(inputs_batch[:batch_size, :, :256])
         features[0, i:(i + batch_size)] = left_features_batch
 
-        middle_features_batch = extractor.predict(inputs_batch[:batch_size, :256, 128:384])
+        middle_features_batch = extractor.predict(inputs_batch[:batch_size, :, 128:384])
         features[1, i:(i + batch_size)] = middle_features_batch
 
-        right_features_batch = extractor.predict(inputs_batch[:batch_size, :256, 256:])
+        right_features_batch = extractor.predict(inputs_batch[:batch_size, :, 256:])
         features[2, i:(i + batch_size)] = right_features_batch
 
         labels[i:(i + batch_size)] = labels_batch[:batch_size]
