@@ -50,11 +50,7 @@ In Abschnitt \ref{sec:daten} erläutern wir die Daten, die unserer Arbeit zugrun
 In Abschnitt \ref{sec:methodik} folgt die Darlegung unserer Klassifizierungsmethodik, in der auf die Details sowohl des klassischen als auch des auf Machine Learning basierenden Ansatzes eingegangen wird.
 Abschließend werden beide Ansätze in Abschnitt \ref{sec:experimente} evaluiert und auf quantitativer Ebene verglichen, dabei erfolgt auch ein Vergleich mit der Leistung einer (kleinen) Gruppe von (nicht fachkundigen) Menschen.
 Unser Fazit ist in Abschnitt \ref{sec:fazit} dargestellt.
-% Entstanden ist diese Ausarbeitung im Rahmen des Praktikums 'Computervision' an der Universität Hamburg im Sommersemester 2018.
- 
-% TODO: soll dieser Satz vvvvv wirklich rein? Ich finde den eher unpassend... -- Lukas.
-% Ich finde den jetzt nicht fürchterlich, aber mir ists eigentlich wurscht, ob der drin ist oder nicht. - -Max
-% ich finde es sinnvoll, in meinem Proseminar (bei christians cheffin), haben wir egsagt bekommen, das wir das da mit reinschreiben sollen,( könnte auch in die Einleiteung)- aber weigentlich ist mir das auch wurscht, denn ich glaube es macht keinen großen unterschied :D-- ali
+
 
 \section{Daten}
 \label{sec:daten}
@@ -304,47 +300,70 @@ Besonders bei der Klassifizierung von Cumuluswolken
 wäre die Anzahl der Zusammenhangskomponenten sehr aussagekräftig gewesen.
 Wir konnten das Region Growing leider nicht mit unseren Daten verwenden, da auf vielen Bildern die Wolken ineinander übergehen und trotz Runterskalierung auf 50p x 50p, die Berechnung pro Bild noch immer bis zu 30 Sekunden gedauert hat.
 
-\subsection{Neuronale Netze}
-% TODO: Leistung der Neuronalen netze
 
-% TODO: Fazit
-%Wie sehen unsere Ergebnisse aus?
-%Wie verändern sich die Ergebnisse durch die CNNs?
+\subsection{Neuronale Netze}
+
+Unser auf neuronalen Netzen basierendes System erreichte eine Klassifizierungsgenauigkeit von 65.6\% auf einem aus 20\% des Datensatzes bestehendem Testdatensatz, der kein Bild mit dem Trainingsdatensatz gemeinsam hat.
+
+Aus der Konfusionsmatrix (Tabelle \ref{tab:confusionNeural}) ist zu erkennen, dass cumuliforme Wolken besonders gut erkannt werden, und cirriforme Wolken vergleichsweise schlecht.
+Weiterhin wird ein recht hoher Anteil an Bildern fälschlicherweise als stratocumuliform klassifiziert (besonders cirriforme Wolken), ähnliches gilt für cumuliforme Wolken.
+
+Wir vermuteten, dass dies an der recht ungleichen Verteilung der verschiedenen Labels im Datensatz liegt (siehe Tabelle \ref{table:oberklassen}).
+Ein erneuter Testdurchlauf nach Angleichen der Klassengrößen durch entfernen von Bilderns aus überrepräsentierten Klassen bestätigte diese Vermutung.
+Im Allgemeinen sank zwar die Genauigkeit deutlich (um ca. 8 Prozentpunkte), jedoch verschwanden die beschriebenen Anomalien.
+Aufgrund des allgemeinen Genauigkeitsverlust, und da auch in Alltag die Wolkenformen eher so verteilt sind wie im ursprünglichen Datensatz, entschieden wir uns dafür, diesen unverändert beizubehalten.
+% TODO: Auch hierfür eine Konfusionsmatrix... ich habe die Daten verloren, vielleicht lasse ich das System morgen nochmal laufen, sonst muss das so "mündlich" beschrieben reichen. -- Lukas
+
+% TODO: Wie schnell sind unsere Verfahren?
 %Was passiert, wenn man einzelne Teile des Systems austauscht oder Merkmale entfernt (dies evtl.\ auch mit Diagrammen zeigen)?
-%Wie schneidet das System pro Klasse ab?
 %Wie wirken sich Änderungen der Parameter/Hyperpara\-meter auf die Ergebnisse aus?
-%Wie schnell sind unsere Verfahren?
+
+\begin{table}
+    \begin{tabular}{| l | l | l | l | l |}
+        \hline
+        Label & cir & cum & str & str-cum \\ \hline
+        Cirriform (cir) & 40\% & 14\% & 2\% & 44\% \\ \hline
+        Cumuliform (cum) & 2\% & 81\% & 2\% & 15\% \\ \hline
+        Stratiform (str) & 5\% & 18\% & 56\% & 21\% \\ \hline
+        Stratocumuliform (str-cum) & 9\% & 24\% & 4\% & 64\% \\ \hline
+    \end{tabular}
+    \caption{Konfusionsmatrix des auf neuronalen Netzen basierenden Klassifikators. Zeilen sind die wirklichen Labels, Spalten die vom Klassifikator errechneten Labels. 80\% heißt, dass 80\% der Bilder mit dem gegebenen echten Label das gegebenen errechnete Label haben}
+    \label{tab:confusionNeural}
+\end{table}
 
 \subsection{Menschen klassifizieren Wolken}
 
 Da uns aufgefallen ist, dass es nicht nur für den Computer sondern auch für uns schwierig ist, die Wolken zu klassifizieren, haben wir uns dazu entschieden, eine kleine Studie durchzuführen.
-Bei dieser Studie sollten die sechs getesteten Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen.
+Bei dieser Studie sollten die sechs Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen.
 Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Klasse sechs Trainingsbilder als Referenz.
 Dabei wurde eine durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer im "CloudGame.pdf" im Anhang geschildert.
 
-Die erreichte Genauigkeit von 51\% ist sehr nah an dem Ergebnis unseres klassischen Ansatzes dran. Allerdings sind die 36 Bilder, welche für die Testpersonen gewählt wurden, gut klassifizierbare Bilder, das bedeutet.
-% TODO: Zumindest oberflächlicher Vergleich der verschiedenen Ansätze und der Menschen.
+Die erreichte Genauigkeit von 51\% ist sehr nah an dem Ergebnis unseres klassischen Ansatzes dran, liegen überraschenderweise jedoch unter den Ergebnissen des Maschine-Learning-Ansatzes.
+Zu beachten ist jedoch, dass die 36 Bilder, welche für die Testpersonen gewählt wurden, gut klassifizierbare Bilder waren.
+Im Allgemeinen ist also damit zurechnen, dass ungeschulte Menschen noch schlechter abschneiden.
 
 \section{Fazit}
 \label{sec:fazit}
 
-% TODO: Fazit
+% Fazit
 %Was ist unser Fazit?
 %Zusammenfassung und Einordnung unserer Ergebnisse.
 %Ausblick?
 
 Insgesamt können wir sagen, dass es eine Herausforderung war, die verschiedenen Bilder zu klassifizieren.
 Nicht nur innerhalb einer Wolkenart unterscheiden sich die Bilder teils sehr stark voneinander, auch ist es vor allem die Ähnlichkeit vieler Bilder in jeweils verschiedenen Wolkenklassen, die die korrekte Klassifizierung der Wolken erschwert.
-Und da es sogar für Menschen schwer ist, viele Bilder ihrer richtigen Kategorie zuzuordnen, hatten wir besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erwartet.
+Und da es sogar für Menschen schwer ist, viele Bilder ihrer richtigen Kategorie zuzuordnen, hatten wir besonders bei der klassischen Methode nichtall zu genaue Ergebnisse erwartet.
 Allerdings sind wir mit 49\% für die klassische Methodik schon sehr zufrieden, da dies noch weit besser ist, als ein zufälliges Zuordnen der Klassen.
 
-Bei Neuronale Netzen .... % TODO
+Auch beim auf neuronalen Netzen aufbauenden Ansatz waren wir von der erreichten Leitung positiv überrascht, besonders in Hinblick auf den recht kleinen Datensatz.
+Sofern sich die in der Entwicklung festgestellte Beziehung zwischen Datensatzgröße und erreichter Genauigkeit fortsetzt, wäre eine Leistung jenseits der 75\% nicht überraschend.
+Weiterhin wäre es dann interessant, das zur Merkmalsextraktion genutzte CNN vollständig selbst zu trainieren; dies hatte die aktuelle Datensatzgröße nicht zugelassen.
 
-Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei gleicher Helligkeit oder aber vom selben Standpunkt aus.
-Allerdings müsste man dann äußerst vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder so nicht zum overfitten der Ergebnisse führen.\cite{heinle}
+Ebenso können wir uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei gleicher Helligkeit oder aber vom selben Standpunkt aus.
+Jedoch sind dann auch deutliche Verluste bzgl.\ der Generalisierbarkeit auf andere Situationen zu erwarten.
+% TODO?: vvvv ich kann aus dem referenzierten Paper nicht erkennen, was da mit Overfitting ist. -- Lukas
+% Allerdings müsste man dann äußerst vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder so nicht zum overfitten der Ergebnisse führen.\cite{heinle}
 
-% TODO: In der Bilbiografie selbst spielt die Formatierung der Autoren noch verrückt.
-% ^ Sehe ich jetzt nicht, was denn genau? -- Lukas
 \bibliographystyle{babplain}
 \bibliography{bibliography}
 
