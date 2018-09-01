@@ -46,7 +46,7 @@ Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-O
 \subsection{Unsere Arbeit}
 
 In dieser Arbeit versuchen wir, Wolken automatisiert zu klassifizieren, und vergleichen dabei zwei unterschiedliche Ansätze:
-der eine Ansatz basiert auf \glqq klassischen\grqq\ Methoden der Computer Vision, das heißt auf händisch ausgewählten Merkmalen wie Mittelwert, Standardabweichung, Farb-Histogrammen und Kantenerkennung, auf deren Grundlage dann ein k-nearest-neighbor-Klassifikator angewendet wird.
+der eine Ansatz basiert auf \glqq klassischen\grqq\ Methoden der Computer Vision, das heißt auf händisch ausgewählten Merkmalen wie Mittelwert, Standardabweichung, Farb-Histogrammen und Kantenzählung, auf deren Grundlage dann ein k-nearest-neighbor-Klassifikator angewendet wird.
 Der andere auf den \glqq moderneren\grqq\ Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
 
 
@@ -136,7 +136,7 @@ Bevor mit der eigentlichen Klassifikation begonnen wird, werden die Ursprungsbil
 \end{figure}
 
 Im \glqq klassischen\grqq\ Ansatz erfolgt hier nun die Bestimmung der Merkmale.
-Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenerkennung durchgeführt (Abschnitt \ref{sec:kanten}).
+Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenzählung durchgeführt, bei der die gefundenen Kanten aufsummiert werden (Abschnitt \ref{sec:kanten}).
 Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierenden Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
 
 Beim auf Machine Learning basierten Ansatz wird im Training der doch recht kleine Datensatz durch Data Augmentation kompensiert (Abschnitt \ref{sec:augmentation}).
