@@ -138,7 +138,6 @@ Bevor mit der eigentlichen Klassifikation begonnen wird, werden die Ursprungsbil
 Im \glqq klassischen\grqq\ Ansatz erfolgt hier nun die Bestimmung der Merkmale.
 Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenerkennung durchgeführt (Abschnitt \ref{sec:kanten}).
 Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierenden Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
-Der zugehörige Train/Validation-Split bei diesem Ansatz war 8:2. % TODO: Dieses Detail vielleicht woanders hin?
 
 Beim auf Machine Learning basierten Ansatz wird im Training der doch recht kleine Datensatz durch Data Augmentation kompensiert (Abschnitt \ref{sec:augmentation}).
 Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutional Neural Network (CNN); die extrahierten Merkmale werden dann durch ein Klassifikationsnetz klassifiziert (Abschnitt \ref{sec:neural}).
@@ -147,7 +146,7 @@ Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutio
 
 \subsection{Vorverarbeitung der Bilder}
 \label{sec:vorverarbeitung}
-Da unsere ursprünglichen Bilder in ihren Dimensionen und in ihrer Art und Weise, wie sie entstanden sind sich stark unterscheiden, mussten wir sie vor der eigentlichen Klassifikation anpassen.
+Da unsere ursprünglichen Bilder sich in ihren Dimensionen und in ihrer Art und Weise wie sie entstanden sind stark unterscheiden, mussten wir sie vor der eigentlichen Klassifikation anpassen.
 Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Fotos, auf denen die Wolken kaum erkennbar waren, manuell aussortiert.
 Wie erwähnt war oft der untere Rand des Bildes nicht mehr nur reiner Himmel. Oft waren auch Wiesen oder Bäume zu erkennen, die der Klassifizierung Probleme bereiteten.
 Durch eine Binarisierung und unter Anwendung unseres BoxCut Algorithmus, die in Kapitel \ref{sec:binary} und Kapitel \ref{sec:boxcut} näher erläutert werden, konnten wir relativ akkurat den Himmel vom restlichen Bild trennen.
@@ -178,6 +177,11 @@ Falls aber der durchschnittliche Farbwert unter dem Schwellwert liegen sollte, s
 \subsection{Klassischer Ansatz}
 
 % TODO: Es fehlt noch eine genauere Beschreibung des klassischen Ansatzes..., sprich, die finalen Ergebnisse, die im "Experimente"-Abschnitt beschrieben werden, sollten hier zusammengefasst stehen... oder zumindest so grob...
+%Bin ehrlich gesagt nicht sicher, was genau du damit meinst... Eine totale Wiederholung aus Kapitel 4 würde ich gerne vermeiden. Meinst du eine Art allgemeine Erklärung, wie genau die Standardmerkmale extrahiert werden?
+
+%Standardmerkmale erwähnen
+%nearest-neighbor Klassifikator
+Der zugehörige Train/Validation-Split bei diesem Ansatz war 8:2.
 
 \subsubsection{Kantenzählung}
 \label{sec:kanten}
@@ -352,8 +356,7 @@ Bei Neuronale Netzen .... % TODO
 Wir könnten uns vorstellen, dass ein viel besseres Ergebnis zu erreichen ist, wenn die Bilder alle nach einer bestimmten Norm aufgenommen wären, zum Beispiel mit dem selben Winkel zum Himmel, bei gleicher Helligkeit oder aber vom selben Standpunkt aus.
 Allerdings müsste man dann äußerst vorsichtig sein, wie im Falle der Kieler Universität, das die Bilder so nicht zum overfitten der Ergebnisse führen.\cite{heinle}
 
-% TODO: In der Bilbiografie selbst spielt die Formatierung der Autoren noch verrückt.
-% ^ Sehe ich jetzt nicht, was denn genau? -- Lukas
+
 \bibliographystyle{babplain}
 \bibliography{bibliography}
 
