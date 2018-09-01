@@ -25,18 +25,25 @@ cloud_kinds = {
     "cumuliform": ["cumulus", "cumulonimbus"]
 }
 
+
+def cropImage(img):
+    '''Returns a cropped image, cropped with the box_clouds method.'''
+    image_shape = box.binarized_crop(img, 0.2)
+    # print("image_shape:" ,image_shape)
+    # print("img_shape:" , img.shape)
+    return img[0:image_shape[0],0:image_shape[1],:]
+
+
+
 def cropImageArray(array):
     '''
     Returns a cropped imageArray, cropped with the box_clouds method.
     '''
     cropped_array = []
     for img in array:
-        image_shape = box.binarized_crop(img, 0.2)
-        #print("image_shape:" ,image_shape)
-        #print("img_shape:" , img.shape)
-        image = img[0:image_shape[0],0:image_shape[1],:]
-        #print("image:",image.shape)
+        image = cropImage(img)
+        # print("image:",image.shape)
         resized = skimage.transform.resize(image, (500,500))
-        #print("resized:",resized.shape)
+        # print("resized:",resized.shape)
         cropped_array.append(resized)
     return cropped_array
