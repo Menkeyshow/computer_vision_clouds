@@ -17,35 +17,31 @@
 \maketitle
 
 \begin{abstract}
-    % TODO: Nochmal überprüfen!
     Wir vergleichen zwei Ansätze zur Klassifizierung von Wolken anhand von Bildern:
         einerseits einen \glqq klassischen\grqq\ Ansatz, in dem auf Grundlage von manuell ausgewählten Merkmalen eine \emph{$k$-nearest-neighbor}-Klassifika\-tion durchgeführt wird;
-        andererseits einen auf \emph{Machine Learning} basierendem Ansatz, in dem die Klassifizierung durch ein neuronales Netz auf Grundlage von von einem \emph{Convolutional Neural Network} extrahierten Merkmalen klassifiziert werden.
-        % TODO: Vortrainierung erwähnen? 
-        %ich bin dafür Vortrainierung zu erwähnen & habe "luft" durch "potential" ersetzt -alo
+        andererseits einen auf \emph{Machine Learning} basierendem Ansatz, in dem die Klassifizierung durch ein neuronales Netz auf Grundlage von von einem vortrainierten \emph{Convolutional Neural Network} extrahierten Merkmalen klassifiziert werden.
     Wir kommen zum Schluss, dass letzterer Ansatz deutlich besser geeignet ist, aber in beiden Varianten noch Potential für weitere Verbesserungen vorhanden ist.
 \end{abstract}
 
 \section{Einleitung}
 
-% TODO: Hab den Anfang umgeschrieben, bitte überprüfen und auch gerne ändern - alo 
-Im 19. Jahrhundert begangen Wissenschaftler damit Wolken zu typisieren und schufen damit die Grundlage der heutigen Forschung.
-"Wolken sind ein wesentlicher Bestandteil der Atmosphäre.[...] Sie sind außerordentlich typische Kennzeichen der jeweiligen Wetterlage und Vorzeichen für die künftige Wetterentwicklung.\cite{wolkenatlas:Karlsruhe}
+Im 19. Jahrhundert begannen Wissenschaftler damit, Wolken zu typisieren, und schufen damit die Grundlage der heutigen Forschung. % TODO: Quelle?
+\glqq Wolken sind ein wesentlicher Bestandteil der Atmosphäre. [...] Sie sind außerordentlich typische Kennzeichen der jeweiligen Wetterlage und Vorzeichen für die künftige Wetterentwicklung.\grqq\cite{wolkenatlas:Karlsruhe}
 Daher ist die Klassifikation von Wolken nicht nur für Wolken-Enthusiasten interessant, sondern spielt auch eine große Rolle bei der Klimaforschung, Wettervorhersagen und Unwetterwarnungen.
 Deshalb handelt sich bei dieser Arbeit, um das Thema Wolkenklassifizierung mit Hilfe von Bilder.
 
 Allerdings werden bei der heutigen Bestimmung andere Messmethoden wie Radar, Laser (z.B. LiDAR) oder Radiometer präferiert, bei denen Messungen von Sensoren an verschiedenen Orten (Satellit, Bodenstationen) miteinander kombiniert werden \cite{wang}.
 Es gab aber auch schon zuvor Versuche, nur mit Hilfe von Bildern Wolken zu klassifizieren:
 Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von derselben Position aus und unterschieden dabei sieben verschiedene Wolkenarten(kombinationen), darunter auch den \glqq leeren Himmel\grqq.
-Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie bei der Leave-One-Out Cross-Validation eine Genauigkeit von 97\% \cite{heinle}.
-% vll lieber "Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie (bei der Leave-One-Out Cross-Validation) eine Genauigkeit von 97\%"
+Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie eine Genauigkeit von 97\% \cite{heinle}.
+% TODO: Hier stand mal was mit Leave-One-Out Cross-Validation... ich habe es raus genommen, denn zumindest ich habe *null* Ahnung was das bedeuten soll... --Lukas
 
 
 \subsection{Unsere Arbeit}
 
 In dieser Arbeit versuchen wir, Wolken automatisiert zu klassifizieren, und vergleichen dabei zwei unterschiedliche Ansätze:
 der eine Ansatz basiert auf \glqq klassischen\grqq\ Methoden der Computer Vision, das heißt auf händisch ausgewählten Merkmalen wie Mittelwert, Standardabweichung, Farb-Histogrammen und Kantenerkennung, auf deren Grundlage dann ein k-nearest-neighbor-Klassifikator angewendet wird.
-Der andere auf den \glqq moderneren\grqq\ Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
+Der andere basiert auf den \glqq moderneren\grqq\ Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
 
 
 \subsection{Aufbau der Arbeit}
@@ -106,7 +102,6 @@ Aufgrund der Ähnlichkeit einiger Klassen und der doch recht geringen Anzahl an 
     \caption{Zusammensetzung und Beschreibung unseres Klassifizierungsschemas}
     \label{table:oberklassen}
 \end{table}
-% TODO: evtl. Umwandlung der Tabelle in eigenständige "Abbildung"
 
 Wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen die Klassen leider teils ineinander über, was die Unterscheidung deutlich erschwert.
 Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich teilweise ebenso in ihren Eigenschaften überschneiden.
@@ -234,14 +229,14 @@ In diesem Abschnitt werden die erzielten Ergebnisse unter verschiedenen Paramete
 
 \subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
 Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 49\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
-%TODO: Was bedeutet der "grau" Eintrag in der ersten Tabelle? -- Max
+
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|l|l|l|l|l|l|}
  \hline
  \textbf{Merkmale:}&mean&std&1D-Hist.&3D-Hist.&Grau-Hist.&Kantenz.\\
  \hline
- \textbf{Erfolg:} & 28\% & 32\% & 35\% & 38\% & grau & 41\% \\
+ \textbf{Erfolg:} & 28\% & 32\% & 35\% & 38\% & 35\% & 41\% \\
  \hline
 \end{tabular}
 \caption{Genauigkeit der einzelnen Merkmale, gerundet}
