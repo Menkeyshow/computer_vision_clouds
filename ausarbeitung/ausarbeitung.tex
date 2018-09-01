@@ -208,7 +208,7 @@ Trainiert wurde auf 4096 Bildern---eine höhere Anzahl an Bildern brachte keine 
 
 Bei der Merkmalsextraktion wurde darauf verzichtet, ein eigenes CNN zu konstruieren und zu trainieren.
 Stattdessen verwenden wir, wieder aufgrund der geringen Datensatzgröße, ein in Keras vorhandenes, auf ImageNet vortrainiertes Netz.
-Die Wahl fiel dabei auf \emph{Xception} \cite{keras:xception}.
+Die Wahl fiel dabei auf \emph{Xception} \cite{xception}.
 Wir wählten es aufgrund der (verglichen mit den anderen in Keras vorhanden Netzen) hohen Genauigkeit bzgl.\ ImageNet.\footnote{Zwar hat \emph{Xception} zum aktuellen Zeitpunkt nicht die höchste Genauigkeit---dieses Netz wäre \emph{InceptionResNetV2}, wobei dieses nur ca. einen Prozentpunkt besser abschneidet---ist aber 60\% kleiner als \emph{InceptionResNetV2} und auch deutlich performanter.}
 
 Die von \emph{Xception} errechneten 2048 Merkmale wurden nun durch ein weiteres, von uns konstruiertes neuronales Netz konstruiert.
