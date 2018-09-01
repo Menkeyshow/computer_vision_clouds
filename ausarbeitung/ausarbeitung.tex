@@ -133,6 +133,7 @@ Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutio
 % TODO: Training/Validation/Testing split?
 
 
+
 \subsection{Vorverarbeitung der Bilder}
 \label{sec:vorverarbeitung}
 Da unsere ursprünglichen Bilder sich in ihren Dimensionen und in ihrer Art und Weise wie sie entstanden sind stark unterscheiden, mussten wir sie vor der eigentlichen Klassifikation anpassen.
@@ -344,10 +345,13 @@ Da uns aufgefallen ist, dass es nicht nur für den Computer sondern auch für un
 Bei dieser Studie sollten die sechs Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen.
 Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Klasse sechs Trainingsbilder als Referenz.
 Dabei wurde eine durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer im "CloudGame.pdf" im Anhang geschildert.
+%TODO: Ist der Anhang vom CloudGame als auch unser Quellcode nicht einfach am Ende dieses Dokuments? Wir geben doch am Ende nur eine pdf-Datei ab, oder irre ich mich? Dann sollte CloudGame.pdf so natürlich nicht stehen bleiben-- Max
 
 Die erreichte Genauigkeit von 51\% ist sehr nah an dem Ergebnis unseres klassischen Ansatzes dran, liegen überraschenderweise jedoch unter den Ergebnissen des Maschine-Learning-Ansatzes.
 Zu beachten ist jedoch, dass die 36 Bilder, welche für die Testpersonen gewählt wurden, gut klassifizierbare Bilder waren.
 Im Allgemeinen ist also damit zurechnen, dass ungeschulte Menschen noch schlechter abschneiden.
+%TODO: Sollte man hier noch reinschreiben, dass die Ergebnisse auch ganz anders sein hätten können bei der Studie? evtl in Richtung, man kann ja den Testies nicht zumuten, alle Bilder so wie die Maschine zuzuordnen? Oder dass bei einer anderen Auswahl der 36 Bilder das Ergebniss ganz anders aussehen könnte?
+% TODO: Zumindest oberflächlicher Vergleich der verschiedenen Ansätze und der Menschen.
 
 \section{Fazit}
 \label{sec:fazit}
