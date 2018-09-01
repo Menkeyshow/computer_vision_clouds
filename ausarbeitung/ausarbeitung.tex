@@ -27,11 +27,11 @@
 
 Im 19. Jahrhundert begannen Wissenschaftler damit, Wolken zu typisieren, und schufen damit die Grundlage der heutigen Forschung. % TODO: Quelle?
 \glqq Wolken sind ein wesentlicher Bestandteil der Atmosphäre. [...] Sie sind außerordentlich typische Kennzeichen der jeweiligen Wetterlage und Vorzeichen für die künftige Wetterentwicklung.\grqq\cite{wolkenatlas:Karlsruhe}
-Daher ist die Klassifikation von Wolken nicht nur für Wolken-Enthusiasten interessant, sondern spielt auch eine große Rolle bei der Klimaforschung, Wettervorhersagen und Unwetterwarnungen.
-Deshalb handelt sich bei dieser Arbeit, um das Thema Wolkenklassifizierung mit Hilfe von Bilder.
+Daher ist die Klassifikation von Wolken nicht nur für Wolken-Enthusiasten interessant, sondern spielt auch eine große Rolle in der Klimaforschung, bei Wettervorhersagen und bei Unwetterwarnungen.
+All dies sind Gründe, warum wir uns mit der Wolkenklassifizierung anhand von Bildern beschäftigen---neben dem reinen Interesse an der Herausforderung, etwas maschinell zu klassifizieren, dass wir, die Autoren, selbst nicht sehr gut klassifizieren können.
 
 Allerdings werden bei der heutigen Bestimmung andere Messmethoden wie Radar, Laser (z.B. LiDAR) oder Radiometer präferiert, bei denen Messungen von Sensoren an verschiedenen Orten (Satellit, Bodenstationen) miteinander kombiniert werden \cite{wang}.
-Es gab aber auch schon zuvor Versuche, nur mit Hilfe von Bildern Wolken zu klassifizieren:
+Es gab aber auch schon zuvor Versuche, Wolken nur mit Hilfe von Bildern zu klassifizieren:
 Forscher der Universität Kiel fotografierten den gesamten Himmel immer wieder von derselben Position aus und unterschieden dabei sieben verschiedene Wolkenarten(kombinationen), darunter auch den \glqq leeren Himmel\grqq.
 Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie eine Genauigkeit von 97\% \cite{heinle}.
 % TODO: Hier stand mal was mit Leave-One-Out Cross-Validation... ich habe es raus genommen, denn zumindest ich habe *null* Ahnung was das bedeuten soll... --Lukas
@@ -40,8 +40,8 @@ Mithilfe eines k-nearest-neighbour Klassifikators erreichten sie eine Genauigkei
 \subsection{Unsere Arbeit}
 
 In dieser Arbeit versuchen wir, Wolken automatisiert zu klassifizieren, und vergleichen dabei zwei unterschiedliche Ansätze:
-der eine Ansatz basiert auf \glqq klassischen\grqq\ Methoden der Computer Vision, das heißt auf händisch ausgewählten Merkmalen wie Mittelwert, Standardabweichung, Farb-Histogrammen und Kantenerkennung, auf deren Grundlage dann ein k-nearest-neighbor-Klassifikator angewendet wird.
-Der andere basiert auf den \glqq moderneren\grqq\ Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
+Ein Ansatz basiert auf \glqq klassischen\grqq\ Methoden der Computer Vision, das heißt auf händisch ausgewählten Merkmalen wie Mittelwert, Standardabweichung, Farb-Histogrammen und Kantenzählung, auf deren Grundlage dann ein k-nearest-neighbor-Klassifikator angewendet wird.
+Ein Anderer basiert auf den \glqq moderneren\grqq\ Convolutional Neural Networks (CNN), die Merkmale extrahieren, auf deren Grundlagen dann die weitere Klassifikation durch ein konventionelles neuronales Netz stattfindet.
 
 
 \subsection{Aufbau der Arbeit}
@@ -99,8 +99,10 @@ Aufgrund der Ähnlichkeit einiger Klassen und der doch recht geringen Anzahl an 
     \label{table:oberklassen}
 \end{table}
 
+
 Wie man auch schon an den Namen der verschiedenen Wolkengattungen sieht, gehen die Klassen leider teils ineinander über, was die Unterscheidung deutlich erschwert.
 Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich teilweise ebenso in ihren Eigenschaften überschneiden.
+%TODO: Der folgende Satz sitzt momentan recht einsam auf der Seite mit den figures. Schiebt sich evtl noch zurrecht.
 Eine gute Übersicht der Wolkengattungen, -arten, etc. findet man in der \emph{Wikipedia} \cite{wiki:wolkenarten}.
 
 \section{Methodik}
@@ -123,9 +125,8 @@ Bevor mit der eigentlichen Klassifikation begonnen wird, werden die Ursprungsbil
 \end{figure}
 
 Im \glqq klassischen\grqq\ Ansatz erfolgt hier nun die Bestimmung der Merkmale.
-Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenerkennung durchgeführt (Abschnitt \ref{sec:kanten}).
+Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenzählung durchgeführt, bei der die gefundenen Kanten aufsummiert werden (Abschnitt \ref{sec:kanten}).
 Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierenden Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
-Der zugehörige Train/Validation-Split bei diesem Ansatz war 8:2. % TODO: Dieses Detail vielleicht woanders hin?
 
 Beim auf Machine Learning basierten Ansatz wird im Training der doch recht kleine Datensatz durch Data Augmentation kompensiert (Abschnitt \ref{sec:augmentation}).
 Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutional Neural Network (CNN); die extrahierten Merkmale werden dann durch ein Klassifikationsnetz klassifiziert (Abschnitt \ref{sec:neural}).
@@ -134,7 +135,7 @@ Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutio
 
 \subsection{Vorverarbeitung der Bilder}
 \label{sec:vorverarbeitung}
-Da unsere ursprünglichen Bilder in ihren Dimensionen und in ihrer Art und Weise, wie sie entstanden sind sich stark unterscheiden, mussten wir sie vor der eigentlichen Klassifikation anpassen.
+Da unsere ursprünglichen Bilder sich in ihren Dimensionen und in ihrer Art und Weise wie sie entstanden sind stark unterscheiden, mussten wir sie vor der eigentlichen Klassifikation anpassen.
 Zuerst haben wir unpassende Bilder, wie zum Beispiel von einem Sturm oder Fotos, auf denen die Wolken kaum erkennbar waren, manuell aussortiert.
 Wie erwähnt war oft der untere Rand des Bildes nicht mehr nur reiner Himmel. Oft waren auch Wiesen oder Bäume zu erkennen, die der Klassifizierung Probleme bereiteten.
 Durch eine Binarisierung und unter Anwendung unseres BoxCut Algorithmus, die in Kapitel \ref{sec:binary} und Kapitel \ref{sec:boxcut} näher erläutert werden, konnten wir relativ akkurat den Himmel vom restlichen Bild trennen.
@@ -165,6 +166,11 @@ Falls aber der durchschnittliche Farbwert unter dem Schwellwert liegen sollte, s
 \subsection{Klassischer Ansatz}
 
 % TODO: Es fehlt noch eine genauere Beschreibung des klassischen Ansatzes..., sprich, die finalen Ergebnisse, die im "Experimente"-Abschnitt beschrieben werden, sollten hier zusammengefasst stehen... oder zumindest so grob...
+%Bin ehrlich gesagt nicht sicher, was genau du damit meinst... Eine totale Wiederholung aus Kapitel 4 würde ich gerne vermeiden. Meinst du eine Art allgemeine Erklärung, wie genau die Standardmerkmale extrahiert werden?
+
+%Standardmerkmale erwähnen
+%nearest-neighbor Klassifikator
+Der zugehörige Train/Validation-Split bei diesem Ansatz war 8:2.
 
 \subsubsection{Kantenzählung}
 \label{sec:kanten}
@@ -226,6 +232,7 @@ In diesem Abschnitt werden die erzielten Ergebnisse unter verschiedenen Paramete
 \subsection{Klassischer Ansatz}%TODO: Daten bei Änderungen aktualisieren
 Die höchste Genauigkeit, die wir mit dem klassischen Ansatz erzielen konnten, beträgt 49\%. Wie gut dabei die einzelnen Merkmale abschneiden, kann man aus Tabelle~\ref{tab:gen} herauslesen. Dabei steht \textit{mean} für den Mittelwert und \textit{std} für die Standardabweichung. 
 
+%TODO: Sicherstellen, dass Grau-Hist in der Tabelle tatsächlich 35% waren?
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|l|l|l|l|l|l|}
