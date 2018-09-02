@@ -19,7 +19,7 @@
 \begin{abstract}
     Wir vergleichen zwei Ansätze zur Klassifizierung von Wolken anhand von Bildern:
         einerseits einen \glqq klassischen\grqq\ Ansatz, in dem auf Grundlage von manuell ausgewählten Merkmalen eine \emph{$k$-nearest-neighbor}-Klassifika\-tion durchgeführt wird;
-        andererseits einen auf \emph{Machine Learning} basierendem Ansatz, in dem die Klassifizierung durch ein neuronales Netz auf Grundlage von von einem vortrainierten \emph{Convolutional Neural Network} extrahierten Merkmalen klassifiziert werden.
+        andererseits einen auf \emph{Machine Learning} basierendem Ansatz, in dem die Klassifizierung durch ein neuronales Netz auf Grundlage von einem vortrainierten \emph{Convolutional Neural Network} extrahierten Merkmalen klassifiziert werden.
     Wir kommen zum Schluss, dass letzterer Ansatz deutlich besser geeignet ist, aber in beiden Varianten noch Potential für weitere Verbesserungen vorhanden ist.
 \end{abstract}
 
@@ -48,7 +48,7 @@ Ein Anderer basiert auf den \glqq moderneren\grqq\ Convolutional Neural Networks
 
 In Abschnitt \ref{sec:daten} erläutern wir die Daten, die unserer Arbeit zugrunde liegen, also deren Herkunft, deren Charakteristika und unsere Klasseneinteilung.
 In Abschnitt \ref{sec:methodik} folgt die Darlegung unserer Klassifizierungsmethodik, in der auf die Details sowohl des klassischen als auch des auf Machine Learning basierenden Ansatzes eingegangen wird.
-Abschließend werden beide Ansätze in Abschnitt \ref{sec:experimente} evaluiert und auf quantitativer Ebene verglichen, dabei erfolgt auch ein Vergleich mit der Leistung einer Gruppe von nicht fachkundigen Menschen.
+Abschließend werden beide Ansätze in Abschnitt \ref{sec:experimente} evaluiert und auf quantitativer Ebene verglichen. Hier erfolgt auch ein Vergleich mit der Leistung einer Gruppe von nicht fachkundigen Menschen.
 Unser Fazit ist in Abschnitt \ref{sec:fazit} dargestellt.
 
 
@@ -57,7 +57,7 @@ Unser Fazit ist in Abschnitt \ref{sec:fazit} dargestellt.
 
 Unser Datensatz besteht aus 833 Farbbildern, die zu ungefähr gleichen Teilen vom Wolkenatlas der Webseite wolken-online.de \cite{wolkenonline} und der Bildergalerie des \emph{International Cloud Atlas} der \emph{World Meteorological Organization} \cite{wmo:images} stammen.
 Die Bilder sind meist von individuellen Personen geschossene Fotos vom Himmel.
-Allerdings ist auf den Bildern oft nicht nur der Himmel zu sehen, sondern auch vor allem am unteren Rand die Erdoberfläche mitsamt Objekten wie Häusern oder Bäumen.
+Allerdings ist auf den Bildern oft nicht nur der Himmel zu sehen, sondern auch vor allem am unteren Rand des Bildes die Erdoberfläche mitsamt Objekten wie Häusern oder Bäumen.
 Außerdem sind gelegentlich mehrere Wolkenarten auf demselben Bild vertreten.
 
 Der \textit{International Cloud Atlas}\cite{internationalCloudAtlas} unterscheidet zehn Wolkengattungen, welche in Abbildung~\ref{fig:cloudtypes} schematisch dargestellt sind.
@@ -151,8 +151,8 @@ Dies hat nach vielem herum experimentieren für ein gutes Ergebnis gesorgt. \ref
 \subsubsection{BoxCut Algorithmus}
 \label{sec:boxcut}
 Nach dem Binarisieren versucht der BoxCut Algorithmus den eigentlichen Himmel vom Rest des Bildes auszuscheiden. Dazu wird von unten eine rechteckige Fläche des Bildes ausgewählt. Die Höhe beträgt dabei ca. 10\%
-des Bildes und die gesamte Breite (dargestellt durch das rote Rechteck im mittleren binarisierten Bild in \ref{fig:boxAlg}). In dem markierten Rechteck wird dann der durchschnittliche Farbwert berechnet.
-Liegt dieser über unserem Schwellwert von 0.35 liegt, so gehört ein Teil der Box wahrscheinlich zum Himmel, sodass das Bild bis zum unteren Teil der Box geschnitten wird.
+des Bildes und die gesamte Breite (dargestellt durch das rote Rechteck im mittleren binarisierten Bild in Abbildung \ref{fig:boxAlg}). In dem markierten Rechteck wird dann der durchschnittliche Farbwert berechnet.
+Liegt dieser über unserem Schwellwert von 0.35, so gehört ein Teil der Box wahrscheinlich zum Himmel, sodass das Bild bis zum unteren Teil der Box geschnitten wird.
 Falls aber der durchschnittliche Farbwert unter dem Schwellwert liegen sollte, so wird die Box um die Hälfte ihrer Höhe nach oben verschoben. Dies wird solange fortgeführt, bis letztlich der Schwellwert überschritten wird und das Bild zugeschnitten wird.
 
 
@@ -172,13 +172,14 @@ Falls aber der durchschnittliche Farbwert unter dem Schwellwert liegen sollte, s
 %Standardmerkmale erwähnen
 %nearest-neighbor Klassifikator
 Für den klassischen Ansatz haben wir die Merkmale: Mittelwert, Standartabweichung, 1D-/3D-/Grau-Histogramm und Kantenzählung benutzt. 
+%Kantenzählung nochmal referenzieren? Eig haben wir das ja schon weiter oben getan UND es ist literally das nächste Kapitel --Max
 Der zugehörige Train/Validation-Split bei diesem Ansatz war 8:2.
 
 \subsubsection{Kantenzählung}
 \label{sec:kanten}
 Ein Merkmal, welches wir neben dem Mittelwert, der Standardabweichung und den Farb-Histogrammen verwenden, misst die Anzahl der Kanten auf den Bildern.
-Dazu wird zuerst das Bild in ein Graustufenbild umgewandelt, da man somit nicht die Kanten für jeden Farbwert im RGB-Farbraum einzeln berechnet werden müssen. Als nächstes wird ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Hilfe des Sobel-Filters ein Kantenbild erzeugt.
-Dort, wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher.
+Dazu wird zuerst das Bild in ein Graustufenbild umgewandelt, da man so nicht die Kanten für jeden Farbwert im RGB-Farbraum einzeln berechnen muss. Als nächstes wird ein Gaussfilter mit Sigma = 2 auf das Bild angewendet, damit nur die gröberen Kanten ins Gewicht fallen. Danach wird mit Hilfe des Sobel-Filters ein Kantenbild erzeugt.
+Dort wo sich Kanten befinden, sind die Pixel heller, d.h. die Werte sind höher.
 Diese Werte werden dann zeilenweise aufsummiert, sodass ein Histogramm wie auf dem rechten Bild in Abbildung~\ref{fig:kaz} entsteht. So können die Kanten pro Zeile von zwei Bildern verglichen werden.
 
 \begin{figure}[h!]
