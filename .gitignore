@@ -69,5 +69,5 @@ ausarbeitung/*.pdf
 ausarbeitung/*.synctex.gz
 ausarbeitung/*.bbl
 ausarbeitung/*.blg
-
+!ausarbeitung/CloudGame.pdf
 temp/

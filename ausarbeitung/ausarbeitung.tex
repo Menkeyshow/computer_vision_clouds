@@ -6,6 +6,7 @@
 \usepackage{graphicx}       % um Bilder einzubinden
 \usepackage{subfigure} 	    % um 2 Bilder nebeneinander haben zu können
 \usepackage{hyperref}       % um URLs korrekt einzubinden und Hyperlinks im Dokument zu ermöglichen
+\usepackage{pdfpages}
 \usepackage{cite}
 \usepackage{babelbib}
 
@@ -346,7 +347,7 @@ Aufgrund des allgemeinen Genauigkeitsverlust, und da auch in Alltag die Wolkenfo
 Da uns aufgefallen ist, dass es nicht nur für den Computer sondern auch für uns schwierig ist, die Wolken zu klassifizieren, haben wir uns dazu entschieden, eine kleine Studie durchzuführen.
 Bei dieser Studie sollten die sechs Probanden jeweils sechzehn Wolkenbilder in unsere vier Kategorien einteilen.
 Sie haben die Übersicht aus Abbildung~\ref{fig:cloudtypes} bekommen und pro Klasse sechs Trainingsbilder als Referenz.
-Dabei wurde eine durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer im "CloudGame.pdf" im Anhang geschildert.
+Dabei wurde eine durchschnittliche Genauigkeit von 51\% erreicht. Der Versuchsaufbau und die Ergebnisse sind noch einmal genauer im Anhang \ref{anhang:cloudgame} geschildert.
 %TODO: Ist der Anhang vom CloudGame als auch unser Quellcode nicht einfach am Ende dieses Dokuments? Wir geben doch am Ende nur eine pdf-Datei ab, oder irre ich mich? Dann sollte CloudGame.pdf so natürlich nicht stehen bleiben-- Max
 
 Die erreichte Genauigkeit von 51\% ist sehr nah an dem Ergebnis unseres klassischen Ansatzes dran, liegen überraschenderweise jedoch unter den Ergebnissen des Maschine-Learning-Ansatzes.
@@ -379,6 +380,15 @@ Jedoch sind dann auch deutliche Verluste bzgl.\ der Generalisierbarkeit auf ande
 
 \bibliographystyle{babplain}
 \bibliography{bibliography}
+
+\appendix
+\section{Cloud Game}
+\label{anhang:cloudgame}
+\includegraphics[height=\dimexpr\textheight-4\baselineskip\relax,page=1]{CloudGame}
+%vvvvvv wollte die erste Seite eig größer haben, hat aber mit der Überschrift nicht geklappt
+%\includepdf[pages=1,pagecommand={\thispagestyle{empty}\section{Cloud Game}}]{CloudGame}
+\includepdf[pages=2-]{CloudGame}
+
 
 \end{document}
 
