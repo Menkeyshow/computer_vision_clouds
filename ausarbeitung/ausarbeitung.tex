@@ -319,7 +319,7 @@ Aus der Konfusionsmatrix (Tabelle \ref{tab:confusionNeural}) ist zu erkennen, da
 Weiterhin wird ein recht hoher Anteil an Bildern fälschlicherweise als stratocumuliform klassifiziert (besonders cirriforme Wolken), ähnliches gilt für cumuliforme Wolken.
 
 Wir vermuteten, dass dies an der recht ungleichen Verteilung der verschiedenen Labels im Datensatz liegt (siehe Tabelle \ref{table:oberklassen}).
-Ein erneuter Testdurchlauf nach Angleichen der Klassengrößen durch entfernen von Bilderns aus überrepräsentierten Klassen bestätigte diese Vermutung.
+Ein erneuter Testdurchlauf nach Angleichen der Klassengrößen durch entfernen von Bildern aus überrepräsentierten Klassen bestätigte diese Vermutung.
 Im Allgemeinen sank zwar die Genauigkeit deutlich (um ca. 8 Prozentpunkte), jedoch verschwanden die beschriebenen Anomalien.
 Aufgrund des allgemeinen Genauigkeitsverlust, und da auch in Alltag die Wolkenformen eher so verteilt sind wie im ursprünglichen Datensatz, entschieden wir uns dafür, diesen unverändert beizubehalten.
 % TODO: Auch hierfür eine Konfusionsmatrix... ich habe die Daten verloren, vielleicht lasse ich das System morgen nochmal laufen, sonst muss das so "mündlich" beschrieben reichen. -- Lukas
@@ -365,7 +365,7 @@ Im Allgemeinen ist also damit zurechnen, dass ungeschulte Menschen noch schlecht
 
 Insgesamt können wir sagen, dass es eine Herausforderung war, die verschiedenen Bilder zu klassifizieren.
 Nicht nur innerhalb einer Wolkenart unterscheiden sich die Bilder teils sehr stark voneinander, auch ist es vor allem die Ähnlichkeit vieler Bilder in jeweils verschiedenen Wolkenklassen, die die korrekte Klassifizierung der Wolken erschwert.
-Und da es sogar für Menschen schwer ist, viele Bilder ihrer richtigen Kategorie zuzuordnen, hatten wir besonders bei der klassischen Methode nichtall zu genaue Ergebnisse erwartet.
+Und da es sogar für Menschen schwer ist, viele Bilder ihrer richtigen Kategorie zuzuordnen, hatten wir besonders bei der klassischen Methode nicht all zu genaue Ergebnisse erwartet.
 Allerdings sind wir mit 49\% für die klassische Methodik schon sehr zufrieden, da dies noch weit besser ist, als ein zufälliges Zuordnen der Klassen.
 
 Auch beim auf neuronalen Netzen aufbauenden Ansatz waren wir von der erreichten Leitung positiv überrascht, besonders in Hinblick auf den recht kleinen Datensatz.
