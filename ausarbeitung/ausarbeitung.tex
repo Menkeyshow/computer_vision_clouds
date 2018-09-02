@@ -14,7 +14,7 @@
 \begin{document}
 
 \title{Cloud Computing mal anders: Klassifikation von Wolkenbildern mit kNN und CNNs}
-\author{Maximilian Birkenhagen, Ali Ebrahimi, Thilo Fryen, Lukas Hintze}
+\author{Maximilian Birkenhagen, Ali Ebrahimi, Thilo Fryen,\\Lukas Hintze}
 \maketitle
 
 \begin{abstract}
@@ -108,6 +108,8 @@ Außerdem gibt es noch sehr viele Arten, Unterarten und Begleitwolken, die sich 
 Im diesem Abschnitt erläutern wir die Methodik der beiden Klassifikationsansätze.
 Eine Übersicht über den groben Ablauf kann in Abbildung \ref{fig:ablauf} gewonnen werden. 
 Bevor mit der eigentlichen Klassifikation begonnen wird, werden die Ursprungsbilder zunächst möglichst so zugeschnitten, dass nur noch Himmel im Bild vorhanden ist (Abschnitt \ref{sec:vorverarbeitung}).
+Ab hier unterscheidet sich der \glqq klassische\grqq von dem auf Machine Learning basierenden Ansatz.
+Die beiden Varianten sind in Abschnitt \ref{sec:classic} bzw.\ Abschnitt \ref{sec:ml} beschrieben.
 
 \begin{figure}
 	\centering
@@ -115,14 +117,6 @@ Bevor mit der eigentlichen Klassifikation begonnen wird, werden die Ursprungsbil
 	\caption{Ablauf der Klassifikation}
 	\label{fig:ablauf}
 \end{figure}
-
-Im \glqq klassischen\grqq\ Ansatz erfolgt hier nun die Bestimmung der Merkmale.
-Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und einem Farb-Histogramm wird auch eine Kantenzählung durchgeführt, bei der die gefundenen Kanten aufsummiert werden (Abschnitt \ref{sec:kanten}).
-Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierenden Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
-
-Beim auf Machine Learning basierten Ansatz wird im Training der doch recht kleine Datensatz durch Data Augmentation kompensiert (Abschnitt \ref{sec:augmentation}).
-Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutional Neural Network (CNN); die extrahierten Merkmale werden dann durch ein Klassifikationsnetz klassifiziert (Abschnitt \ref{sec:neural}).
-
 
 
 \subsection{Vorverarbeitung der Bilder}
@@ -156,14 +150,11 @@ Falls aber der durchschnittliche Farbwert unter dem Schwellwert liegen sollte, s
 
 
 \subsection{Klassischer Ansatz}
+\label{sec:classic}
 
-% TODO: Es fehlt noch eine genauere Beschreibung des klassischen Ansatzes..., sprich, die finalen Ergebnisse, die im "Experimente"-Abschnitt beschrieben werden, sollten hier zusammengefasst stehen... oder zumindest so grob...
-%Bin ehrlich gesagt nicht sicher, was genau du damit meinst... Eine totale Wiederholung aus Kapitel 4 würde ich gerne vermeiden. Meinst du eine Art allgemeine Erklärung, wie genau die Standardmerkmale extrahiert werden?
-
-%Standardmerkmale erwähnen
-%nearest-neighbor Klassifikator
-Für den klassischen Ansatz haben wir die Merkmale: Mittelwert, Standartabweichung, 1D-/3D-/Grau-Histogramm und Kantenzählung benutzt. 
-%Kantenzählung nochmal referenzieren? Eig haben wir das ja schon weiter oben getan UND es ist literally das nächste Kapitel --Max
+Der \glqq klassische\grqq\ Ansatz beginnt mit der Bestimmung der Merkmale.
+Neben den oft verwendeten Merkmalen Standardabweichung, Mittelwert und 1D-/3D-/Grau-Histogramm wird auch eine Kantenzählung durchgeführt, bei der die gefundenen Kanten aufsummiert werden (Abschnitt \ref{sec:kanten}).
+Zum Schluss dieses Ansatzes nutzen wir nun einen \emph{nearest-neighbor}-Klassifikator, der die Merkmale des zu klassifizierenden Bildes mit denen der Bilder im Trainingsdatensatz vergleicht.
 Der zugehörige Train/Validation-Split bei diesem Ansatz war 8:2.
 
 \subsubsection{Kantenzählung}
@@ -182,6 +173,13 @@ Diese Werte werden dann zeilenweise aufsummiert, sodass ein Histogramm wie auf d
 
 
 \subsection{Machine-Learning-Ansatz}
+\label{sec:ml}
+
+Bei diesem basierten Ansatz wird im Training der doch recht kleine Datensatz durch Data Augmentation kompensiert (Abschnitt \ref{sec:augmentation}).
+Es folgt die Merkmalsextraktion durch ein auf ImageNet vortrainiertes Convolutional Neural Network (CNN); die extrahierten Merkmale werden dann durch ein Klassifikationsnetz klassifiziert (Abschnitt \ref{sec:neural}).
+
+20\% des Datensatzes wurden fürs Testen reserviert, der Rest der Bilder wurde fürs Training verwendet, wobei hier wiederum 20\% für die Validierung und 80\% fürs eigentliche Training verwendet wurden.
+
 
 \subsubsection{Augmentation der Bilder}
 \label{sec:augmentation}
@@ -206,8 +204,9 @@ Die von \emph{Xception} errechneten 2048 Merkmale wurden nun durch ein weiteres,
 Hier folgen auf zwei Fully-connected Layer mit 128 Neuronen und ReLU-Aktivierung ein letzter Fully-connected Layer mit 4 Neuronen und Softmax-Aktivierung, die als Ausgabe dient.
 Zwischen den Schichten wurden je 60\% der Verbindungen gekappt, um Overfitting vorzubeugen.
 
-% TODO: Loss-Funktion (Categorical Crossentropy), Optimierer (SGD, Learning Rate 0.001, Momentum 0.9)
-% TODO: Train/Validatoin/Test split (0.64/0.16/0.2)
+Das Klassifizierungsnetz wurde nun auf etwa 50 Epochen aus je 4096 (s.o.) trainiert.
+Die Anzahl an Epochen wurde wurde durch Keras' \emph{Early Stopping}-Funktionalität mit einem Gedultwert von 30 Epochen bzgl.\ des Loss-Wertes auf den Validierungsdaten gewählt.
+Das Training des Netzes erfolgte durch stochastischen Gradient Descent (SGD) mit dem Learning-Rate-Parameter bei 0,001 und Momentum bei 0,9, und \emph{categorical cross entropy} als Loss-Funktion.
 
 In der Anwendung des Netzes auf Testfälle wurde nun der Input in drei verschiedene, sich teils überlappende, Segmente aufgeteilt (s. Abbildung \ref{fig:augmentation}), und die Klassifizierungspipeline dann auf jedes Segment angewendet, die dabei resultierenden Gewichte der Outputschicht summiert, und die Kategorie mit dem höchsten Gewicht als Klassifizierung gewählt.
 
