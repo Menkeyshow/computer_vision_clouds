@@ -381,12 +381,49 @@ Jedoch sind dann auch deutliche Verluste bzgl.\ der Generalisierbarkeit auf ande
 \bibliographystyle{babplain}
 \bibliography{bibliography}
 
+\pagebreak
 \appendix
-\section{Cloud Game}
+\section{Cloud Game---Wie gut sind Menschen darin Wolken zu Klassifizieren}
+
+Wir haben eine Studie durchgeführt, bei der wir sechs Personen, drei männlich/drei weiblich, im Alter von 19 bis 52 Jahren, gebeten haben, Wolken zu klassifizieren.
+Die Probanden haben eine kurze Einführung in die Klassifikation von Wolken bekommen und wir haben Ihnen kurz erklärt, was wir in unserem Projekt tun (Klassifizierung von Wolken mittels Computer Vision).
+Sonst hatten sie keine Vorkenntnisse.
+Insgesamt erzielten sie eine Trefferquote von 51\%.
+
+
+\subsection{Versuchsaufbau}
 \label{anhang:cloudgame}
-\includegraphics[height=\dimexpr\textheight-4\baselineskip\relax,page=1]{CloudGame}
-%vvvvvv wollte die erste Seite eig größer haben, hat aber mit der Überschrift nicht geklappt
-%\includepdf[pages=1,pagecommand={\thispagestyle{empty}\section{Cloud Game}}]{CloudGame}
+
+Den Probanden wurde Abbildung \ref{fig:cloudtypes} zur Verfügung gestellt.
+Diese durften sie auch während der Klassifizierung nutzen.
+Die verwendeten Testbilder finden sich auf den folgenden Seiten.
+Es sind je zwölf Bilder für unsere vier Kategorien, also insgesamt 48 Bilder.
+
+Die Probanden erhielten nun pro Kategorie sechs Trainingsbilder, die zufällig aus den zwölf gewählt wurden.
+Die restlichen 24 Bilder wurden gemischt und dem Probanden wurden davon sechzehn gegeben, die er dann den Kategorien zuordnen sollte.
+Die Testperson konnte so nicht einfach jeder Klasse die sechs fehlenden Bilder zuordnen, da acht Bilder fehlten.
+Es hätte also auch passieren können, dass eine Kategorie nicht vertreten ist.
+Dabei hatten die Probanden die 24 Trainingsbilder und die Übersicht als Hilfsmittel.
+Der Versuch hat pro Person etwa eine Viertelstunde gedauert.
+
+Der „Kluger-Hans-Effekt“ konnte nicht auftreten, da die testende Person selber nicht die richtigen Antworten wusste.
+Die Ergebnisse des Versuches sind in der Konfusionsmatrix in Tabelle \ref{tab:humanConfusion} zu sehen.
+Sechs Testpersonen sind natürlich zu wenige, um statistisch belastbare Ergebnisse zu erzielen, aber sie lassen zumindest eine Richtung erkennen.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{| l | l | l | l | l |}
+        \hline
+        Label & cir & cum & str & s-c \\ \hline
+        Cirriform (cir) & 56\% & 12\% & 20\% & 12\% \\ \hline
+        Cumuliform (cum) & 0\% & 76\% & 4\% & 20\% \\ \hline
+        Stratiform (str) & 18\% & 9\% & 45\% & 27\% \\ \hline
+        Stratocumuliform (s-c) & 25\% & 13\% & 38\% & 25\% \\ \hline
+    \end{tabular}
+    \caption{Konfusionsmatrix bei der Klassifikation durch Menschen (N=6) (vgl.\ Tabelle \ref{tab:confusionNeural})}
+    \label{tab:humanConfusion}
+\end{table}
+
 \includepdf[pages=2-]{CloudGame}
 
 
