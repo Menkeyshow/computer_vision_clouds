@@ -13,6 +13,7 @@ import util
 
 
 def set_up_logger(name):
+    """Sets up a logger with the given name."""
     global logger
     logger = logging.getLogger(name)
     if (logger.hasHandlers()):
@@ -26,6 +27,14 @@ def set_up_logger(name):
 
 
 def move_data_into_categorized_directories():
+    """Sets up a temporary directory for categorized, preprocessed images.
+
+    If ../temp/deep/categorized/ does not exist, then it is created and
+    filled with preprocessed training and test images in the appropriate
+    categories.
+
+    Returns the directories for the train and test images."""
+
     dirname = "../temp/deep/categorized/"
 
     train_dirname = dirname + "train/"
@@ -54,13 +63,18 @@ def move_data_into_categorized_directories():
             sublabeldirname = "../data/" + cloud_type + "/"
             for filename in os.listdir(sublabeldirname):
                 if random() > 0.2:
+                    # Training image; crop and split into left and right half...
+
                     img = util.cropImage(imread(sublabeldirname + filename))
                     width = img.shape[1]
                     imsave(train_labeldirname + "l-" + filename,
                            img[:, :(width // 2), :])
                     imsave(train_labeldirname + "r-" + filename,
                            img[:, (width // 2):, :])
+
                 else:
+                    # Test image, just crop
+
                     imsave(test_labeldirname + filename,
                            util.cropImage(imread(sublabeldirname + filename)))
 
@@ -76,7 +90,17 @@ extractor = Xception(include_top=False,
 
 
 def extract_features(datagen, image_dir, mode, num):
-    # TODO: seed...
+    """Extracts `num` features of the images in `image_dir` with the
+    given data generator.
+    
+    `datagen` is the desired data generator.
+    `image_dir` is the directory in which the source images can be found.
+    `mode` is either "training" or "validation".
+    `num` is the number of feature-tuples which should be created.
+    
+    Returns the features and labels.
+    """
+
     generator = datagen.flow_from_directory(
             image_dir,
             target_size=(256, 256),
@@ -102,6 +126,13 @@ def extract_features(datagen, image_dir, mode, num):
 
 
 def load_extracted_features():
+    """Loads the extracted features from ../temp/deep/features if they
+    were already extracted, and else extracts & saves the features.
+
+    Returns the training features, training labels, validation features,
+    and validation labels.
+    """
+
     dirname = "../temp/deep/features/"
     if util.ensure_directory_exists(dirname):
         logger.info("found extracted features in " + dirname + ", proceeding")
@@ -152,6 +183,8 @@ def load_extracted_features():
 
 
 def create_compiled_model():
+    """Returns the compiled classification neural net model."""
+
     logger.info("creating model")
 
     model = models.Sequential()
@@ -171,6 +204,9 @@ def create_compiled_model():
 
 
 def fit_model(model, filename, tr_features, tr_labels, val_features, val_labels):
+    """Fits the given model given the training and validation data and
+    saves a checkpoint of the best settings into a file at the given filename."""
+
     # TODO: add option to just load already-fitted model
     logger.info("fitting model")
 
@@ -182,80 +218,15 @@ def fit_model(model, filename, tr_features, tr_labels, val_features, val_labels)
                                                     save_best_only=True,
                                                     save_weights_only=False,
                                                     mode='auto', period=1)
-    # TODO: visualize training history??
+
     model.fit(tr_features, tr_labels, epochs=500, batch_size=64,
               verbose=1, validation_data=(val_features, val_labels),
               callbacks=[early_stop_callback, checkpoint_callback])
 
 
-def print_confusion_matrix(model, val_features, val_labels):
-    predictions = model.predict_classes(val_features, verbose=1)
-
-    ground_truth = []
-    for label in val_labels:
-        for i in range(len(label)):
-            if label[i] > 0.:
-                ground_truth.append(i)
-                break
-
-    assert len(ground_truth) == len(predictions)
-
-    cm = np.zeros(16).reshape((4, 4))
-    for true, prediction in zip(ground_truth, predictions):
-        cm[true][prediction] += 1
-
-    correctness = (cm[0][0] + cm[1][1] + cm[2][2] + cm[3][3]) / len(ground_truth)
-    print("correctness: {}".format(correctness))
-
-    for i in range(4):
-        cm[i] /= np.sum(cm[i])
-
-    cm *= 100
-
-    print("\t".join(["", "cir", "cum", "str", "s-c"]))
-    print("cir\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[0][0], cm[0][1], cm[0][2], cm[0][3]))
-    print("cum\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[1][0], cm[1][1], cm[1][2], cm[1][3]))
-    print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
-    print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
-
-
-def classify_image_test(model):
-    # FIXME: check for deduplicatablility w/ extract_features et al.
-    test_datagen = ImageDataGenerator(fill_mode='nearest', rescale=1./255)
-    generator = test_datagen.flow_from_directory(
-            '../temp/deep/categorized/test/',
-            target_size=(256,512),
-            batch_size=32)
-    
-    num = 180
-    features = np.empty(shape=(3, num, 2048))
-    labels = np.empty(shape=(num, 4))
-
-    i = 0
-    for inputs_batch, labels_batch in generator:
-        batch_size = min(num - i, inputs_batch.shape[0])
-
-        left_features_batch = extractor.predict(inputs_batch[:batch_size, :, :256])
-        features[0, i:(i + batch_size)] = left_features_batch
-
-        middle_features_batch = extractor.predict(inputs_batch[:batch_size, :, 128:384])
-        features[1, i:(i + batch_size)] = middle_features_batch
-
-        right_features_batch = extractor.predict(inputs_batch[:batch_size, :, 256:])
-        features[2, i:(i + batch_size)] = right_features_batch
-
-        labels[i:(i + batch_size)] = labels_batch[:batch_size]
-
-        i += batch_size
-        logger.debug("extracting features: {}/{}".format(i, num))
-        if i >= num:
-            break
-
-    left_predictions = model.predict(features[0], verbose=1)
-    middle_predictions = model.predict(features[1], verbose=1)
-    right_predictions = model.predict(features[2], verbose=1)
-    predictions = left_predictions + middle_predictions + right_predictions
-    predictions = np.argmax(predictions, axis=1)
+def print_confusion_matrix(labels, predictions):
+    """Compares the given predictions with the given labels and prints
+    a confusion matrix to the console."""
 
     ground_truth = []
     for label in labels:
@@ -283,7 +254,52 @@ def classify_image_test(model):
     print("cum\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[1][0], cm[1][1], cm[1][2], cm[1][3]))
     print("str\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[2][0], cm[2][1], cm[2][2], cm[2][3]))
     print("s-c\t%.2f\t%.2f\t%.2f\t%.2f" % (cm[3][0], cm[3][1], cm[3][2], cm[3][3]))
-            
+
+
+def classify_image_test(model):
+    """Tests the given model using the test data found in
+    ../temp/deep/categorized/test, printing the results to the console."""
+
+    test_datagen = ImageDataGenerator(fill_mode='nearest', rescale=1./255)
+    generator = test_datagen.flow_from_directory(
+            '../temp/deep/categorized/test/',
+            target_size=(256,512),
+            batch_size=32)
+    
+    num = 180
+    features = np.empty(shape=(3, num, 2048))
+    labels = np.empty(shape=(num, 4))
+
+    i = 0
+    for inputs_batch, labels_batch in generator:
+        batch_size = min(num - i, inputs_batch.shape[0])
+
+        # we split the image into "left", "middle", and "right", and extract the
+        # features for each
+        left_features_batch = extractor.predict(inputs_batch[:batch_size, :, :256])
+        features[0, i:(i + batch_size)] = left_features_batch
+
+        middle_features_batch = extractor.predict(inputs_batch[:batch_size, :, 128:384])
+        features[1, i:(i + batch_size)] = middle_features_batch
+
+        right_features_batch = extractor.predict(inputs_batch[:batch_size, :, 256:])
+        features[2, i:(i + batch_size)] = right_features_batch
+
+        labels[i:(i + batch_size)] = labels_batch[:batch_size]
+
+        i += batch_size
+        logger.debug("extracting features: {}/{}".format(i, num))
+        if i >= num:
+            break
+
+    left_predictions = model.predict(features[0], verbose=1)
+    middle_predictions = model.predict(features[1], verbose=1)
+    right_predictions = model.predict(features[2], verbose=1)
+    predictions = left_predictions + middle_predictions + right_predictions
+    predictions = np.argmax(predictions, axis=1)
+
+    print_confusion_matrix(labels, predictions)
+
 
 def main():
     set_up_logger(__name__)
@@ -300,7 +316,8 @@ def main():
     score = model.evaluate(val_features, val_labels, verbose=1)
     print("test loss: ", score[0], "accuracy: ", score[1])
 
-    print_confusion_matrix(model, val_features, val_labels)
+    predictions = model.predict_classes(val_features, verbose=1)
+    print_confusion_matrix(val_labels, predictions)
 
     classify_image_test(model)
 
