@@ -14,14 +14,14 @@ import seaborn as sns
 '''      CONFIGURATION      
          PLEASE ADJUST      
 Erfolgreiche Gewichtungen:
-mean,1 std,1 --> 40%
-mean,100 std,100 edge_count,1 -->48%
-edge_count,1500 histogram3D, 1 -->49%
+[['mean', 1],['std', 1500]] --> 40% 
+[['mean', 100],['std', 100],["edge_count", 1]] -->48%
+[['edge_count', 1500],['histogram3D', 1]] -->49%
 '''
 #Which features should be used and how should they be weighted?
 #available features: mean, std, histogram1D, histogram3D, histogramG, edge_count
 #shape: [[feature, weight],[feature2, weight2], ...]
-config = [['histogram3D', 1],['edge_count', 1500]]
+config = [['edge_count', 1500],['histogram3D', 1]]
 
 #following are the arrays needed to save the features
 #ATTENTION: they are only accessible via the stringconverter dict
@@ -234,21 +234,27 @@ if __name__ == '__main__':
     create_confusion_matrix()
     
     #SCATTERPLOTS! eventuell auskommentieren
-    
-    '''#following is a scatterplot for mean and std
+    '''
+    #config = [['mean', 1],['std', 1500]]
+    #following is a scatterplot for mean and std
     x = stringconverter['tr_mean']
     y = stringconverter['tr_std']
     a = np.append(trainLabels,np.append(trainLabels,trainLabels))
     b = np.sort(a)
-    c = np.reshape(b, (666, 3))
+    c = np.reshape(b, (633, 3))
     plt.scatter(x, y, 5, c)
     plt.xlabel('Mean \n lila:stratiform    blau:cirriform    grün:stratocumuliform    gelb:cumuliform')
     plt.ylabel('Standard Deviation')
     plt.show
+
+    #config = [['edge_count', 1]]
     #following is a box/swarmplot for edge_count
     x = [] 
     for arr in stringconverter['tr_edge_count']:
         x.append(sum(arr))
     y = trainLabels
-    sns.swarmplot(y,x)#In dieser und der nächsten Zeile sind boxplot/violinplot/swarmplot austauschbar
-    sns.swarmplot(y,x,order=['stratiform','cirriform','stratocumuliform','cumuliform'])'''
+    sns.swarmplot(y,x)  
+    #In dieser und der nächsten Zeile sind boxplot/violinplot/swarmplot austauschbar
+    sns.swarmplot(y,x,order=['stratiform','cirriform','stratocumuliform','cumuliform'])
+'''
+    

@@ -16,11 +16,6 @@ sh.setLevel(logging.DEBUG)
 logger.addHandler(sh)
 
 
-#TODO chosing label numbers globally for this project
-#TODO save only descriptor data (missing metric functions for that)
-#TODO save and load funktions for compressed *.npz instead of prepare_data()
-
-
 def save_resized_pictures(height, width):
     for cloud_kind, subkinds in util.cloud_kinds.items():
         if util.ensure_directory_exists("../temp/classic/" + cloud_kind):

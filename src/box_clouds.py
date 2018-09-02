@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jun 21 14:44:21 2018
-
-@author: ali
+BoxCut Algorithm to cut out non-sky area
 """
 
 import numpy as np
-from skimage.io import imread, imshow, imshow_collection
-import matplotlib.pyplot as plt
-import glob
 import skimage.color
 
 
