@@ -1,4 +1,7 @@
-# clouds
+# Computer Vision - Clouds
+
+Dies ist eine Kopie des Repositorys, welches im Rahmen des Projektes an der Universität Hamburg ausgearbeitet wurde.
+Hierbei wurden traditionelle als auch mit deep learning im Zusammenhang stehende Methoden angewendet um Wolkenarten zu bestimmen.
 
 ## Ausarbeitung
 
